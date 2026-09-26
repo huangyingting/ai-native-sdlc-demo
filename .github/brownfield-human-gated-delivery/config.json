@@ -12,7 +12,9 @@
       "prompt": ".github/brownfield-human-gated-delivery/prompts/spec.md",
       "minimumApprovals": 1,
       "reviewers": {
-        "users": ["huangyingting"],
+        "users": [
+          "huangyingting"
+        ],
         "teams": []
       }
     },
@@ -20,7 +22,9 @@
       "prompt": ".github/brownfield-human-gated-delivery/prompts/plan.md",
       "minimumApprovals": 1,
       "reviewers": {
-        "users": ["huangyingting"],
+        "users": [
+          "huangyingting"
+        ],
         "teams": []
       }
     },
@@ -28,7 +32,9 @@
       "prompt": ".github/brownfield-human-gated-delivery/prompts/tests.md",
       "minimumApprovals": 1,
       "reviewers": {
-        "users": ["huangyingting"],
+        "users": [
+          "huangyingting"
+        ],
         "teams": []
       }
     },
@@ -36,7 +42,9 @@
       "prompt": ".github/brownfield-human-gated-delivery/prompts/implementation.md",
       "minimumApprovals": 1,
       "reviewers": {
-        "users": ["huangyingting"],
+        "users": [
+          "huangyingting"
+        ],
         "teams": []
       }
     }
