@@ -133,6 +133,12 @@ an artifact exists. Preflight is for a **fresh** prepared baseline; after the
 ownership feature lands, its fingerprint check deliberately fails. Use replay
 to inspect completed or in-progress runs instead of calling them fresh.
 
+Before the first Intent, run **IT Service Desk CI** from the Actions tab using
+**Run workflow** on `main`. This executes tests, lint, build and container smoke
+checks without a dummy code change. A new repository's initial push may only
+change provenance/configuration relative to its imported history, so the
+path-scoped application push trigger is not proof that application CI ran.
+
 Exit codes: **0** command/automated check succeeded (manual checks remain),
 **2** preflight/readiness incomplete, **1** invalid input, conflict or execution error.
 JSON output may be redirected to a **new operator-selected file** for an

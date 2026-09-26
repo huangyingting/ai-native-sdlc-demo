@@ -28,6 +28,10 @@ test("application CI retains path-scoped main pushes", () => {
   assert.match(pushTrigger, /paths:[\s\S]*"demos\/it-service-desk\/\*\*"/);
 });
 
+test("operators can validate a prepared baseline without a dummy application change", () => {
+  assert.match(workflow, /^  workflow_dispatch:/m);
+});
+
 test("application jobs skip only pre-implementation lifecycle stages, never default-branch checks", () => {
   const conditions = ["validate", "container-smoke"].map((job) => {
     const condition = workflow.match(new RegExp(`^  ${job}:\\n(?:    needs: [^\\n]+\\n)?    if: >-\\n([\\s\\S]*?)(?=^    runs-on:)`, "m"))?.[1];
@@ -50,13 +54,14 @@ test("application jobs skip only pre-implementation lifecycle stages, never defa
     { base: "main", body: "Documentation update", expected: true },
     { base: "brownfield-delivery/7", body: "", expected: true },
     { event: "push", expected: true },
+    { event: "workflow_dispatch", expected: true },
   );
   for (const condition of conditions) {
     for (const { base, body, expected, event = "pull_request" } of cases) {
       const actual = runInNewContext(condition, {
         github: { event_name: event, event: {
           repository: { default_branch: "main" },
-          pull_request: event === "push" ? undefined : { base: { ref: base }, body },
+          pull_request: event === "pull_request" ? { base: { ref: base }, body } : undefined,
         } },
         contains: (value, search) => String(value ?? "").toLowerCase().includes(search.toLowerCase()),
         startsWith: (value, search) => String(value ?? "").toLowerCase().startsWith(search.toLowerCase()),
