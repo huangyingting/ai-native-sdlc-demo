@@ -70,7 +70,7 @@ function runEvidence(intent) {
     ],
   };
   const pull = {
-    number: 200 + intent, merged: true, merge_commit_sha: merge,
+    number: 200 + intent, merged: true, timeline: [{ event: "merged", commit_id: merge }],
     body: `Delivery Intent: #${intent}\nDelivery Stage: implementation\n`,
     base: { ref: "main", repo: { full_name: "example/demo" } }, head: { sha: hash(700 + intent) },
   };

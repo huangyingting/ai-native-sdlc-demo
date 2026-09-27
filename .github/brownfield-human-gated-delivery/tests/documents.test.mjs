@@ -166,7 +166,14 @@ function repository() {
     if (path === "/orgs/example/teams/approvers/members") return reply(state.teamMembers);
     if (path === "") return reply({ default_branch: "main" });
     if (path === "/pulls") return reply(state.pulls.filter((pr) => pr.state === "open"));
-    if (path.startsWith("/pulls/")) return reply(state.pulls.find((pr) => pr.number === Number(path.split("/")[2])));
+    if (path.startsWith("/pulls/")) {
+      const pr = state.pulls.find((pr) => pr.number === Number(path.split("/")[2]));
+      return reply({ ...pr, merge_commit_sha: undefined, timeline: undefined });
+    }
+    if (/^\/issues\/\d+\/timeline$/.test(path)) {
+      const pr = state.pulls.find((pr) => pr.number === Number(path.split("/")[2]));
+      return reply(listPage(pr.timeline, url));
+    }
     if (path.startsWith("/statuses/") && method === "POST") return reply(body);
     if (/^\/issues\/\d+\/parent$/.test(path)) return reply(issues[0]);
     if (path.startsWith("/collaborators/")) return reply({ permission: state.permissions.get(path.split("/")[2]) ?? "read" });
@@ -733,6 +740,7 @@ async function engineering(mock) {
   mock.issues[3].state = "closed";
   const pr = {
     number: 50, node_id: "PR_50", state: "closed", merged: true, merge_commit_sha: snapshot.sha,
+    timeline: [{ event: "merged", commit_id: snapshot.sha }],
     body: mock.issues[4].body, user: { login: "Copilot", type: "Bot" },
     head: { sha: snapshot.sha, repo: { full_name: "example/repo" } }, base: { ref: "main" },
     html_url: "https://github.com/example/repo/pull/50",
@@ -811,6 +819,28 @@ test("acceptance cleanup recovers after API failure without requiring or duplica
   await run.processControls(42, baseline);
   assert.equal(mock.refs.has(lifecycleBranch(42)), false);
   assert.equal((await run.loadRun(42)).state.delivery.acceptances.length, 1);
+});
+
+test("acceptance needs one matching merge event even when the REST PR omits merge_commit_sha", async () => {
+  for (const mismatch of [
+    () => [],
+    () => [{ event: "merged", commit_id: baseline }],
+    (merge) => [{ event: "merged", commit_id: merge }, { event: "merged", commit_id: merge }],
+  ]) {
+    const mock = repository();
+    const run = control(mock);
+    const { pr, verified } = await engineering(mock);
+    await run.verification(42, baseline, verified);
+    mock.add(`/sdlc accept ${digest}\nAC-1 passed`);
+    pr.timeline = mismatch(verified.mergeSha);
+    await assert.rejects(() => run.processControls(42, baseline), /merged timeline event/);
+    assert.equal(mock.issues[0].state, "open");
+    assert.ok(mock.refs.has(lifecycleBranch(42)));
+    pr.timeline = [{ event: "merged", commit_id: verified.mergeSha }];
+    await run.processControls(42, baseline);
+    assert.equal(mock.issues[0].state, "closed");
+    assert.equal((await run.loadRun(42)).state.delivery.acceptances.length, 1);
+  }
 });
 
 test("pause gates document publication, revokes automerge and retry repairs a failed status write", async () => {

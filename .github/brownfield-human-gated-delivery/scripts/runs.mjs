@@ -187,9 +187,11 @@ export class RunControl extends DocumentReview {
     }
     const pr = await this.request(`/pulls/${state.delivery.pullNumber}`);
     const metadata = parsePullRequestMetadata(pr.body);
-    if (!pr.merged || pr.merge_commit_sha !== state.delivery.mergeSha ||
+    const merges = (await this.list(`/issues/${state.delivery.pullNumber}/timeline`))
+      .filter((event) => event.event === "merged");
+    if (!pr.merged || merges.length !== 1 || merges[0].commit_id !== state.delivery.mergeSha ||
         metadata.intentNumber !== state.intent || metadata.stage !== "implementation") {
-      throw new Error("Accepted delivery no longer matches its merged implementation.");
+      throw new Error("Accepted delivery does not match the PR's merged timeline event or implementation metadata.");
     }
     for (const number of [metadata.stageIssueNumber, state.intent]) {
       const issue = await this.request(`/issues/${number}`);

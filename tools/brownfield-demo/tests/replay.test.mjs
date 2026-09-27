@@ -33,7 +33,8 @@ function evidence() {
     body: commentBody, author_association: "COLLABORATOR", created_at: at, updated_at: at,
   };
   const pull = {
-    number: 44, title: "Ownership implementation", merged: true, merge_commit_sha: merge,
+    number: 44, title: "Ownership implementation", merged: true,
+    timeline: [{ event: "merged", commit_id: merge }],
     body: "Delivery Intent: #42\nDelivery Stage: implementation\n",
     base: { ref: "main", repo: { full_name: "example/demo" } }, head: { sha: head },
   };
@@ -102,7 +103,8 @@ function mockGithub({ missingRecord = false, trusted = true, mutate = () => {} }
       { type: "blob", path: "docs/delivery-runs/brownfield-human-gated-delivery/42/spec.md" },
       { type: "blob", path: "docs/delivery-runs/brownfield-human-gated-delivery/42/plan.md" },
     ] };
-    if (path === "/pulls/44") return data.pull;
+    if (path === "/pulls/44") return { ...data.pull, timeline: undefined };
+    if (path.startsWith("/issues/44/timeline?")) return data.pull.timeline;
     if (path.startsWith("/pulls/44/reviews?")) return [{ user: { type: "User", login: "reviewer" }, state: "APPROVED" }];
     if (path.startsWith("/pulls/44/comments?")) return [];
     if (path.startsWith(`/commits/${head}/check-runs?`)) return { check_runs: [{ name: "stage-validation", conclusion: "success" }] };
@@ -167,7 +169,9 @@ test("completion needs attested record, actual matching merge/run, and matching 
     (value) => { value.issues[0].comments[0].updatedAt = "2026-09-26T04:00:00Z"; },
     (value) => { value.issues[0].comments[0].authorAssociation = "NONE"; },
     (value) => { value.pull.merged = false; },
-    (value) => { value.pull.merge_commit_sha = commit; },
+    (value) => { value.pull.timeline[0].commit_id = commit; },
+    (value) => { value.pull.timeline = []; },
+    (value) => { value.pull.timeline.push({ event: "merged", commit_id: merge }); },
     (value) => { value.pull.body = "Delivery Intent: #900\nDelivery Stage: implementation"; },
     (value) => { value.workflow.conclusion = "failure"; },
     (value) => { value.workflow.head_sha = commit; },
@@ -200,6 +204,8 @@ test("replay exports escaped real evidence, current state, and only existing imm
   const exported = JSON.parse(readFileSync(join(dest, "evidence.json"), "utf8"));
   assert.equal(exported.record.delivery.digest, digest);
   assert.equal(exported.pulls[0].reviews[0].state, "APPROVED");
+  assert.deepEqual(exported.pulls[0].timeline, [{ event: "merged", commit_id: merge }]);
+  assert.equal(exported.pulls[0].merge_commit_sha, undefined);
   assert.match(result.summary.scenarioRunsCompleted, /Not assessed/);
   assert.ok(mock.calls.every((call) => call.method === "GET" || call.endpoint === "graphql"));
   await assert.rejects(replay({ repo: "example/demo", intent: "42", dest }, { api: mock.api }), /already exists/);
