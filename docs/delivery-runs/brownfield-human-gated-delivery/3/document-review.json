@@ -36,11 +36,24 @@
       "hash": "f27de5f951af2d4bbd74ffe525b4878d4ec661e18ce9a8aee76bb6b1fa963b88",
       "specHash": "c729eb11c4fda57da44bc2f7a16e99f7a376bfaea17cd24595dc91021c23cd7d",
       "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-      "approvals": []
+      "approvals": [
+        {
+          "user": {
+            "id": 24954047,
+            "login": "huangyingting",
+            "type": "User"
+          },
+          "commentId": 5851400259,
+          "commentBody": "/sdlc approve plan v3",
+          "approvedAt": "2026-09-27T00:50:21Z",
+          "hash": "f27de5f951af2d4bbd74ffe525b4878d4ec661e18ce9a8aee76bb6b1fa963b88",
+          "version": 3
+        }
+      ]
     }
   },
   "pending": null,
-  "lastCommentId": 5851385720,
+  "lastCommentId": 5851400259,
   "receipts": [
     {
       "id": 5851321604,
@@ -65,7 +78,11 @@
     {
       "id": 5851385720,
       "message": "Command #5851385720 recorded: revise plan."
+    },
+    {
+      "id": 5851400259,
+      "message": "Command #5851400259 recorded: approve plan v3."
     }
   ],
-  "sealed": false
+  "sealed": true
 }
