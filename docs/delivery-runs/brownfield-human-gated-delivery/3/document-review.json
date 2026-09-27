@@ -16,31 +16,18 @@
       "hash": "3e46194ecf3325fb797da73be1b6c09259e2117a3dfaafb22e854d5c05f2b254",
       "specHash": null,
       "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-      "approvals": [
-        {
-          "user": {
-            "id": 24954047,
-            "login": "huangyingting",
-            "type": "User"
-          },
-          "commentId": 5851338756,
-          "commentBody": "/sdlc approve spec v1",
-          "approvedAt": "2026-09-27T00:40:02Z",
-          "hash": "3e46194ecf3325fb797da73be1b6c09259e2117a3dfaafb22e854d5c05f2b254",
-          "version": 1
-        }
-      ]
-    },
-    "plan": {
-      "version": 1,
-      "hash": "cf94b1f0af9c369acfc08e55645c0dbefc2cf629de1b901c53729f76ddf3635f",
-      "specHash": "3e46194ecf3325fb797da73be1b6c09259e2117a3dfaafb22e854d5c05f2b254",
-      "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
       "approvals": []
-    }
+    },
+    "plan": null
   },
-  "pending": null,
-  "lastCommentId": 5851338756,
+  "pending": {
+    "stage": "spec",
+    "version": 2,
+    "feedback": "Clarify AC-3 without changing scope: clearing the owner filter means selecting All owners while preserving the exact active search, status and priority selections. This is distinct from clearing a ticket owner on its detail page. Keep AC-1 through AC-5, the fixed roster, all compatibility constraints and non-goals unchanged. Development rehearsal: invalidate the earlier Spec approval and its draft Plan; the revised versions need new explicit approvals.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": null
+  },
+  "lastCommentId": 5851353633,
   "receipts": [
     {
       "id": 5851321604,
@@ -49,6 +36,10 @@
     {
       "id": 5851338756,
       "message": "Command #5851338756 recorded: approve spec v1."
+    },
+    {
+      "id": 5851353633,
+      "message": "Command #5851353633 recorded: revise spec."
     }
   ],
   "sealed": false
