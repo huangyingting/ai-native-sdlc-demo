@@ -16,6 +16,12 @@ node tools/brownfield-demo/cli.mjs scenario show ownership-standard
 node --test tools/brownfield-demo/tests/*.test.mjs
 ```
 
+Toolkit unit tests inject synthetic baseline files and a matching test-only
+manifest, so they remain runnable after ownership is implemented in an exported
+demo. Production fingerprints remain unchanged: synthetic or modified application
+files still fail the real baseline check. Passing unit tests is not evidence
+that the current application is an ownership-free baseline.
+
 ## 1. Choose one fixed scenario
 
 Data, the Human Intent template, and the unfilled acceptance checklist live in

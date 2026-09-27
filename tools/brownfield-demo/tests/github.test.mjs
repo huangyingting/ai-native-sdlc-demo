@@ -4,7 +4,7 @@ import { parseOptions } from "../cli.mjs";
 import { readOnlyApi, github } from "../github.mjs";
 import { preflight } from "../preflight.mjs";
 import { configPath, provenancePath, workflowFiles } from "../common.mjs";
-import { baselineFiles, commit, encoded, image } from "./helpers.mjs";
+import { baselineFiles, commit, encoded, fixtureManifest, image } from "./helpers.mjs";
 
 test("CLI requires explicit repositories, rejects write switches and defaults solo mode off", () => {
   assert.equal(parseOptions(["preflight", "--repo", "example/demo"]).singleOwner, false);
@@ -51,8 +51,9 @@ test("GitHub pagination is explicit and permission/network failure is not an emp
   assert.throws(() => github("example/demo", () => { throw new Error("forbidden"); }).optional("git/ref/heads/brownfield-runs/42"), /forbidden/);
 });
 
-function fixture({ missingWorkflow = false, sourceRef = commit, changedConfig = false, singleOwner = false } = {}) {
+function fixture({ missingWorkflow = false, sourceRef = commit, changedConfig = false, changedBaseline = false, singleOwner = false } = {}) {
   const files = baselineFiles();
+  if (changedBaseline) files.get("demos/it-service-desk/src/lib/ticket.ts").data = Buffer.from("owner: string");
   if (changedConfig) {
     const config = JSON.parse(files.get(configPath).data);
     config.stages.spec.reviewers.users = ["other-human"];
@@ -84,7 +85,7 @@ test("preflight reuses only setup preview, distinguishes manual checks, and pins
   const { api, requests } = fixture();
   let setupOptions;
   const result = await preflight({ repo: "example/demo", image }, {
-    api, run: local,
+    api, run: local, manifest: fixtureManifest,
     setupPreview: (options) => {
       setupOptions = options;
       return { ready: true, changes: [], blockers: [], notes: [] };
@@ -103,20 +104,21 @@ test("preflight reuses only setup preview, distinguishes manual checks, and pins
 
 test("preflight refuses incomplete setup, missing workflows, mutable baseline and reviewer drift", async () => {
   for (const settings of [
-    { missingWorkflow: true }, { sourceRef: "main" }, { changedConfig: true }, { singleOwner: true },
+    { missingWorkflow: true }, { sourceRef: "main" }, { changedConfig: true }, { changedBaseline: true }, { singleOwner: true },
   ]) {
     const result = await preflight({ repo: "example/demo" }, {
-      api: fixture(settings).api, run: local, setupPreview: () => ({ ready: true }),
+      api: fixture(settings).api, run: local, manifest: fixtureManifest, setupPreview: () => ({ ready: true }),
     });
     assert.equal(result.automatedReady, false);
     assert.ok(result.blockers.length);
+    if (settings.changedBaseline) assert.ok(result.blockers.some((item) => item.includes("fingerprint")));
   }
   for (const setupPreview of [
     () => ({ ready: false, changes: [{ method: "PUT" }], blockers: [] }),
     () => { throw new Error("missing administrator access"); },
     () => ({ ready: true, blockers: ["secret missing"] }),
   ]) {
-    const result = await preflight({ repo: "example/demo" }, { api: fixture().api, run: local, setupPreview });
+    const result = await preflight({ repo: "example/demo" }, { api: fixture().api, run: local, manifest: fixtureManifest, setupPreview });
     assert.equal(result.automatedReady, false);
   }
 });
@@ -124,6 +126,7 @@ test("preflight refuses incomplete setup, missing workflows, mutable baseline an
 test("preflight does not interpret missing CLI or explicit solo mode as readiness", async () => {
   const result = await preflight({ repo: "example/demo", singleOwner: true }, {
     api: fixture({ singleOwner: true }).api,
+    manifest: fixtureManifest,
     run: (command) => { if (command === "docker") throw new Error("missing"); return local(command); },
     setupPreview: (options) => {
       assert.equal(options["single-owner"], true);
@@ -140,7 +143,7 @@ test("preflight rejects main changing while setup reads mutable settings", async
   const result = await preflight({ repo: "example/demo" }, {
     api: (method, endpoint) => endpoint.endsWith("/branches/main") && ++reads > 1 ?
       { commit: { sha: "f".repeat(40) } } : original(method, endpoint),
-    run: local, setupPreview: () => ({ ready: true }),
+    run: local, manifest: fixtureManifest, setupPreview: () => ({ ready: true }),
   });
   assert.equal(result.automatedReady, false);
   assert.ok(result.blockers.some((item) => item.includes("Main changed")));
