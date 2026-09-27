@@ -18,9 +18,9 @@ export function parseRunCommand(body) {
   return null;
 }
 
-export function newRun(intent, repository, baseline) {
+export function newRun(intent, repository, baseline, mode = "live") {
   return {
-    version: 1, intent, repository, baseline, mode: "live", status: "active",
+    version: 1, intent, repository, baseline, mode, status: "active",
     lastCommentId: 0, delivery: null, failure: null, events: [],
   };
 }
@@ -28,7 +28,7 @@ export function newRun(intent, repository, baseline) {
 export function validateRun(state, intent) {
   if (state?.version !== 1 || state.intent !== intent || !Number.isSafeInteger(intent) || intent < 1 ||
       !/^[\w.-]+\/[\w.-]+$/.test(state.repository) || !/^[a-f0-9]{40}$/.test(state.baseline) ||
-      state.mode !== "live" || !["active", "paused", "cancelled", "accepted"].includes(state.status) ||
+      !["live", "development-test"].includes(state.mode) || !["active", "paused", "cancelled", "accepted"].includes(state.status) ||
       !Number.isSafeInteger(state.lastCommentId) || state.lastCommentId < 0 || !Array.isArray(state.events)) {
     throw new Error("Invalid delivery run state.");
   }
@@ -117,7 +117,7 @@ export function applyRunCommand(state, command, comment, policy, teamMembers = [
 }
 
 export function runPresentation(state) {
-  if (state.status === "accepted") return { status: "Complete - Human accepted", next: "Replay or archive this run. Start a fresh demo instance for another rehearsal." };
+  if (state.status === "accepted") return { status: state.mode === "development-test" ? "Development test complete - not Human acceptance" : "Complete - Human accepted", next: "Replay or archive this run. Start a fresh demo instance for another rehearsal." };
   if (state.status === "cancelled") return { status: "Cancelled", next: "No new work or automatic merge is allowed. Existing evidence is retained; start a new Intent." };
   if (state.status === "paused") return { status: "Paused", next: "Submit `/sdlc resume`. Already-running agents may finish, but publication/advancement and automatic merge are gated." };
   if (state.delivery?.rejection) return { status: "Acceptance rejected", next: "Use the rejection notes to create a linked remediation Intent. For an environment-only problem, fix it and rerun verification." };

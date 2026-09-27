@@ -612,6 +612,17 @@ const evidence = {
 const acceptancePolicy = config.stages.implementation;
 const control = (mock) => new RunControl(mock.review);
 
+test("explicit development-test mode is durable and cannot become a live rehearsal after an Issue edit", async () => {
+  const mock = repository();
+  mock.issues[0].body += "\nDelivery Execution: development-test\n";
+  const run = control(mock);
+  const initial = await run.ensure(42, baseline);
+  assert.equal(initial.state.mode, "development-test");
+  assert.match(await run.summary(42), /AUTOMATED DEVELOPMENT TEST/);
+  mock.issues[0].body = parent.body;
+  assert.equal((await run.ensure(42, baseline)).state.mode, "development-test");
+});
+
 test("run command grammar requires digest and observed acceptance results", () => {
   for (const action of ["help", "status", "pause", "resume", "cancel"]) {
     assert.deepEqual(parseRunCommand(`/sdlc ${action}`), { action });

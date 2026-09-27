@@ -40,7 +40,11 @@ export class RunControl extends DocumentReview {
   }
 
   async ensure(intent, baseline) {
-    return await this.loadRun(intent) ?? this.runStore.save(null, newRun(intent, `${this.owner}/${this.repo}`, baseline));
+    const existing = await this.loadRun(intent);
+    if (existing) return existing;
+    const issue = await this.request(`/issues/${intent}`);
+    const mode = /^Delivery Execution: development-test\s*$/m.test(issue.body ?? "") ? "development-test" : "live";
+    return this.runStore.save(null, newRun(intent, `${this.owner}/${this.repo}`, baseline, mode));
   }
 
   async assertActive(intent) {
@@ -66,6 +70,7 @@ export class RunControl extends DocumentReview {
     const presentation = runPresentation(state);
     const delivery = state.delivery;
     return [
+      state.mode === "development-test" ? "**AUTOMATED DEVELOPMENT TEST: approvals are scripted with explicit account-owner authorization. This run never counts as genuine Human acceptance or Demo Ready.**" : "",
       `### Run: ${presentation.status}`, "", presentation.next, "",
       `Responsible Human reviewers: ${this.config.stages.implementation.reviewers.users.map((login) => `@${login}`).join(", ") || "configured team"}.`,
       `Evidence: [run record](https://github.com/${this.owner}/${this.repo}/blob/${sha}/${runStatePath(intent)})`,
