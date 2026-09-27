@@ -21,7 +21,12 @@
     "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
     "specHash": null
   },
-  "lastCommentId": 0,
-  "receipts": [],
+  "lastCommentId": 5851321604,
+  "receipts": [
+    {
+      "id": 5851321604,
+      "message": "Command #5851321604 recorded: retry."
+    }
+  ],
   "sealed": false
 }
