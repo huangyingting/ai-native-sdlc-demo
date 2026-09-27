@@ -5,10 +5,23 @@ against the existing IT service desk. All lifecycle decisions happen in GitHub
 Web. A Human must exercise the verified image before final acceptance; the
 toolkit can present it locally without creating a hosted deployment.
 
-For an illustrated account of an actual execution, read the
-[ticket-ownership case study](./brownfield-human-gated-delivery-case-study.md).
-It complements this runbook with architecture, runtime screenshots, decisions,
-failures, and evidence; it is explicitly a development-test rehearsal.
+## Start here
+
+- **Inspect or present the existing result:** use the
+  [ticket-ownership case study](./brownfield-human-gated-delivery-case-study.md)
+  and its [reproduction steps](./brownfield-human-gated-delivery-case-study.md#7-how-to-present-or-reproduce-the-result).
+  This is historical development-test evidence, not a new live run.
+- **Run the ownership scenario from scratch:** an operator completes
+  [Step 1](#1-prepare-the-repository) below, in order. Then the requester and
+  configured Human reviewers follow [Steps 2 through 9](#2-show-the-existing-application).
+- **Continue a configured, ownership-free run:** verify the
+  [preflight checklist](#15-preflight-and-handoff), then continue at the relevant
+  stage. For an interrupted run, use [run controls](#run-controls-during-presentation)
+  and [troubleshooting](#troubleshooting-during-the-demo), not a new setup.
+
+Do not reset the completed `ai-native-sdlc-demo` repository or submit the same
+ownership request against its already-implemented application. Prepare a new
+isolated repository from the ownership-free source instead.
 
 The example starts with **unclear ticket ownership**. The Human writes the
 Intent, AI proposes the Spec and Plan, and the Human can request as many
@@ -106,33 +119,153 @@ pause and explain the blocker, or show a clearly identified real prior replay.
 
 ## 1. Prepare the repository
 
-Complete the [one-time setup](./brownfield-human-gated-delivery.md#one-time-repository-setup)
-before the live session.
+This is the first-time operator path; complete it before submitting an Intent.
+Run each block separately and check its expected result before continuing.
+Do not run later steps after an unexpected error.
 
-With Node.js 24+ and GitHub CLI authenticated as a repository administrator,
-preview the supported prerequisites from the repository root:
+### 1.1 Choose the source, target, and review mode
+
+You need Node.js 24+, Git, authenticated GitHub CLI (`gh`), Docker with a running
+daemon, and permission to create/administer the selected GitHub repository.
+Copilot Coding Agent access, Copilot CLI entitlement in Actions, and registry
+access are separate prerequisites; a successful `gh auth status` does not prove
+them.
+
+Check the local prerequisites before creating anything:
 
 ```sh
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc
+node --version
+git --version
+gh auth status --hostname github.com
+docker info
 ```
 
-Replace the repository with the explicitly selected isolated demo repository.
-Only add `--apply` after agreeing to its complete preview: **full apply creates
-missing `main` protection**. This repository's `main` is intentionally
-unprotected; do not run full apply here without explicit agreement.
-Read-only previews do not write.
+If GitHub CLI is not authenticated, use `gh auth login --hostname github.com`.
+Resolve missing tools, daemon access, and Git authentication before continuing.
 
-After that agreement, use `--apply --set-token` for secure interactive token
-entry, or
-`--apply --intent 7` to repair the label on an existing Intent. Setup does not
-dispatch kickoff or publish local changes. By default, it preserves existing
-protections.
+Throughout this guide, replace these placeholders consistently:
+
+| Placeholder | Meaning |
+|---|---|
+| `/absolute/path/to/source-checkout` | Local checkout of `huangyingting/ai-native-sdlc`, whose ownership capability is still missing |
+| `FULL_40_HEX_COMMIT` | Reviewed source commit, copied from `git rev-parse HEAD`; not the literal `HEAD` or a short SHA |
+| `/absolute/path/to/new-isolated-demo` | New directory outside the source; its parent must exist, but the destination must not |
+| `OWNER/NEW_DEMO_REPO` | New GitHub repository you explicitly agree to create, not the source or an existing completed demo |
+| `REVIEWER_LOGIN` | The Human who will review, with write access to the new repository |
+
+The examples use **explicit single-owner demo mode**, where one Human performs
+the reviews. Keep `--single-owner` on preparation, setup, and preflight.
+For independent-review mode, omit that flag consistently and configure eligible
+independent reviewers using the [reviewer reference](./brownfield-human-gated-delivery.md#configure-human-reviewers).
+Neither mode authorizes an assistant to submit Human approvals.
+
+Use an existing source checkout, or clone into a new path:
+
+```sh
+git clone https://github.com/huangyingting/ai-native-sdlc.git /absolute/path/to/source-checkout
+git -C /absolute/path/to/source-checkout rev-parse HEAD
+```
+
+**Expected result:** a source checkout and a full commit SHA. Do not clone over
+an existing directory or choose the completed demo's implementation commit.
+
+### 1.2 Prepare the isolated baseline
+
+Run from the source checkout root. No root dependency installation is needed:
+
+```sh
+cd /absolute/path/to/source-checkout &&
+node tools/brownfield-demo/cli.mjs prepare \
+  --source /absolute/path/to/source-checkout \
+  --source-ref FULL_40_HEX_COMMIT \
+  --dest /absolute/path/to/new-isolated-demo \
+  --reviewer REVIEWER_LOGIN \
+  --scenario ownership-standard \
+  --single-owner
+```
+
+**Expected result:** a new ownership-free export with the current workflows,
+selected reviewers, and `brownfield-demo-provenance.json`. It is not yet a Git
+repository or a published demo. A baseline mismatch is a blocker; do not
+disable fingerprint checks or delete ownership code to make it pass.
+The [toolkit preparation reference](../tools/brownfield-demo/README.md#2-prepare-from-a-full-immutable-source-commit)
+explains exclusions and alternate rehearsal scenarios.
+
+### 1.3 Inspect and publish the new repository
+
+Review the exported files, reviewer configuration, and provenance before
+publishing. Provenance includes your local source path; confirm it is safe to
+share. Check for secrets and local data even though preparation excludes common
+sensitive paths. All commands in this subsection target the **new export**,
+not the source checkout.
+
+Before creating the remote, confirm that the account/plan supports the required
+protections and Copilot features for the chosen visibility. The example uses
+private visibility; choose public only deliberately, after reviewing the data
+and organization policy. Do not weaken the gates to work around a plan limitation.
+
+```sh
+git -C /absolute/path/to/new-isolated-demo init --initial-branch=main
+git -C /absolute/path/to/new-isolated-demo add .
+git -C /absolute/path/to/new-isolated-demo diff --cached --stat
+```
+
+After reviewing the staged contents:
+
+```sh
+git -C /absolute/path/to/new-isolated-demo commit -m "Initialize isolated brownfield demo"
+gh repo create OWNER/NEW_DEMO_REPO --private \
+  --source /absolute/path/to/new-isolated-demo --remote origin --push
+```
+
+**This creates a private remote and pushes the reviewed export.**
+If the remote already exists, stop and inspect it; do not force-push or overwrite
+an existing run. Git author identity must be configured before committing.
+
+```sh
+gh repo view OWNER/NEW_DEMO_REPO --json defaultBranchRef --jq .defaultBranchRef.name
+gh workflow list --repo OWNER/NEW_DEMO_REPO --all
+```
+
+**Expected result:** `main` is the default branch, and GitHub has registered the
+delivery workflows, including **Brownfield Delivery · Documents**. If necessary,
+set `main` as default in repository settings and wait for workflow registration.
+Invite any additional configured reviewers with write access.
+Publishing alone does not configure tokens, protections, or Copilot access.
+
+### 1.4 Configure GitHub and review the setup preview
+
+With Node.js 24+ and GitHub CLI authenticated as a repository administrator,
+run from the **new isolated checkout root**, not the source checkout:
+
+```sh
+cd /absolute/path/to/new-isolated-demo &&
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --single-owner
+```
+
+The first preview may exit **2** with missing settings, credentials, or manual
+checks. Review every proposed change. **Full apply creates missing `main`
+protection**; it is not merely a token-setting operation. Existing targets may
+already be protected. Never infer policy from which repository contains this
+copy of the guide, or apply setup to the original source by mistake.
+Read-only preview does not write.
+
+Create the limited automation credential using the
+[token instructions](./brownfield-human-gated-delivery.md#configure-the-copilot-token).
+Only after agreeing to the complete preview, use an interactive terminal:
+
+```sh
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --single-owner --apply --set-token
+```
+
+Enter the token only at the secure prompt, never in arguments, files, or chat.
+If the correct secret already exists, omit `--set-token` to leave it unchanged.
+Setup does not dispatch kickoff or publish local changes. By default it preserves
+existing protections apart from the explicitly selected solo-mode change.
 See [setup script details](./brownfield-human-gated-delivery.md#run-the-setup-script)
-for permissions, exit codes, and manual checks. No root dependencies need to
-be installed.
+for permissions, partial-failure recovery, and manual checks.
 
-If you are the only Human reviewer, add `--single-owner` to both preview and
-apply commands for the Tests and Implementation PR stages. New Issue
+The example's `--single-owner` flag concerns Tests and Implementation PRs. New Issue
 Spec/Plan approvals do not have GitHub's native PR independent-review
 restriction. Native PR review rules can exclude your approval when you
 collaborated with Copilot. [Single-owner demo mode](./brownfield-human-gated-delivery.md#single-owner-demo-mode)
@@ -165,10 +298,10 @@ other repository write credentials; trusted publication and approval are
 separate steps. Human reviewers sign in to GitHub normally; they do not need
 to create a token to review documents or PRs.
 
-The checked-in configuration assigns `huangyingting` and requires one approval
-at every configured stage. Explicitly update and publish it before the demo if
-another person will approve. Final acceptance uses the Implementation policy
-and quorum, not a separate configurable stage.
+The source configuration assigns `huangyingting`; preparation replaces reviewer
+lists with the selected `REVIEWER_LOGIN`, while preserving approval thresholds.
+Inspect and publish the actual configuration for your run. Final acceptance
+uses the Implementation policy and quorum, not a separate configurable stage.
 Submitting the Intent does not automatically make its author a reviewer.
 For mandatory approval by one particular end user, configure that person as
 the sole Spec and Plan reviewer with a threshold of one. Issue approvers must
@@ -190,9 +323,28 @@ Check the [ruleset instructions](./brownfield-human-gated-delivery.md#configure-
   `brownfield-documents/**` or `brownfield-runs/**`. State branches need trusted
   automation writes, not a ruleset bypass.
 
+### 1.5 Preflight and handoff
+
+From the new isolated checkout, after resolving setup findings:
+
+```sh
+cd /absolute/path/to/new-isolated-demo &&
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --single-owner &&
+node tools/brownfield-demo/cli.mjs preflight --repo OWNER/NEW_DEMO_REPO --single-owner
+```
+
+**Expected result:** setup's automated checks pass and preflight reports
+`automatedReady: true`. Its `readyForLiveRun` remains `false` because the tool
+does not certify manual checks. Verify credential scope/expiry, entitlement,
+billing, Docker daemon and registry access, and reviewer participation yourself.
+Stop on unresolved blockers. Do not use fresh-baseline preflight to evaluate a
+completed ownership implementation; use replay for that.
+
 **Configured when:** the form is visible, intended reviewers are configured, and
 automation prerequisites and agreed branch protections are in place. This is
-not yet **Demo Ready**; complete the real rehearsals above.
+not yet **Demo Ready**; complete the real rehearsals above. Hand off to the
+requester and reviewers at [Step 2](#2-show-the-existing-application), then create
+the Intent in **`OWNER/NEW_DEMO_REPO`**, not in the source or completed demo.
 
 ## 2. Show the existing application
 
@@ -619,7 +771,7 @@ repository and example number as needed, is:
 
 ```sh
 gh workflow run brownfield-human-gated-delivery-documents.yml \
-  --repo huangyingting/ai-native-sdlc --ref main -f issue_number=7
+  --repo OWNER/NEW_DEMO_REPO --ref main -f issue_number=7
 ```
 
 Inspect the latest hub and run result after recovery. A full Plan approval

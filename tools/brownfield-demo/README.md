@@ -6,6 +6,11 @@ checks, runs an exact delivered image locally, and exports actual GitHub
 evidence. It never creates a remote repository, dispatches a workflow, edits
 GitHub, approves work, resets the source, or commits/pushes.
 
+**First time running the demo?** Follow the
+[walkthrough's preparation sequence](../../docs/brownfield-human-gated-delivery-walkthrough.md#1-prepare-the-repository)
+for export, inspection, Git initialization, remote publication, setup, and
+preflight in the correct order. Use this README as the command reference.
+
 See the [illustrated delivery case study](../../docs/brownfield-human-gated-delivery-case-study.md)
 for the architecture, screenshots, and actual evidence from a completed
 development-test run. This README remains the command and safety reference.
