@@ -121,8 +121,8 @@ describe("Ticket ownership persistence", () => {
     const observer = new DatabaseSync(path);
     const snapshot = () => observer.prepare("SELECT * FROM tickets ORDER BY id").all();
     const version = () => (observer.prepare("PRAGMA data_version").get() as { data_version: number }).data_version;
-    expect(typeof store.updateOwner).toBe("function");
     try {
+      expect(typeof store.updateOwner).toBe("function");
       const unassignedRows = snapshot();
       const unassignedVersion = version();
       expect(store.updateOwner(1, null)).toBe(true);
@@ -145,8 +145,8 @@ describe("Ticket ownership persistence", () => {
     const { path } = oldSchemaDatabase();
     const store = openStore(path);
     const observer = new DatabaseSync(path);
-    expect(typeof store.updateOwner).toBe("function");
     try {
+      expect(typeof store.updateOwner).toBe("function");
       const snapshot = () => observer.prepare("SELECT * FROM tickets ORDER BY id").all();
       const before = snapshot();
       expect(() => store.updateOwner(1, "not-in-roster")).toThrow("Invalid ticket owner update");
