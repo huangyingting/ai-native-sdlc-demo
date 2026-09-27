@@ -654,4 +654,7 @@ test("keeps staged workflows and trusted boundaries synchronized", () => {
   assert.doesNotThrow(() => runAggregate({}));
   assert.throws(() => runAggregate({ CLASSIFY: "failure", LIFECYCLE: "false" }));
   assert.throws(() => runAggregate({ RED: "skipped" }));
+  assert.throws(() => runAggregate({ RED: "failure" }));
+  assert.throws(() => runAggregate({ STAGE: "implementation", IMPLEMENTATION: "failure" }));
+  assert.doesNotThrow(() => runAggregate({ STAGE: "implementation", IMPLEMENTATION: "success" }));
 });
