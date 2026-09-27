@@ -1091,5 +1091,10 @@ if (
   if (!commands[command]) {
     throw new Error(`Unknown brownfield delivery command: ${command}`);
   }
-  await commands[command]();
+  // Let this module finish evaluating before a command imports a module that
+  // uses the shared GitHub helpers; top-level await would deadlock that cycle.
+  commands[command]().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
 }
