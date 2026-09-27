@@ -39,7 +39,9 @@ function inspect(run, kind, name) {
     if (!Array.isArray(result) || result.length !== 1) throw new Error("Unexpected Docker inspect result.");
     return result[0];
   } catch (error) {
-    if (new RegExp(`No such ${kind}(?: object)?:`, "i").test(String(error.stderr ?? ""))) return null;
+    const message = String(error.stderr ?? "").trim();
+    if (new RegExp(`No such ${kind}(?: object)?:`, "i").test(message) ||
+        (kind === "volume" && message === `Error response from daemon: get ${name}: no such volume`)) return null;
     throw error;
   }
 }

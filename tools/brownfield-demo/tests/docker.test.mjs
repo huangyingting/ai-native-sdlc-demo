@@ -22,7 +22,7 @@ const containerInfo = () => ({
 const dataset = () => ({
   count: 4, rows: loadManifest().fixtures.map(({ reference, owner, ...fields }, index) => ({ id: index + 1, ...fields })),
 });
-function dockerMock({ container = null, volume = null, daemonError = false, seed = dataset() } = {}) {
+function dockerMock({ container = null, volume = null, daemonError = false, legacyVolumeError = false, seed = dataset() } = {}) {
   const calls = [];
   const run = (command, args) => {
     calls.push([command, ...args]);
@@ -30,7 +30,11 @@ function dockerMock({ container = null, volume = null, daemonError = false, seed
     if (daemonError) throw new Error("Cannot connect to daemon");
     if (args[1] === "inspect") {
       const data = args[0] === "container" ? container : volume;
-      if (!data) throw Object.assign(new Error("absent"), { stderr: `Error response from daemon: No such ${args[0]}: ${args[2]}` });
+      if (!data) throw Object.assign(new Error("absent"), {
+        stderr: args[0] === "volume" && !legacyVolumeError
+          ? `Error response from daemon: get ${args[2]}: no such volume`
+          : `Error response from daemon: No such ${args[0]}: ${args[2]}`,
+      });
       return JSON.stringify([data]);
     }
     if (args[0] === "pull") return "pulled";
@@ -121,6 +125,30 @@ test("existing resources and unavailable daemon are not treated as permission to
     const docker = dockerMock(state);
     await assert.rejects(runImage(options, { run: docker.run }), /already exists|daemon/);
     assert.ok(!docker.calls.some((call) => ["run", "pull", "stop"].includes(call[1]) || call.includes("create")));
+  }
+});
+
+test("volume inspection recognizes current and legacy absence but propagates other daemon errors", async () => {
+  for (const legacyVolumeError of [false, true]) {
+    const docker = dockerMock({ legacyVolumeError });
+    const result = stopImage(options, { run: docker.run });
+    assert.equal(result.stopped, false);
+    assert.equal(result.dataRetained, false);
+    assert.ok(docker.calls.every((call) => call[2] === "inspect"));
+  }
+  for (const stderr of [
+    `Error response from daemon: get ${resource.volume}: permission denied`,
+    `Error response from daemon: get ${resource.volume}-different: no such volume`,
+  ]) {
+    const docker = dockerMock();
+    const error = Object.assign(new Error(stderr), { stderr });
+    await assert.rejects(runImage(options, {
+      run: (command, args) => {
+        if (args[0] === "volume" && args[1] === "inspect") throw error;
+        return docker.run(command, args);
+      },
+    }), (actual) => actual === error);
+    assert.ok(!docker.calls.some((call) => call[1] === "pull"));
   }
 });
 
