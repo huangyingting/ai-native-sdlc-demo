@@ -16,12 +16,25 @@
       "hash": "c729eb11c4fda57da44bc2f7a16e99f7a376bfaea17cd24595dc91021c23cd7d",
       "specHash": null,
       "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-      "approvals": []
+      "approvals": [
+        {
+          "user": {
+            "id": 24954047,
+            "login": "huangyingting",
+            "type": "User"
+          },
+          "commentId": 5851367871,
+          "commentBody": "/sdlc approve spec v2",
+          "approvedAt": "2026-09-27T00:44:55Z",
+          "hash": "c729eb11c4fda57da44bc2f7a16e99f7a376bfaea17cd24595dc91021c23cd7d",
+          "version": 2
+        }
+      ]
     },
     "plan": null
   },
   "pending": null,
-  "lastCommentId": 5851363575,
+  "lastCommentId": 5851367871,
   "receipts": [
     {
       "id": 5851321604,
@@ -38,6 +51,10 @@
     {
       "id": 5851363575,
       "message": "Command #5851363575 rejected: Stale or missing document version; approve the latest published vN."
+    },
+    {
+      "id": 5851367871,
+      "message": "Command #5851367871 recorded: approve spec v2."
     }
   ],
   "sealed": false
