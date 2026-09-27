@@ -66,7 +66,8 @@ export function acceptanceEvidence(record, issues, pulls, runs, config, recordTr
   if (record?.status !== "accepted") reasons.push("Runtime record is not accepted.");
   if (!delivery?.verified || delivery?.rejection !== null) reasons.push("Delivery is not verified or has an outstanding rejection.");
   const pull = pulls.find((item) => item.number === delivery?.pullNumber);
-  if (!pull?.merged || pull.merge_commit_sha !== delivery?.mergeSha ||
+  const merges = pull?.timeline?.filter((event) => event.event === "merged") ?? [];
+  if (!pull?.merged || merges.length !== 1 || merges[0].commit_id !== delivery?.mergeSha ||
       pull.base?.repo?.full_name?.toLowerCase() !== record?.repository?.toLowerCase() ||
       pull.base?.ref !== "main" ||
       !new RegExp(`^Delivery Intent:\\s*#${record?.intent}\\s*$`, "im").test(pull.body ?? "") ||
@@ -183,6 +184,7 @@ export async function collectEvidence(options, { api = readOnlyApi, now = () => 
     if (!fullSha(pull.head?.sha)) throw new Error("PR head commit is invalid.");
     pulls.push({
       ...pull,
+      timeline: client.list(`issues/${number}/timeline`),
       reviews: client.list(`pulls/${number}/reviews`),
       reviewComments: client.list(`pulls/${number}/comments`),
       checks: client.list(`commits/${pull.head.sha}/check-runs`, "check_runs"),
