@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { updateTicketStatusAction } from "@/app/actions";
+import { updateTicketOwnerAction, updateTicketStatusAction } from "@/app/actions";
 import { ArrowLeftIcon, CheckIcon } from "@/app/icons";
 import { CustomSelect } from "@/app/custom-select";
 import { getTicketStore } from "@/lib/ticket-store";
-import { formatTicketStatus, ticketStatuses } from "@/lib/ticket";
+import { formatTicketOwner, formatTicketStatus, ticketOwnerOptions, ticketStatuses } from "@/lib/ticket";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -57,8 +57,27 @@ export default async function TicketPage({
               <div><dt>Email</dt><dd>{ticket.requesterEmail}</dd></div>
               <div><dt>Category</dt><dd>{ticket.category}</dd></div>
               <div><dt>Priority</dt><dd>{ticket.priority}</dd></div>
+              <div><dt>Owner</dt><dd>{formatTicketOwner(ticket.owner)}</dd></div>
               <div><dt>Last updated</dt><dd>{formatDate(ticket.updatedAt)}</dd></div>
             </dl>
+            <form action={updateTicketOwnerAction} className="status-form">
+              <input name="id" type="hidden" value={ticket.id} />
+              <label htmlFor="owner">Update owner</label>
+              <select
+                defaultValue={ticket.owner ?? ""}
+                id="owner"
+                name="owner"
+              >
+                <option value="">Unassigned</option>
+                {ticketOwnerOptions.map((owner) => (
+                  <option key={owner.value} value={owner.value}>{owner.label}</option>
+                ))}
+              </select>
+              <button className="button button-primary" type="submit">
+                <CheckIcon />
+                Save owner
+              </button>
+            </form>
             <form action={updateTicketStatusAction} className="status-form">
               <input name="id" type="hidden" value={ticket.id} />
               <label htmlFor="status">Update status</label>

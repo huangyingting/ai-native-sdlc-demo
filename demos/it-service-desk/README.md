@@ -9,6 +9,8 @@ Issue-to-PR workflow with GitHub Copilot.
 - Create a ticket with server-side validation.
 - View ticket details.
 - Move a ticket through open, in-progress, resolved, and closed states.
+- Assign, reassign, clear, view, and filter ticket ownership for Avery Stone,
+  Jordan Lee, or Unassigned.
 - Persist data in a local SQLite database.
 
 Search matches titles, requester names, and ticket references such as `INC-0001`
@@ -16,16 +18,23 @@ Search matches titles, requester names, and ticket references such as `INC-0001`
 and `inc-1` also work; surrounding whitespace is ignored. Status and priority
 filters still apply to search results.
 
-The custom dropdowns keep keyboard focus on a labeled combobox. Open with
-Enter, Space, or an arrow key; navigate with arrow keys, Home/End, or
-typeahead. Enter/Space commits, Escape cancels uncommitted navigation, and
-Tab/Shift+Tab commits and moves focus normally. Clicking outside or moving
-focus away also commits and closes the popup. Menus remain visible above
-short or empty ticket queues.
+Ownership uses a fixed local roster: Avery Stone and Jordan Lee. Tickets without
+an owner are shown as Unassigned, newly created tickets start Unassigned, and
+the dashboard owner filter intersects with the existing search, status, and
+priority filters without changing summary counts. Owner assignment and owner
+filtering use labeled native selects with options for the two roster members
+and Unassigned or All owners, respectively.
 
-The application intentionally stops at a practical first release. Assignment,
-SLA policies, comments, audit history, access control, notifications, and
-reporting are suitable follow-up GitHub Issues for live Copilot demos.
+The status and priority custom dropdowns keep keyboard focus on a labeled
+combobox. Open with Enter, Space, or an arrow key; navigate with arrow keys,
+Home/End, or typeahead. Enter/Space commits, Escape cancels uncommitted
+navigation, and Tab/Shift+Tab commits and moves focus normally. Clicking
+outside or moving focus away also commits and closes the popup. Menus remain
+visible above short or empty ticket queues.
+
+The application intentionally stops at a practical first release. SLA policies,
+comments, audit history, access control, notifications, and reporting are
+suitable follow-up GitHub Issues for live Copilot demos.
 
 ## Run locally
 
@@ -40,6 +49,9 @@ npm run dev
 Open <http://localhost:3000>.
 
 The database is created and seeded automatically at `data/service-desk.db`.
+When an existing database does not yet have ownership data, startup adds a
+nullable `owner` column in place. Existing rows keep their ticket fields and
+timestamps and appear as Unassigned until an agent assigns them.
 For disposable local development only, deleting that file resets demo data.
 Do not reset a shared checkout for a presentation; use an isolated prepared
 copy as described below.

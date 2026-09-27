@@ -69,6 +69,7 @@ body {
 
 button,
 input,
+select,
 textarea {
   font: inherit;
 }
@@ -484,6 +485,7 @@ label {
 }
 
 input,
+select,
 textarea {
   width: 100%;
   border: 1px solid var(--cp-border);
@@ -616,6 +618,7 @@ textarea {
 }
 
 input:focus,
+select:focus,
 textarea:focus {
   background: var(--cp-surface);
   border-color: var(--cp-accent);
@@ -642,10 +645,10 @@ textarea {
 .ticket-list-header,
 .ticket-row {
   display: grid;
-  grid-template-columns: minmax(300px, 1fr) 132px 116px 138px 24px;
+  grid-template-columns: minmax(300px, 1fr) 132px 116px 128px 138px 24px;
   align-items: center;
   gap: 16px;
-  min-width: 820px;
+  min-width: 940px;
   padding: 15px 24px;
 }
 
