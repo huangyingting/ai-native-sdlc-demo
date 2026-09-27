@@ -235,7 +235,7 @@ export function countHumanApprovals(reviews, policy, pullRequestAuthor, teamMemb
   };
 }
 
-function section(content, heading) {
+export function section(content, heading) {
   const marker = `## ${heading}`;
   const markerIndex = content.split(/\r?\n/).findIndex((line) => line === marker);
   if (markerIndex < 0) throw new Error(`Missing or empty section: ${heading}`);

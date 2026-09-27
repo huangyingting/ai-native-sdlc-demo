@@ -291,6 +291,14 @@ test("Issue commands require exact submitted syntax and explicit document versio
 test("document validation enforces existing contracts and complete review presentation", () => {
   validateGeneratedDocument("spec", spec);
   validateGeneratedDocument("plan", plan, spec);
+  for (const [stage, document] of [["spec", spec], ["plan", plan]]) {
+    for (const heading of ["Revision summary", "Open questions"]) {
+      const spaced = document.replace(`## ${heading}\n`, `## ${heading}\n\n \n`);
+      validateGeneratedDocument(stage, spaced, spec);
+      const empty = spaced.replace(heading === "Revision summary" ? /Initial (proposal|plan)\./ : /None\./, "");
+      assert.throws(() => validateGeneratedDocument(stage, empty, spec), /Missing or empty section/);
+    }
+  }
   assert.throws(() => validateGeneratedDocument("spec", `\`\`\`md\n${spec}\`\`\``), /must start/);
   assert.throws(() => validateGeneratedDocument("spec", spec.replace("## Open questions", "## Questions")), /Open questions/);
   assert.throws(() => validateGeneratedDocument("plan", plan.replace("AC-1", "AC-9").replace("Acceptance: AC-1", "Acceptance: AC-9"), spec), /unknown AC/);
