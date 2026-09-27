@@ -73,9 +73,15 @@ export function acceptanceEvidence(record, issues, pulls, runs, config, recordTr
       !new RegExp(`^Delivery Intent:\\s*#${record?.intent}\\s*$`, "im").test(pull.body ?? "") ||
       !/^Delivery Stage:\s*implementation\s*$/im.test(pull.body ?? "")) reasons.push("Actual implementation PR merge does not match the recorded delivery.");
   const run = runs.find((item) => item.id === Number(delivery?.runId));
+  const sourceMatches = typeof pull?.head?.ref === "string" && pull.head.ref.length > 0 &&
+    run?.head_branch === pull.head.ref &&
+    typeof pull?.head?.repo?.full_name === "string" &&
+    run?.head_repository?.full_name?.toLowerCase() === pull.head.repo.full_name.toLowerCase();
+  // GitHub can omit associations after a PR closes; still require its exact source and head SHA.
+  const pullMatches = run?.pull_requests?.some((item) => item.number === pull?.number) ||
+    (Array.isArray(run?.pull_requests) && run.pull_requests.length === 0 && sourceMatches);
   const workflowCommitMatches = run?.head_sha === delivery?.mergeSha ||
-    (run?.event === "pull_request" && run.head_sha === pull?.head?.sha &&
-      run.pull_requests?.some((item) => item.number === pull.number));
+    (run?.event === "pull_request" && run.head_sha === pull?.head?.sha && pullMatches);
   if (!run || run.status !== "completed" || run.conclusion !== "success" ||
       !workflowCommitMatches ||
       (delivery?.runAttempt !== undefined && run.run_attempt !== delivery.runAttempt) ||
