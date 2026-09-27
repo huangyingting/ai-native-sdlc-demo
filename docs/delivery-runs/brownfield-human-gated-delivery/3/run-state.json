@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "intent": 3,
+  "repository": "huangyingting/ai-native-sdlc-demo",
+  "baseline": "a619937b78e95443fdd0b4932ce7269fe4029efc",
+  "mode": "development-test",
+  "status": "active",
+  "lastCommentId": 0,
+  "delivery": null,
+  "failure": null,
+  "events": []
+}
