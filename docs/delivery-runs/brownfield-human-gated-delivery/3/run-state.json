@@ -4,8 +4,8 @@
   "repository": "huangyingting/ai-native-sdlc-demo",
   "baseline": "a619937b78e95443fdd0b4932ce7269fe4029efc",
   "mode": "development-test",
-  "status": "paused",
-  "lastCommentId": 5851683833,
+  "status": "active",
+  "lastCommentId": 5851721641,
   "delivery": null,
   "failure": null,
   "events": [
@@ -31,6 +31,18 @@
       "at": "2026-09-27T01:38:55Z",
       "commentId": 5851683833,
       "message": "Command #5851683833 recorded: pause."
+    },
+    {
+      "type": "resume",
+      "at": "2026-09-27T01:45:24Z",
+      "commentId": 5851721641,
+      "actor": "huangyingting"
+    },
+    {
+      "type": "command-receipt",
+      "at": "2026-09-27T01:45:24Z",
+      "commentId": 5851721641,
+      "message": "Command #5851721641 recorded: resume."
     }
   ]
 }
