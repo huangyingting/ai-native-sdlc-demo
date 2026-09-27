@@ -1,6 +1,7 @@
 import { afterEach, test } from "node:test";
 import { strict as assert } from "node:assert";
 import { createHash } from "node:crypto";
+import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -16,6 +17,28 @@ import { applyRunCommand, newRun, parseRunCommand, recordDelivery, runBranch, ru
 import { advance, delivery, verify } from "../scripts/github.mjs";
 
 const config = loadConfig();
+
+test("actual CLI entrypoints finish module evaluation before loading mutually dependent helpers", () => {
+  const directory = mkdtempSync(join(tmpdir(), "sdlc-cli-imports-"));
+  try {
+    const preload = join(directory, "network.mjs");
+    const event = join(directory, "event.json");
+    writeFileSync(preload, 'globalThis.fetch = async () => { throw new Error("CLI_MODULE_GRAPH_READY"); };\n');
+    writeFileSync(event, JSON.stringify({ issue: { number: 42 } }));
+    for (const [file, command] of [["github.mjs", "route-kickoff"], ["documents.mjs", "prepare"]]) {
+      const result = spawnSync(process.execPath, ["--import", preload, new URL(`../scripts/${file}`, import.meta.url).pathname, command], {
+        encoding: "utf8", timeout: 10000,
+        env: { ...process.env, GITHUB_TOKEN: "test", GITHUB_REPOSITORY: "example/repo",
+          INTENT_ISSUE_NUMBER: "42", GITHUB_EVENT_PATH: event },
+      });
+      assert.equal(result.status, 1, `${file}: ${result.stderr}`);
+      assert.match(result.stderr, /CLI_MODULE_GRAPH_READY/);
+      assert.doesNotMatch(result.stderr, /unsettled top-level await/);
+    }
+  } finally {
+    rmSync(directory, { recursive: true });
+  }
+});
 const human = { id: 123, login: "huangyingting", type: "User" };
 const spec = `# Specification
 
