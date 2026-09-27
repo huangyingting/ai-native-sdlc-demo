@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { artifactPaths, lifecycleBranch, validateImplementationPlan, validateSpecification } from "./core.mjs";
+import { artifactPaths, lifecycleBranch, section, validateImplementationPlan, validateSpecification } from "./core.mjs";
 
 export const documentMode = "Delivery Document Review: issue-v1";
 export const documentStages = ["spec", "plan"];
@@ -72,9 +72,7 @@ export function validateGeneratedDocument(stage, text, spec) {
   if (stage === "spec") validateSpecification(text);
   else validateImplementationPlan(text, validateSpecification(spec));
   for (const heading of ["Revision summary", "Open questions"]) {
-    if (!new RegExp(`^## ${heading}\\n(?!\\s*(?:##|$))\\s*\\S`, "m").test(text)) {
-      throw new Error(`Document needs a nonempty '## ${heading}' section.`);
-    }
+    section(text, heading);
   }
 }
 
