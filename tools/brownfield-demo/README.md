@@ -6,6 +6,10 @@ checks, runs an exact delivered image locally, and exports actual GitHub
 evidence. It never creates a remote repository, dispatches a workflow, edits
 GitHub, approves work, resets the source, or commits/pushes.
 
+See the [illustrated delivery case study](../../docs/brownfield-human-gated-delivery-case-study.md)
+for the architecture, screenshots, and actual evidence from a completed
+development-test run. This README remains the command and safety reference.
+
 This is a reusable utility, not an npm workspace or application dependency.
 Run from the repository root:
 
@@ -281,6 +285,14 @@ The destination must not exist. Outputs:
 - `evidence.json`: actual Issue/sub-Issue comments, linked PR reviews/checks,
   related workflow runs, runtime record, and summary.
 - `summary.json`: minimal machine-readable corroboration result and limitations.
+
+Replay does not download raw Actions logs or report artifacts. Follow the
+[case study's preservation steps](../../docs/brownfield-human-gated-delivery-case-study.md#preserve-ci-logs-and-reports)
+to archive available attempt-specific evidence separately, outside Git.
+Reports that were never uploaded cannot be recovered by `replay`.
+Executions using the current Stage CI workflow preserve attempt-scoped Red/Green
+report artifacts for 14 days; see
+[CI report archives](../../docs/brownfield-human-gated-delivery.md#ci-report-archives).
 
 Every page says **read-only replay — NOT LIVE**. No markdown/HTML from GitHub
 is executed. Links are constructed for the explicit repository; existing

@@ -143,6 +143,16 @@ jobs:
           VITEST_REPORT: ${{ runner.temp }}/vitest-red.json
           VITEST_ERRORS_REPORT: ${{ runner.temp }}/vitest-red-errors.json
         run: node "$GITHUB_WORKSPACE/trusted/.github/brownfield-human-gated-delivery/scripts/validate-stage.mjs" red
+      - name: Preserve Red test reports
+        if: ${{ !cancelled() && (steps.red.outcome == 'success' || steps.red.outcome == 'failure') }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: brownfield-red-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/vitest-red.json
+            ${{ runner.temp }}/vitest-red-errors.json
+          if-no-files-found: error
+          retention-days: 14
 
   implementation-contract:
     needs: classify
@@ -188,6 +198,7 @@ jobs:
             "brownfield-delivery/${INTENT_NUMBER}:refs/remotes/origin/brownfield-delivery/${INTENT_NUMBER}"
           node "$GITHUB_WORKSPACE/trusted/.github/brownfield-human-gated-delivery/scripts/validate-stage.mjs" approved
       - name: Capture Green test evidence
+        id: green
         working-directory: pr/demos/it-service-desk
         env:
           VITEST_ERRORS_REPORT: ${{ runner.temp }}/vitest-green-errors.json
@@ -202,6 +213,16 @@ jobs:
           VITEST_REPORT: ${{ runner.temp }}/vitest-green.json
           VITEST_ERRORS_REPORT: ${{ runner.temp }}/vitest-green-errors.json
         run: node "$GITHUB_WORKSPACE/trusted/.github/brownfield-human-gated-delivery/scripts/validate-stage.mjs" green
+      - name: Preserve Green test reports
+        if: ${{ !cancelled() && (steps.green.outcome == 'success' || steps.green.outcome == 'failure') }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: brownfield-green-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/vitest-green.json
+            ${{ runner.temp }}/vitest-green-errors.json
+          if-no-files-found: error
+          retention-days: 14
 
   stage-validation:
     if: always()

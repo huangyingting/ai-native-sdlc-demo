@@ -3,6 +3,9 @@
 For a hands-on session, follow the
 [step-by-step walkthrough](./brownfield-human-gated-delivery-walkthrough.md).
 This page is the setup, policy, and implementation reference.
+The [illustrated case study](./brownfield-human-gated-delivery-case-study.md)
+connects that design to a real development-test execution, including screenshots,
+review iterations, operational failures, and immutable evidence links.
 
 This demo safely evolves the existing IT service desk from a human-authored Intent into
 a reviewed specification, implementation plan, executable tests, working
@@ -873,6 +876,51 @@ Required checks prove:
 
 The Human performs the final code and behavior review. Approval enables
 auto-merge only after every required check is Green.
+
+#### CI report archives
+
+The current Stage CI workflow preserves Red and Green test reports as Actions
+artifacts for **14 days**, consistent with the repository's trace-artifact
+retention. Artifact names include the workflow run ID and attempt number, so
+reruns do not overwrite earlier attempts:
+
+| Stage | Artifact name | Contents |
+|---|---|---|
+| Tests | `brownfield-red-<RUN_ID>-attempt-<ATTEMPT>` | `vitest-red.json`, `vitest-red-errors.json` |
+| Implementation | `brownfield-green-<RUN_ID>-attempt-<ATTEMPT>` | `vitest-green.json`, `vitest-green-errors.json` |
+
+Upload runs after validation when the test-capture step completed, including
+failed captures or failed validation. Only those two explicit report paths are
+eligible; the workflow does not archive the checkout, database, or full runner
+temporary directory. If capture was skipped, or the run was cancelled, upload
+is skipped. Timeouts or runner loss can also prevent preservation.
+
+A failed capture can leave a partial report pair; any available report is
+diagnostic evidence, **not proof of a passing stage**. Missing reports are still
+rejected by the existing validator. An attempted upload with no files, or an
+upload service failure, fails the job and therefore the required
+`stage-validation` check. There is no `continue-on-error` bypass.
+
+Before retention expires, inspect the run's actual artifact names and expiry:
+
+```sh
+gh api repos/OWNER/REPO/actions/runs/RUN_ID/artifacts --paginate
+gh run download RUN_ID --repo OWNER/REPO \
+  --name brownfield-red-RUN_ID-attempt-ATTEMPT \
+  --dir /absolute/path/to/new-red-report-directory
+```
+
+Replace placeholders with the selected run, attempt, and exact artifact name;
+use `brownfield-green-...` for Implementation. Use a fresh destination outside
+Git. Keep the run metadata, head SHA, attempt, job conclusions, and checksums
+with the reports, and review test data/error messages before sharing them.
+For raw logs and checksum commands, see the
+[case-study preservation steps](./brownfield-human-gated-delivery-case-study.md#preserve-ci-logs-and-reports).
+Replay remains a separate read-only metadata snapshot, not an artifact backup.
+
+This applies to executions using the updated workflow. Previously prepared demo
+repositories need the workflow update separately; expired or never-uploaded
+historical reports are not retroactively recovered.
 
 ### 6. Verify delivery and obtain Human acceptance
 

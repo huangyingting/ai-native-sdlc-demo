@@ -5,6 +5,11 @@ against the existing IT service desk. All lifecycle decisions happen in GitHub
 Web. A Human must exercise the verified image before final acceptance; the
 toolkit can present it locally without creating a hosted deployment.
 
+For an illustrated account of an actual execution, read the
+[ticket-ownership case study](./brownfield-human-gated-delivery-case-study.md).
+It complements this runbook with architecture, runtime screenshots, decisions,
+failures, and evidence; it is explicitly a development-test rehearsal.
+
 The example starts with **unclear ticket ownership**. The Human writes the
 Intent, AI proposes the Spec and Plan, and the Human can request as many
 revisions as needed before approving the next stage.
@@ -37,10 +42,11 @@ PR work.
 
 ## Presenter runbook and readiness
 
-**Current evidence boundary:** no completed live rehearsal is established yet.
-These instructions and automated tests are not proof of a deployed workflow or
-a successful end-to-end demo. Do not announce **Demo Ready** until three
-actual isolated runs below have completed with genuine Human decisions.
+**Current evidence boundary:** the [case study](./brownfield-human-gated-delivery-case-study.md)
+records a completed real workflow in `development-test` mode, not an independently
+Human-accepted live rehearsal. These instructions and automated tests alone are
+not deployment evidence. Do not announce **Demo Ready** until three actual
+isolated runs below have completed with genuine Human decisions.
 
 Use `npm run demo:brownfield -- help` from the root and the
 [toolkit README](../tools/brownfield-demo/README.md) for exact commands.
