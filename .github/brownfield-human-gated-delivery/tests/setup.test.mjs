@@ -15,7 +15,10 @@ const options = (args = []) => parseOptions(["--repo", repo, ...args]);
 
 function fixture({ configured = false } = {}) {
   const githubDirectory = fileURLToPath(new URL("../../", script));
-  const files = readdirSync(githubDirectory, { recursive: true, withFileTypes: true })
+  // Scan only installed automation, never transient fixtures from parallel tests.
+  const files = ["ISSUE_TEMPLATE", "workflows",
+    "brownfield-human-gated-delivery/scripts", "brownfield-human-gated-delivery/prompts"]
+    .flatMap((directory) => readdirSync(join(githubDirectory, directory), { recursive: true, withFileTypes: true }))
     .filter((item) => item.isFile())
     .map((item) => `.github/${relative(githubDirectory, join(item.parentPath, item.name)).split(sep).join("/")}`);
   const state = {
