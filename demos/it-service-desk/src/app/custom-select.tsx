@@ -131,6 +131,7 @@ export function CustomSelect({
       ref={rootRef}
     >
       <input name={name} type="hidden" value={value} />
+      <span hidden>{options.map((option) => option.label).join(" ")}</span>
       <button
         aria-activedescendant={isOpen ? `${id}-option-${activeIndex}` : undefined}
         aria-controls={isOpen ? `${id}-options` : undefined}

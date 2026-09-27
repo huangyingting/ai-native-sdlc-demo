@@ -642,10 +642,10 @@ textarea {
 .ticket-list-header,
 .ticket-row {
   display: grid;
-  grid-template-columns: minmax(300px, 1fr) 132px 116px 138px 24px;
+  grid-template-columns: minmax(300px, 1fr) 132px 116px 128px 138px 24px;
   align-items: center;
   gap: 16px;
-  min-width: 820px;
+  min-width: 940px;
   padding: 15px 24px;
 }
 

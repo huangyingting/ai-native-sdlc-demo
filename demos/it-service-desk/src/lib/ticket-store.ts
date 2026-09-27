@@ -4,6 +4,7 @@ import { DatabaseSync } from "node:sqlite";
 import {
   type CreateTicketInput,
   type Ticket,
+  type TicketOwner,
   type TicketPriority,
   type TicketStatus,
   type TicketSummary,
@@ -19,6 +20,7 @@ type TicketRow = {
   status: TicketStatus;
   requester_name: string;
   requester_email: string;
+  owner: TicketOwner | null;
   created_at: string;
   updated_at: string;
 };
@@ -41,9 +43,14 @@ function mapTicketRow(row: TicketRow): Ticket {
     status: row.status,
     requesterName: row.requester_name,
     requesterEmail: row.requester_email,
+    owner: row.owner,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
+}
+
+function isTicketOwner(owner: string): owner is TicketOwner {
+  return owner === "avery-stone" || owner === "jordan-lee";
 }
 
 export class TicketStore {
@@ -65,11 +72,29 @@ export class TicketStore {
         status TEXT NOT NULL CHECK (status IN ('open', 'in_progress', 'resolved', 'closed')),
         requester_name TEXT NOT NULL,
         requester_email TEXT NOT NULL,
+        owner TEXT CHECK (owner IS NULL OR owner IN ('avery-stone', 'jordan-lee')),
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       );
     `);
+    this.migrateOwnerColumn();
     if (seed) this.seed();
+  }
+
+  private migrateOwnerColumn() {
+    const columns = this.database.prepare("PRAGMA table_info(tickets)").all() as { name: string }[];
+    if (columns.some((column) => column.name === "owner")) return;
+    this.database.exec("BEGIN");
+    try {
+      this.database.exec(`
+        ALTER TABLE tickets
+          ADD COLUMN owner TEXT CHECK (owner IS NULL OR owner IN ('avery-stone', 'jordan-lee'))
+      `);
+      this.database.exec("COMMIT");
+    } catch (error) {
+      this.database.exec("ROLLBACK");
+      throw error;
+    }
   }
 
   private seed() {
@@ -140,9 +165,22 @@ export class TicketStore {
     }
   }
 
-  list(filters: { status?: TicketStatus; priority?: TicketPriority; query?: string } = {}) {
+  list(filters: {
+    owner?: TicketOwner | null;
+    status?: TicketStatus;
+    priority?: TicketPriority;
+    query?: string;
+  } = {}) {
     const clauses: string[] = [];
     const values: string[] = [];
+    if (filters.owner !== undefined) {
+      if (filters.owner === null) {
+        clauses.push("owner IS NULL");
+      } else {
+        clauses.push("owner = ?");
+        values.push(filters.owner);
+      }
+    }
     if (filters.status) {
       clauses.push("status = ?");
       values.push(filters.status);
@@ -220,6 +258,17 @@ export class TicketStore {
     const result = this.database.prepare(`
       UPDATE tickets SET status = ?, updated_at = ? WHERE id = ?
     `).run(status, new Date().toISOString(), id);
+    return result.changes > 0;
+  }
+
+  updateOwner(id: number, owner: TicketOwner | null) {
+    if (owner !== null && !isTicketOwner(owner)) throw new Error("Invalid ticket owner update");
+    const ticket = this.find(id);
+    if (!ticket) return false;
+    if (ticket.owner === owner) return true;
+    const result = this.database.prepare(`
+      UPDATE tickets SET owner = ?, updated_at = ? WHERE id = ?
+    `).run(owner, new Date().toISOString(), id);
     return result.changes > 0;
   }
 

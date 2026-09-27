@@ -8,9 +8,13 @@ import {
 import { CustomSelect } from "@/app/custom-select";
 import { getTicketStore } from "@/lib/ticket-store";
 import {
+  formatTicketOwner,
   formatTicketStatus,
+  ticketOwnerOptions,
+  ticketOwners,
   ticketPriorities,
   ticketStatuses,
+  type TicketOwner,
   type TicketPriority,
   type TicketStatus,
 } from "@/lib/ticket";
@@ -39,15 +43,21 @@ export default async function Dashboard({
   const params = await searchParams;
   const requestedStatus = firstQueryValue(params.status);
   const requestedPriority = firstQueryValue(params.priority);
+  const requestedOwner = firstQueryValue(params.owner);
   const status = ticketStatuses.includes(requestedStatus as TicketStatus)
     ? requestedStatus as TicketStatus
     : undefined;
   const priority = ticketPriorities.includes(requestedPriority as TicketPriority)
     ? requestedPriority as TicketPriority
     : undefined;
-  const query = firstQueryValue(params.q)?.trim() || undefined;
+  const owner = ticketOwners.includes(requestedOwner as TicketOwner)
+    ? requestedOwner as TicketOwner
+    : requestedOwner === "unassigned"
+      ? null
+      : undefined;
+  const query = firstQueryValue(params.q) || undefined;
   const store = getTicketStore();
-  const tickets = store.list({ status, priority, query });
+  const tickets = store.list({ owner, status, priority, query });
   const summary = store.summary();
 
   return (
@@ -100,6 +110,20 @@ export default async function Dashboard({
               </div>
             </div>
             <div className="field">
+              <label htmlFor="owner">Owner</label>
+              <CustomSelect
+                defaultValue={owner === null ? "unassigned" : owner ?? ""}
+                id="owner"
+                key={`owner-${owner ?? "all"}`}
+                name="owner"
+                options={[
+                  { value: "", label: "All owners" },
+                  { value: "unassigned", label: "Unassigned" },
+                  ...ticketOwnerOptions,
+                ]}
+              />
+            </div>
+            <div className="field">
               <label htmlFor="status">Status</label>
               <CustomSelect
                 defaultValue={status ?? ""}
@@ -139,7 +163,7 @@ export default async function Dashboard({
 
           <div className="ticket-list">
             <div className="ticket-list-header">
-              <span>Request</span><span>Status</span><span>Priority</span><span>Updated</span><span />
+              <span>Request</span><span>Status</span><span>Priority</span><span>Owner</span><span>Updated</span><span />
             </div>
             {tickets.length ? tickets.map((ticket) => (
               <Link className="ticket-row" href={`/tickets/${ticket.id}`} key={ticket.id}>
@@ -149,6 +173,7 @@ export default async function Dashboard({
                 </span>
                 <span className={`badge badge-status-${ticket.status}`}>{formatTicketStatus(ticket.status)}</span>
                 <span className={`badge badge-priority-${ticket.priority}`}>{ticket.priority}</span>
+                <span className="muted">{formatTicketOwner(ticket.owner)}</span>
                 <span className="muted">{formatDate(ticket.updatedAt)}</span>
                 <span className="row-arrow" aria-hidden="true">
                   <ArrowUpRightIcon />

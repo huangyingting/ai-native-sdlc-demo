@@ -2,6 +2,11 @@ import { z } from "zod";
 
 export const ticketStatuses = ["open", "in_progress", "resolved", "closed"] as const;
 export const ticketPriorities = ["low", "medium", "high", "critical"] as const;
+export const ticketOwners = ["avery-stone", "jordan-lee"] as const;
+export const ticketOwnerOptions = [
+  { value: "avery-stone", label: "Avery Stone" },
+  { value: "jordan-lee", label: "Jordan Lee" },
+] as const;
 export const ticketCategories = [
   "Access and identity",
   "Business applications",
@@ -13,6 +18,7 @@ export const ticketCategories = [
 
 export type TicketStatus = (typeof ticketStatuses)[number];
 export type TicketPriority = (typeof ticketPriorities)[number];
+export type TicketOwner = (typeof ticketOwners)[number];
 export type TicketCategory = (typeof ticketCategories)[number];
 
 export type Ticket = {
@@ -25,6 +31,7 @@ export type Ticket = {
   status: TicketStatus;
   requesterName: string;
   requesterEmail: string;
+  owner: TicketOwner | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -50,6 +57,11 @@ export const updateTicketStatusSchema = z.object({
   status: z.enum(ticketStatuses),
 });
 
+export const updateTicketOwnerSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  owner: z.union([z.enum(ticketOwners), z.literal("")]),
+});
+
 export type CreateTicketInput = z.infer<typeof createTicketSchema>;
 
 export function formatTicketReference(id: number) {
@@ -58,4 +70,8 @@ export function formatTicketReference(id: number) {
 
 export function formatTicketStatus(status: TicketStatus) {
   return status.replace("_", " ");
+}
+
+export function formatTicketOwner(owner: TicketOwner | null) {
+  return ticketOwnerOptions.find((option) => option.value === owner)?.label ?? "Unassigned";
 }
