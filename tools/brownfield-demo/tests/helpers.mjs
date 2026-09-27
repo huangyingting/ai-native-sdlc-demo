@@ -2,7 +2,7 @@ import { mkdirSync, readFileSync, rmSync, rmdirSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { configPath, workflowFiles } from "../common.mjs";
+import { configPath, sha256, workflowFiles } from "../common.mjs";
 import { loadManifest } from "../scenarios.mjs";
 
 export const repositoryRoot = fileURLToPath(new URL("../../../", import.meta.url));
@@ -22,6 +22,12 @@ export const encoded = (value) => ({
 });
 export const absent = () => { throw Object.assign(new Error("Not found"), { notFound: true }); };
 
+export const fixtureManifest = loadManifest();
+const baselineData = new Map(Object.keys(fixtureManifest.baseline.files).map((path) => [
+  path, Buffer.from(`// Synthetic baseline fixture: ${path}\n`),
+]));
+for (const [path, data] of baselineData) fixtureManifest.baseline.files[path] = sha256(data);
+
 export function artifacts(test) {
   const parent = fileURLToPath(new URL("../test-artifacts/", import.meta.url));
   const directory = join(parent, randomUUID());
@@ -34,12 +40,11 @@ export function artifacts(test) {
 }
 
 export function baselineFiles() {
-  const manifest = loadManifest();
   const files = new Map();
-  for (const path of Object.keys(manifest.baseline.files)) {
-    files.set(`${manifest.project}/${path}`, { data: readFileSync(join(repositoryRoot, manifest.project, path)), mode: 0o644 });
+  for (const [path, data] of baselineData) {
+    files.set(`${fixtureManifest.project}/${path}`, { data: Buffer.from(data), mode: 0o644 });
   }
-  files.set(`${manifest.project}/Dockerfile`, { data: readFileSync(join(repositoryRoot, manifest.project, "Dockerfile")), mode: 0o644 });
+  files.set(`${fixtureManifest.project}/Dockerfile`, { data: readFileSync(join(repositoryRoot, fixtureManifest.project, "Dockerfile")), mode: 0o644 });
   files.set(configPath, { data: Buffer.from(JSON.stringify(config)), mode: 0o644 });
   for (const name of ["setup", "run-core", "runs", "state-store"]) {
     files.set(`.github/brownfield-human-gated-delivery/scripts/${name}.mjs`, { data: Buffer.from("// fixture\n"), mode: 0o644 });

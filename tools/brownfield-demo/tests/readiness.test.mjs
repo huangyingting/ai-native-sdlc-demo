@@ -5,7 +5,7 @@ import {
 } from "../readiness.mjs";
 import { parseOptions } from "../cli.mjs";
 import { provenancePath, sha256 } from "../common.mjs";
-import { baselineFiles, commit, config, encoded, image } from "./helpers.mjs";
+import { baselineFiles, commit, config, encoded, fixtureManifest, image } from "./helpers.mjs";
 
 const hash = (number) => number.toString(16).padStart(40, "0");
 const date = (time) => `2026-09-26T${time}:00Z`;
@@ -139,7 +139,7 @@ function fixtures() {
     }
     throw new Error(`Unexpected API request ${endpoint}`);
   };
-  return { data, files, api, collect, calls };
+  return { data, files, api, collect, calls, manifest: fixtureManifest };
 }
 
 test("readiness requires exactly three distinct explicit Intent numbers and no completion switches", () => {
@@ -218,6 +218,7 @@ test("unsigned runtime/doc state, failures without actual failure, missing accep
     (fixture) => { fixture.data[2].evidence.record.delivery.acceptances = []; },
     (fixture) => { fixture.data[0].evidence.record.failure = { stage: "documents" }; },
     (fixture) => { fixture.files.delete(".github/brownfield-human-gated-delivery/scripts/runs.mjs"); },
+    (fixture) => { fixture.files.get("demos/it-service-desk/src/lib/ticket.ts").data = Buffer.from("owner: string"); },
     (fixture) => { fixture.collect = async () => { throw new Error("permission denied"); }; },
   ]) {
     const fixture = fixtures();

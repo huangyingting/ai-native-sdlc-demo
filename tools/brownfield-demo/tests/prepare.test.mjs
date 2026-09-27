@@ -8,7 +8,7 @@ import {
 } from "../common.mjs";
 import { archiveFiles, baselineProblems, omitPath, prepare } from "../prepare.mjs";
 import { loadManifest, scenario, validateManifest } from "../scenarios.mjs";
-import { artifacts, baselineFiles, commit, config, fakeGit, repositoryRoot, tarEntry } from "./helpers.mjs";
+import { artifacts, baselineFiles, commit, config, fakeGit, fixtureManifest, repositoryRoot, tarEntry } from "./helpers.mjs";
 
 test("scenario manifest has three fixed variants with shared deterministic criteria", () => {
   const manifest = loadManifest();
@@ -94,17 +94,25 @@ test("PAX long paths are validated before extraction and unsupported metadata is
   assert.throws(() => archiveFiles(archive("safe", pax("linkpath", "/outside"))), /Unsupported/);
 });
 
+test("synthetic baselines require the test-only manifest, never production fingerprints", () => {
+  const files = baselineFiles();
+  assert.deepEqual(baselineProblems(files, fixtureManifest), []);
+  assert.equal(baselineProblems(files).filter((item) => item.includes("fingerprint")).length, 6);
+  files.get("demos/it-service-desk/src/lib/ticket.ts").data.fill(0);
+  assert.deepEqual(baselineProblems(baselineFiles(), fixtureManifest), []);
+});
+
 test("baseline fails closed if feature differs or orchestration is missing", () => {
   const files = baselineFiles();
-  assert.deepEqual(baselineProblems(files), []);
+  assert.deepEqual(baselineProblems(files, fixtureManifest), []);
   for (const name of ["run-core", "runs", "state-store"]) {
     const missing = new Map(files);
     missing.delete(`.github/brownfield-human-gated-delivery/scripts/${name}.mjs`);
-    assert.ok(baselineProblems(missing).some((item) => item.includes(`${name}.mjs`)));
+    assert.ok(baselineProblems(missing, fixtureManifest).some((item) => item.includes(`${name}.mjs`)));
   }
   files.delete(".github/workflows/brownfield-human-gated-delivery-documents.yml");
   files.get("demos/it-service-desk/src/lib/ticket.ts").data = Buffer.from("owner: string");
-  const problems = baselineProblems(files);
+  const problems = baselineProblems(files, fixtureManifest);
   assert.ok(problems.some((item) => item.includes("fingerprint")));
   assert.ok(problems.some((item) => item.includes("documents.yml")));
 });
@@ -137,7 +145,7 @@ test("prepare exports only pinned archived files, omits local data, and never in
   const result = prepare({
     source, sourceRef: commit, dest, reviewer: "new-human",
     scenario: "ownership-standard", singleOwner: false,
-  }, { run: (command, args, settings) => {
+  }, { manifest: fixtureManifest, run: (command, args, settings) => {
     assert.equal(settings.env.GIT_NO_REPLACE_OBJECTS, "1");
     return fakeGit(source, files, calls)(command, args);
   } });
@@ -153,7 +161,7 @@ test("prepare exports only pinned archived files, omits local data, and never in
   assert.equal(saved.reviewer, "new-human");
   assert.equal(JSON.parse(readFileSync(join(dest, configPath))).stages.spec.reviewers.users[0], "new-human");
   assert.throws(() => prepare({ source, sourceRef: commit, dest, reviewer: "new-human", scenario: "ownership-standard" },
-    { run: fakeGit(source, files) }), /already exists/);
+    { manifest: fixtureManifest, run: fakeGit(source, files) }), /already exists/);
 });
 
 test("prepare rejects mutable refs, unsupported tree entries, already-prepared trees and unready baselines", (t) => {
@@ -164,15 +172,15 @@ test("prepare rejects mutable refs, unsupported tree entries, already-prepared t
   const files = baselineFiles();
   const options = { source, sourceRef: commit, dest, reviewer: "reviewer", scenario: "ownership-standard" };
   for (const sourceRef of ["HEAD", "main", commit.slice(0, 12), `${commit}~1`, commit.toUpperCase()]) {
-    assert.throws(() => prepare({ ...options, sourceRef }, { run: fakeGit(source, files) }), /immutable/);
+    assert.throws(() => prepare({ ...options, sourceRef }, { manifest: fixtureManifest, run: fakeGit(source, files) }), /immutable/);
   }
   const symlinkGit = (command, args) => args[2] === "ls-tree" ? `120000 blob ${commit}\tlink\0` : fakeGit(source, files)(command, args);
-  assert.throws(() => prepare(options, { run: symlinkGit }), /symlink/);
+  assert.throws(() => prepare(options, { manifest: fixtureManifest, run: symlinkGit }), /symlink/);
   files.set(provenancePath, { data: Buffer.from("{}") });
-  assert.throws(() => prepare(options, { run: fakeGit(source, files) }), /already a prepared/);
+  assert.throws(() => prepare(options, { manifest: fixtureManifest, run: fakeGit(source, files) }), /already a prepared/);
   files.delete(provenancePath);
   files.delete(".github/brownfield-human-gated-delivery/scripts/runs.mjs");
-  assert.throws(() => prepare(options, { run: fakeGit(source, files) }), /not a ready/);
+  assert.throws(() => prepare(options, { manifest: fixtureManifest, run: fakeGit(source, files) }), /not a ready/);
   assert.equal(existsSync(dest), false);
 });
 
