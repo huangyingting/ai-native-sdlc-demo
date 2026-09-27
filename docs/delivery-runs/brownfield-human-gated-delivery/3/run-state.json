@@ -6,7 +6,19 @@
   "mode": "development-test",
   "status": "active",
   "lastCommentId": 5851721641,
-  "delivery": null,
+  "delivery": {
+    "runId": "36286787715",
+    "runAttempt": 2,
+    "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk",
+    "digest": "sha256:b5bbac8a0776c782f279a9857cce1d4db37849c3b23a75bfe0797d184a54e16e",
+    "mergeSha": "0ef94e0deb685136102ca8ac5351d53e565e2efc",
+    "pullNumber": 11,
+    "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/36286787715",
+    "verified": true,
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "acceptances": [],
+    "rejection": null
+  },
   "failure": null,
   "events": [
     {
@@ -43,6 +55,12 @@
       "at": "2026-09-27T01:45:24Z",
       "commentId": 5851721641,
       "message": "Command #5851721641 recorded: resume."
+    },
+    {
+      "type": "verification-passed",
+      "at": "2026-09-27T01:53:28.675Z",
+      "runId": "36286787715",
+      "runAttempt": 2
     }
   ]
 }
