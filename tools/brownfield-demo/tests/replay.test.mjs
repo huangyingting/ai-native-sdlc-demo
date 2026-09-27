@@ -49,6 +49,15 @@ function evidence() {
   return { record, human, pull, workflow, issues };
 }
 
+test("scripted development approvals cannot qualify as genuine Human acceptance", () => {
+  const data = evidence();
+  data.record.mode = "development-test";
+  validateRunRecord(data.record, "example/demo", 42);
+  const result = acceptanceEvidence(data.record, data.issues, [data.pull], [data.workflow], config, true);
+  assert.equal(result.complete, false);
+  assert.match(result.reasons.join("\n"), /Automated development tests/);
+});
+
 function mockGithub({ missingRecord = false, trusted = true, mutate = () => {} } = {}) {
   const data = evidence();
   mutate(data);

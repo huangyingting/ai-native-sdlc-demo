@@ -15,7 +15,7 @@ export function escapeHtml(value) {
 
 export function validateRunRecord(record, repo, intent) {
   if (record?.version !== 1 || record.intent !== intent ||
-      record.repository?.toLowerCase() !== repo || record.mode !== "live" ||
+      record.repository?.toLowerCase() !== repo || !["live", "development-test"].includes(record.mode) ||
       !fullSha(record.baseline) || !["active", "paused", "cancelled", "accepted"].includes(record.status) ||
       !Number.isSafeInteger(record.lastCommentId) || record.lastCommentId < 0 ||
       !Array.isArray(record.events) || record.events.some((event) => typeof event?.type !== "string" ||
@@ -61,6 +61,7 @@ function issueEvidence(issue, comments) {
 export function acceptanceEvidence(record, issues, pulls, runs, config, recordTrusted = false) {
   const delivery = record?.delivery;
   const reasons = [];
+  if (record?.mode !== "live") reasons.push("Automated development tests do not constitute genuine Human acceptance or Demo Ready.");
   if (!recordTrusted) reasons.push("Runtime record lacks a verified trusted workflow audit entry.");
   if (record?.status !== "accepted") reasons.push("Runtime record is not accepted.");
   if (!delivery?.verified || delivery?.rejection !== null) reasons.push("Delivery is not verified or has an outstanding rejection.");
@@ -211,7 +212,7 @@ export async function collectEvidence(options, { api = readOnlyApi, now = () => 
     version: 1, mode: "read-only-replay", live: false,
     capturedAt: now().toISOString(), repository: repo, intent,
     currentGitHubIssueState: parent.state, inspectedConfigCommit: main,
-    recordCommit, recordTrusted, runtimeStatus: record?.status ?? null, acceptance, documents, warnings,
+    recordCommit, recordTrusted, executionMode: record?.mode ?? null, runtimeStatus: record?.status ?? null, acceptance, documents, warnings,
     recordUrl: recordCommit ? `https://github.com/${repo}/blob/${recordCommit}/docs/delivery-runs/brownfield-human-gated-delivery/${intent}/run-state.json` : null,
     scenarioRunsCompleted: "Not assessed. A single replay cannot prove three live scenario runs.",
   };

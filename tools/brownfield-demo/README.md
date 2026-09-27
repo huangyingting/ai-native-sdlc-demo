@@ -246,6 +246,14 @@ supported retry/resume route for the stage.
 
 ## 5. Replay actual evidence without changing GitHub
 
+For explicitly authorized scripted development rehearsals, include the exact
+line `Delivery Execution: development-test` in the initial Intent body.
+The trusted run record permanently retains this execution mode. All ordinary
+review, scope and CI gates still apply, but replay/readiness never count its
+scripted approvals as genuine Human acceptance, even if every stage completes.
+Do not use a personal account for scripted approvals without its owner's
+explicit authorization. Normal Human-led Intents omit this marker.
+
 ```sh
 node tools/brownfield-demo/cli.mjs replay \
   --repo OWNER/REPO --intent 42 --dest ./ownership-replay-42
