@@ -56,8 +56,8 @@ function isTicketOwner(owner: string): owner is TicketOwner {
 
 function nondecreasingTimestamp(existing: string) {
   const existingTime = Date.parse(existing);
-  const timestamp = Math.max(Number.isFinite(existingTime) ? existingTime : 0, Date.now());
-  return new Date(timestamp).toISOString();
+  if (!Number.isFinite(existingTime)) throw new Error("Invalid ticket timestamp");
+  return new Date(Math.max(existingTime, Date.now())).toISOString();
 }
 
 export class TicketStore {

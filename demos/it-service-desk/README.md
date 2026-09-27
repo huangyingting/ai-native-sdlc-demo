@@ -21,14 +21,16 @@ filters still apply to search results.
 Ownership uses a fixed local roster: Avery Stone and Jordan Lee. Tickets without
 an owner are shown as Unassigned, newly created tickets start Unassigned, and
 the dashboard owner filter intersects with the existing search, status, and
-priority filters without changing summary counts.
+priority filters without changing summary counts. Owner assignment and owner
+filtering use labeled native selects with options for the two roster members
+and Unassigned or All owners, respectively.
 
-The custom dropdowns keep keyboard focus on a labeled combobox. Open with
-Enter, Space, or an arrow key; navigate with arrow keys, Home/End, or
-typeahead. Enter/Space commits, Escape cancels uncommitted navigation, and
-Tab/Shift+Tab commits and moves focus normally. Clicking outside or moving
-focus away also commits and closes the popup. Menus remain visible above
-short or empty ticket queues.
+The status and priority custom dropdowns keep keyboard focus on a labeled
+combobox. Open with Enter, Space, or an arrow key; navigate with arrow keys,
+Home/End, or typeahead. Enter/Space commits, Escape cancels uncommitted
+navigation, and Tab/Shift+Tab commits and moves focus normally. Clicking
+outside or moving focus away also commits and closes the popup. Menus remain
+visible above short or empty ticket queues.
 
 The application intentionally stops at a practical first release. SLA policies,
 comments, audit history, access control, notifications, and reporting are

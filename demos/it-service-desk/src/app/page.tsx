@@ -114,6 +114,7 @@ export default async function Dashboard({
               <select
                 defaultValue={owner === null ? "unassigned" : owner ?? ""}
                 id="owner"
+                key={`owner-${owner === null ? "unassigned" : owner ?? "all"}`}
                 name="owner"
               >
                 <option value="">All owners</option>
