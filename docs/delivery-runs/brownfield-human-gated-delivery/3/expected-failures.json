@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "intent": 3,
+  "tests": [
+    {
+      "name": "Ticket ownership persistence migrates four old-schema records in place without changing legacy fields or timestamps (AC-1)",
+      "acceptance": ["AC-1"]
+    },
+    {
+      "name": "Ticket ownership persistence assigns, reassigns, clears and persists ownership across reopening the same database (AC-2)",
+      "acceptance": ["AC-2"]
+    },
+    {
+      "name": "Ticket ownership persistence does not write or change updatedAt when setting the already-current owner (AC-2)",
+      "acceptance": ["AC-2"]
+    },
+    {
+      "name": "Ticket ownership persistence intersects exact owner sets with search, status and priority without changing summaries (AC-3)",
+      "acceptance": ["AC-3"]
+    },
+    {
+      "name": "Ticket ownership persistence creates the exact new request as open and unassigned without changing existing workflows (AC-5)",
+      "acceptance": ["AC-5"]
+    },
+    {
+      "name": "Ticket ownership screens shows Unassigned and a labeled detail control with all roster choices (AC-1, AC-4)",
+      "acceptance": ["AC-1", "AC-4"]
+    },
+    {
+      "name": "Ticket ownership screens shows ownership on queue rows and offers a labeled All/Unassigned/roster filter (AC-3, AC-4)",
+      "acceptance": ["AC-3", "AC-4"]
+    },
+    {
+      "name": "Ticket ownership screens keeps exact search text, status and priority when All owners clears the owner filter (AC-3)",
+      "acceptance": ["AC-3"]
+    },
+    {
+      "name": "Ticket ownership screens assigns, reassigns and clears through the detail action and reloads both pages (AC-2)",
+      "acceptance": ["AC-2"]
+    },
+    {
+      "name": "Ticket ownership screens rejects forged owners and missing tickets without changing any ticket (AC-4)",
+      "acceptance": ["AC-4"]
+    }
+  ]
+}
