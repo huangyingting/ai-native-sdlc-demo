@@ -39,8 +39,14 @@
       "approvals": []
     }
   },
-  "pending": null,
-  "lastCommentId": 5851367871,
+  "pending": {
+    "stage": "plan",
+    "version": 3,
+    "feedback": "Resolve the three implementation questions for this explicitly authorized DEVELOPMENT TEST, without changing Spec v2: (1) setting an already-current owner is a successful no-op and preserves updatedAt; (2) use an empty form value for Unassigned, normalize it to database null, and reject all unknown nonempty values; (3) follow src/app/actions.ts: invalid owner input throws an explicit Invalid ticket owner update error, and a missing ticket is surfaced as Ticket not found; neither path mutates any row. Use the existing validation/revalidation/redirect conventions. Ground the task surfaces in the actual repository files, preserve AC-1 through AC-5 and task IDs, and record these as scripted development-review decisions, not independent Human acceptance. Return a complete revised Plan with no unresolved questions if these choices fit the approved Spec.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": "c729eb11c4fda57da44bc2f7a16e99f7a376bfaea17cd24595dc91021c23cd7d"
+  },
+  "lastCommentId": 5851385720,
   "receipts": [
     {
       "id": 5851321604,
@@ -61,6 +67,10 @@
     {
       "id": 5851367871,
       "message": "Command #5851367871 recorded: approve spec v2."
+    },
+    {
+      "id": 5851385720,
+      "message": "Command #5851385720 recorded: revise plan."
     }
   ],
   "sealed": false
