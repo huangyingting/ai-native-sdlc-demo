@@ -143,6 +143,11 @@ Acceptance and replay verify the recorded merge SHA against the PR's actual
 `merged` timeline event. The pinned GitHub REST API version `2026-03-10` omits
 `merge_commit_sha` from PR responses; a PR's last source commit or the current
 main tip is not a substitute for its actual merge commit.
+For a `pull_request` publish run, GitHub may return an empty `pull_requests`
+array after closure. Replay then additionally matches the exact PR head SHA,
+source branch and source repository. A missing association field, contradictory
+PR association, mismatched source, or untrusted runtime ledger cannot establish
+acceptance.
 
 Before the first Intent, run **IT Service Desk CI** from the Actions tab using
 **Run workflow** on `main`. This executes tests, lint, build and container smoke

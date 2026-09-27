@@ -36,12 +36,14 @@ function evidence() {
     number: 44, title: "Ownership implementation", merged: true,
     timeline: [{ event: "merged", commit_id: merge }],
     body: "Delivery Intent: #42\nDelivery Stage: implementation\n",
-    base: { ref: "main", repo: { full_name: "example/demo" } }, head: { sha: head },
+    base: { ref: "main", repo: { full_name: "example/demo" } },
+    head: { sha: head, ref: "copilot/ownership", repo: { full_name: "example/demo" } },
   };
   const workflow = {
     id: 99, run_attempt: 2, status: "completed", conclusion: "success", head_sha: merge,
     path: ".github/workflows/brownfield-human-gated-delivery-publish.yml",
     repository: { full_name: "example/demo" }, updated_at: "2026-09-26T02:00:00Z",
+    head_branch: "copilot/ownership", head_repository: { full_name: "example/demo" },
   };
   const issues = [{
     number: 42, comments: [{ id: human.id, user: human.user, body: human.body,
@@ -157,6 +159,21 @@ test("completion needs attested record, actual matching merge/run, and matching 
   assert.equal(evaluate(pullRequestRun).complete, true);
   pullRequestRun.workflow.pull_requests = [{ number: 900 }];
   assert.equal(evaluate(pullRequestRun).complete, false);
+  pullRequestRun.workflow.pull_requests = [];
+  assert.equal(evaluate(pullRequestRun).complete, true);
+  for (const mutate of [
+    (value) => { value.workflow.head_sha = commit; },
+    (value) => { value.workflow.head_branch = "other-branch"; },
+    (value) => { value.workflow.head_repository.full_name = "example/other"; },
+    (value) => { delete value.pull.head.ref; },
+    (value) => { delete value.pull.head.repo; },
+    (value) => { delete value.workflow.pull_requests; },
+    (value) => { value.workflow.event = "push"; },
+  ]) {
+    const changed = structuredClone(pullRequestRun);
+    mutate(changed);
+    assert.equal(evaluate(changed).complete, false);
+  }
   for (const mutate of [
     (value) => { value.record.status = "active"; },
     (value) => { value.record.delivery.verified = false; },
@@ -219,6 +236,16 @@ test("closed issues, missing records and tampered ledgers never invent acceptanc
     assert.equal(result.summary.currentGitHubIssueState, "closed");
     assert.ok(result.summary.warnings.length);
   }
+});
+
+test("replay corroborates a closed PR workflow with empty associations using its exact source", async (t) => {
+  const mock = mockGithub({ mutate: ({ workflow }) => {
+    workflow.event = "pull_request";
+    workflow.head_sha = head;
+    workflow.pull_requests = [];
+  } });
+  const result = await replay({ repo: "example/demo", intent: "42", dest: join(artifacts(t), "closed-pr") }, { api: mock.api });
+  assert.equal(result.summary.acceptance.complete, true);
 });
 
 test("API failures do not create a misleading partial replay", async (t) => {
