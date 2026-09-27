@@ -21,7 +21,7 @@
     "plan": null
   },
   "pending": null,
-  "lastCommentId": 5851353633,
+  "lastCommentId": 5851363575,
   "receipts": [
     {
       "id": 5851321604,
@@ -34,6 +34,10 @@
     {
       "id": 5851353633,
       "message": "Command #5851353633 recorded: revise spec."
+    },
+    {
+      "id": 5851363575,
+      "message": "Command #5851363575 rejected: Stale or missing document version; approve the latest published vN."
     }
   ],
   "sealed": false
