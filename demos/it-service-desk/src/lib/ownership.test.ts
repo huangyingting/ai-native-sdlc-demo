@@ -118,14 +118,44 @@ describe("Ticket ownership persistence", () => {
   it("does not write or change updatedAt when setting the already-current owner (AC-2)", () => {
     const { path } = oldSchemaDatabase();
     const store = openStore(path);
-    const before = store.find(1);
+    const observer = new DatabaseSync(path);
+    const snapshot = () => observer.prepare("SELECT * FROM tickets ORDER BY id").all();
+    const version = () => (observer.prepare("PRAGMA data_version").get() as { data_version: number }).data_version;
     expect(typeof store.updateOwner).toBe("function");
-    expect(store.updateOwner(1, null)).toBe(true);
-    expect(store.find(1)).toEqual(before);
-    expect(store.updateOwner(1, "avery-stone")).toBe(true);
-    const assigned = store.find(1);
-    expect(store.updateOwner(1, "avery-stone")).toBe(true);
-    expect(store.find(1)).toEqual(assigned);
+    try {
+      const unassignedRows = snapshot();
+      const unassignedVersion = version();
+      expect(store.updateOwner(1, null)).toBe(true);
+      expect(version()).toBe(unassignedVersion);
+      expect(snapshot()).toEqual(unassignedRows);
+
+      expect(store.updateOwner(1, "avery-stone")).toBe(true);
+      expect(version()).toBeGreaterThan(unassignedVersion);
+      const assignedRows = snapshot();
+      const assignedVersion = version();
+      expect(store.updateOwner(1, "avery-stone")).toBe(true);
+      expect(version()).toBe(assignedVersion);
+      expect(snapshot()).toEqual(assignedRows);
+    } finally {
+      observer.close();
+    }
+  });
+
+  it("rejects forged owners and missing tickets at the storage boundary without changing any row (AC-4)", () => {
+    const { path } = oldSchemaDatabase();
+    const store = openStore(path);
+    const observer = new DatabaseSync(path);
+    expect(typeof store.updateOwner).toBe("function");
+    try {
+      const snapshot = () => observer.prepare("SELECT * FROM tickets ORDER BY id").all();
+      const before = snapshot();
+      expect(() => store.updateOwner(1, "not-in-roster")).toThrow("Invalid ticket owner update");
+      expect(snapshot()).toEqual(before);
+      expect(store.updateOwner(999999, "avery-stone")).toBe(false);
+      expect(snapshot()).toEqual(before);
+    } finally {
+      observer.close();
+    }
   });
 
   it("intersects exact owner sets with search, status and priority without changing summaries (AC-3)", () => {

@@ -110,10 +110,19 @@ describe("Ticket ownership screens", () => {
       ["", "Unassigned"],
     ]) {
       await update!(ownerForm(ticket.id, owner));
-      expect(renderToStaticMarkup(await TicketPage({ params: Promise.resolve({ id: String(ticket.id) }) })))
-        .toContain(label);
-      expect(renderToStaticMarkup(await Dashboard({ searchParams: Promise.resolve({}) })))
-        .toContain(label);
+      const detail = documentFor(renderToStaticMarkup(
+        await TicketPage({ params: Promise.resolve({ id: String(ticket.id) }) }),
+      ));
+      const ownerTerm = [...detail.querySelectorAll("dt")].find((term) => term.textContent?.trim() === "Owner");
+      expect(ownerTerm?.nextElementSibling?.textContent?.trim()).toBe(label);
+      const dashboard = documentFor(renderToStaticMarkup(
+        await Dashboard({ searchParams: Promise.resolve({}) }),
+      ));
+      const row = dashboard.querySelector(`.ticket-row[href="/tickets/${ticket.id}"]`);
+      expect(row?.textContent).toContain(label);
+      for (const other of ["Avery Stone", "Jordan Lee", "Unassigned"].filter((name) => name !== label)) {
+        expect(row?.textContent).not.toContain(other);
+      }
     }
   });
 

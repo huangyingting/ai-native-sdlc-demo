@@ -15,6 +15,10 @@
       "acceptance": ["AC-2"]
     },
     {
+      "name": "Ticket ownership persistence rejects forged owners and missing tickets at the storage boundary without changing any row (AC-4)",
+      "acceptance": ["AC-4"]
+    },
+    {
       "name": "Ticket ownership persistence intersects exact owner sets with search, status and priority without changing summaries (AC-3)",
       "acceptance": ["AC-3"]
     },
