@@ -272,6 +272,12 @@ completion behavior and are not retroactively migrated.
 
 ## One-time repository setup
 
+For a first run, follow the walkthrough's
+[ordered preparation steps](./brownfield-human-gated-delivery-walkthrough.md#1-prepare-the-repository)
+first. They cover source selection, isolated export, review, and publication.
+This section is the detailed reference for configuring the resulting repository,
+not a substitute for those bootstrap steps.
+
 ### Run the setup script
 
 Use the dependency-free
@@ -286,13 +292,15 @@ code or change branch names.
 gh auth login --hostname github.com
 
 # Read-only preview, including configured reviewers and missing prerequisites.
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO
 
 # Only with agreement to all previewed changes, preferably in an isolated repo:
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc --apply
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --apply
 ```
 
-Replace `huangyingting/ai-native-sdlc` with your repository when using a fork.
+Replace `OWNER/NEW_DEMO_REPO` with your explicitly selected isolated repository.
+If preparation selected solo mode, include `--single-owner` on every setup
+command, including the token and repair examples below.
 The explicit repository argument prevents accidental changes to another remote.
 The administrator's CLI credential needs permission to manage repository
 settings/rulesets, Actions settings/secrets, Environments, and Issues. This is
@@ -300,8 +308,10 @@ settings/rulesets, Actions settings/secrets, Environments, and Issues. This is
 administration access just to run setup.
 
 **Important:** full `--apply` creates missing managed rulesets, including
-protection for a currently unprotected `main`. This repository's `main` is
-intentionally unprotected; do not run full apply there without explicit
+protection for a currently unprotected `main`. Inspect the selected target's
+actual protections; this shared guide does not imply that its hosting repository
+is unprotected. The original `huangyingting/ai-native-sdlc` source repository
+keeps `main` intentionally unprotected; do not apply setup there without explicit
 agreement to change that policy. The same applies to `--apply --set-token`,
 `--apply --intent`, and `--single-owner --apply`: they are not narrow writes
 that skip the rest of setup. Preview mode never writes.
@@ -350,7 +360,7 @@ To create or replace the automation secret, first create the PAT using
 terminal:
 
 ```sh
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc --apply --set-token
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --apply --set-token
 ```
 
 GitHub CLI prompts securely for the value. Do not put the token in command-line
@@ -361,10 +371,11 @@ or Copilot entitlement.
 To repair an already-created Intent's missing label:
 
 ```sh
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc --apply --intent 7
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --apply --intent 7
 ```
 
-This requires an open Issue from an authorized author. It only adds the label;
+Replace `7` with the existing Intent number. This requires an open Issue from
+an authorized author. Its Intent-specific action only adds the label;
 it does **not** dispatch kickoff. The script prints the explicit resume command
 for after setup and manual checks.
 
@@ -407,10 +418,10 @@ For a demo with one Human, opt in explicitly:
 
 ```sh
 # Preview the single-owner configuration.
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc --single-owner
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --single-owner
 
 # Apply and verify it.
-npm run setup:brownfield -- --repo huangyingting/ai-native-sdlc --single-owner --apply
+npm run setup:brownfield -- --repo OWNER/NEW_DEMO_REPO --single-owner --apply
 ```
 
 This mode sets native `required_approving_review_count` to **0** in managed
@@ -445,8 +456,8 @@ Applying a review-rule change can unblock already-approved PRs with auto-merge
 enabled and therefore advance the lifecycle. Setup itself does not submit
 approvals or merge PRs. Verify the Documents workflow is already published and
 registered; a targeted lifecycle-ruleset edit does not establish that.
-Full apply also creates missing `main` protection. Do not run it against this
-repository's intentionally unprotected `main` without explicit agreement.
+Full apply also creates missing `main` protection. Use only the agreed target;
+do not change the original source repository's policy without explicit agreement.
 
 ### Enable GitHub features
 
@@ -560,8 +571,8 @@ These are the only managed branch scopes. `brownfield-documents/**` and
 do not include them in the PR-required delivery ruleset or grant a bypass.
 Check broader organization rules for conflicts. Protection is an explicit
 administrator decision: full setup `--apply` does create missing `main`
-protection, so do not use it on this repository's intentionally unprotected
-`main` without agreement.
+protection. Inspect the target's actual policy and obtain agreement before
+applying changes; do not treat a prepared demo and the source as the same target.
 
 For both:
 
@@ -987,7 +998,7 @@ digest and clean up only its managed containers.
 
   ```sh
   gh workflow run brownfield-human-gated-delivery-documents.yml \
-    --repo huangyingting/ai-native-sdlc --ref main -f issue_number=7
+    --repo OWNER/NEW_DEMO_REPO --ref main -f issue_number=7
   ```
 
   Replace the repository and Issue number for your run. This is an explicit
