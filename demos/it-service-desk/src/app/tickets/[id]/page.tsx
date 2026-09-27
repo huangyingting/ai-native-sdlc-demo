@@ -63,15 +63,16 @@ export default async function TicketPage({
             <form action={updateTicketOwnerAction} className="status-form">
               <input name="id" type="hidden" value={ticket.id} />
               <label htmlFor="owner">Update owner</label>
-              <CustomSelect
+              <select
                 defaultValue={ticket.owner ?? ""}
                 id="owner"
                 name="owner"
-                options={[
-                  { value: "", label: "Unassigned" },
-                  ...ticketOwnerOptions,
-                ]}
-              />
+              >
+                <option value="">Unassigned</option>
+                {ticketOwnerOptions.map((owner) => (
+                  <option key={owner.value} value={owner.value}>{owner.label}</option>
+                ))}
+              </select>
               <button className="button button-primary" type="submit">
                 <CheckIcon />
                 Save owner

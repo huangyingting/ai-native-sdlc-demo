@@ -111,17 +111,17 @@ export default async function Dashboard({
             </div>
             <div className="field">
               <label htmlFor="owner">Owner</label>
-              <CustomSelect
+              <select
                 defaultValue={owner === null ? "unassigned" : owner ?? ""}
                 id="owner"
-                key={`owner-${owner ?? "all"}`}
                 name="owner"
-                options={[
-                  { value: "", label: "All owners" },
-                  { value: "unassigned", label: "Unassigned" },
-                  ...ticketOwnerOptions,
-                ]}
-              />
+              >
+                <option value="">All owners</option>
+                <option value="unassigned">Unassigned</option>
+                {ticketOwnerOptions.map((item) => (
+                  <option key={item.value} value={item.value}>{item.label}</option>
+                ))}
+              </select>
             </div>
             <div className="field">
               <label htmlFor="status">Status</label>

@@ -9,6 +9,7 @@ import {
   type TicketStatus,
   type TicketSummary,
   formatTicketReference,
+  ticketOwners,
 } from "./ticket";
 
 type TicketRow = {
@@ -50,7 +51,13 @@ function mapTicketRow(row: TicketRow): Ticket {
 }
 
 function isTicketOwner(owner: string): owner is TicketOwner {
-  return owner === "avery-stone" || owner === "jordan-lee";
+  return (ticketOwners as readonly string[]).includes(owner);
+}
+
+function nondecreasingTimestamp(existing: string) {
+  const existingTime = Date.parse(existing);
+  const timestamp = Math.max(Number.isFinite(existingTime) ? existingTime : 0, Date.now());
+  return new Date(timestamp).toISOString();
 }
 
 export class TicketStore {
@@ -268,7 +275,7 @@ export class TicketStore {
     if (ticket.owner === owner) return true;
     const result = this.database.prepare(`
       UPDATE tickets SET owner = ?, updated_at = ? WHERE id = ?
-    `).run(owner, new Date().toISOString(), id);
+    `).run(owner, nondecreasingTimestamp(ticket.updatedAt), id);
     return result.changes > 0;
   }
 
