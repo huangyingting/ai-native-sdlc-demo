@@ -97,6 +97,16 @@ export function validateDiscoveryDocument(text, discovery) {
   return value;
 }
 
+function validateDecisionFields(action, fields) {
+  const keys = action === "decide" ? ["Outcome", "Rationale"] : ["Rationale", "Owner", "Follow-up", "Risk"];
+  exactObject(fields, keys, "decision");
+  for (const key of keys) boundedText(fields[key], key);
+  if (action === "defer" && !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(fields.Owner.trim())) {
+    throw new Error("Deferment Owner must be a GitHub login.");
+  }
+  return Object.fromEntries(keys.map((key) => [key, fields[key].trim()]));
+}
+
 function decisionFields(action, text) {
   const keys = action === "decide" ? ["Outcome", "Rationale"] : ["Rationale", "Owner", "Follow-up", "Risk"];
   const fields = {};
@@ -107,16 +117,41 @@ function decisionFields(action, text) {
     fields[match[1]] = match[2].trim();
   }
   if (Object.keys(fields).length !== keys.length) throw new Error(`Required decision fields: ${keys.join(", ")}.`);
-  if (action === "defer" && !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(fields.Owner)) {
-    throw new Error("Deferment Owner must be a GitHub login.");
+  return validateDecisionFields(action, fields);
+}
+
+export function discoveryDecisionCommands(command) {
+  if (command?.action === "decide-batch") return command.decisions;
+  if (["decide", "defer"].includes(command?.action)) {
+    return [{ action: command.action, questionId: command.questionId, fields: command.fields }];
   }
-  return Object.fromEntries(keys.map((key) => [key, fields[key]]));
+  throw new Error("Expected a discovery decision command.");
 }
 
 export function parseDocumentCommand(body) {
   if (!String(body).startsWith("/sdlc")) return null;
   const text = body.trim();
   if (text === "/sdlc retry") return { action: "retry" };
+  const batch = text.match(/^\/sdlc decide spec v([1-9]\d*) batch\r?\n+```json\r?\n([\s\S]+)\r?\n```$/);
+  if (batch && Number.isSafeInteger(Number(batch[1]))) {
+    if (Buffer.byteLength(text) > 60000) throw new Error("Batch decision command must be at most 60 KB.");
+    const decisions = JSON.parse(batch[2]);
+    if (!Array.isArray(decisions) || !decisions.length || decisions.length > 20) {
+      throw new Error("A decision batch requires 1 to 20 answers.");
+    }
+    const ids = new Set();
+    return { action: "decide-batch", stage: "spec", version: Number(batch[1]),
+      decisions: decisions.map((decision) => {
+        exactObject(decision, ["action", "questionId", "fields"], "batch answer");
+        if (!["decide", "defer"].includes(decision.action) ||
+            typeof decision.questionId !== "string" || !/^Q-[1-9]\d*$/.test(decision.questionId) || ids.has(decision.questionId)) {
+          throw new Error("Batch answers require decide/defer actions and unique Q-n identifiers.");
+        }
+        ids.add(decision.questionId);
+        return { action: decision.action, questionId: decision.questionId,
+          fields: validateDecisionFields(decision.action, decision.fields) };
+      }) };
+  }
   const decision = text.match(/^\/sdlc (decide|defer) spec v([1-9]\d*) (Q-[1-9]\d*)\r?\n+([\s\S]+)$/);
   if (decision && Number.isSafeInteger(Number(decision[2]))) {
     return { action: decision[1], stage: "spec", version: Number(decision[2]), questionId: decision[3],
@@ -130,7 +165,7 @@ export function parseDocumentCommand(body) {
   if (revise && revise[2].trim()) {
     return { action: "revise", stage: revise[1], feedback: revise[2].trim() };
   }
-  throw new Error("Use /sdlc approve spec|plan vN, /sdlc revise spec|plan followed by feedback, /sdlc decide|defer spec vN Q-n with required fields, or /sdlc retry.");
+  throw new Error("Use /sdlc approve spec|plan vN, /sdlc revise spec|plan followed by feedback, /sdlc decide|defer spec vN Q-n with required fields, /sdlc decide spec vN batch with a JSON answer array, or /sdlc retry.");
 }
 
 export function initialDocumentState(issue, baseline, config = {}) {
@@ -236,20 +271,23 @@ function reviewableDocument(state, command, comment, config, teamMembers) {
 export function recordDiscoveryDecision(state, command, comment, config, teamMembers = []) {
   if (state.version !== 2) throw new Error("Discovery decisions require a new decisions-v1 run; existing runs are not migrated.");
   const doc = reviewableDocument(state, command, comment, config, teamMembers);
-  if (!state.discovery.questions.some((question) => question.id === command.questionId)) throw new Error("Unknown discovery question.");
   const parsed = parseDocumentCommand(comment.body);
-  if (!parsed || !["decide", "defer"].includes(parsed.action) || JSON.stringify(parsed) !== JSON.stringify(command) ||
+  if (!parsed || !["decide", "defer", "decide-batch"].includes(parsed.action) || JSON.stringify(parsed) !== JSON.stringify(command) ||
       comment.created_at !== comment.updated_at || !Number.isSafeInteger(comment.id) ||
       !Number.isFinite(Date.parse(comment.created_at))) throw new Error("Decision must be an exact new, unedited Human command.");
+  const decisions = discoveryDecisionCommands(parsed);
+  if (decisions.some((decision) => !state.discovery.questions.some((question) => question.id === decision.questionId))) {
+    throw new Error("Unknown discovery question.");
+  }
   if (state.discovery.decisions.some((decision) => decision.commentId === comment.id)) throw new Error("Decision was already recorded.");
-  if (state.discovery.decisions.length >= 100) throw new Error("Discovery decision history is full; narrow the Intent.");
-  state.discovery.decisions.push({
-    questionId: command.questionId, disposition: command.action === "decide" ? "resolved" : "deferred",
-    fields: command.fields, version: doc.version, hash: doc.hash, contextHash: doc.contextHash,
+  if (state.discovery.decisions.length + decisions.length > 100) throw new Error("Discovery decision history is full; narrow the Intent.");
+  state.discovery.decisions.push(...decisions.map((decision) => ({
+    questionId: decision.questionId, disposition: decision.action === "decide" ? "resolved" : "deferred",
+    fields: decision.fields, version: doc.version, hash: doc.hash, contextHash: doc.contextHash,
     policyHash: doc.policyHash, user: { id: comment.user.id, login: comment.user.login, type: "User" },
     commentId: comment.id, commentBody: comment.body, decidedAt: comment.created_at,
-  });
-  requestDocumentRevision(state, "spec", `Apply Human decision #${comment.id} for ${command.questionId}. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.`, config);
+  })));
+  requestDocumentRevision(state, "spec", `Apply Human decision #${comment.id} for ${decisions.map((decision) => decision.questionId).join(", ")}. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.`, config);
 }
 
 export function approveDocument(state, command, comment, config, teamMembers = []) {
@@ -288,22 +326,34 @@ export function validateDocumentState(state, intent) {
     exactObject(state.discovery, ["questions", "decisions"], "discovery state");
     validateQuestions(state.discovery.questions);
     if (!Array.isArray(state.discovery.decisions) || state.discovery.decisions.length > 100) throw new Error("Invalid discovery decision history.");
-    const comments = new Set();
+    const comments = new Map();
     for (const decision of state.discovery.decisions) {
       if (!state.discovery.questions.some((question) => question.id === decision.questionId) ||
           !["resolved", "deferred"].includes(decision.disposition) ||
-          !Number.isSafeInteger(decision.commentId) || decision.commentId <= 0 || comments.has(decision.commentId) ||
+          !Number.isSafeInteger(decision.commentId) || decision.commentId <= 0 ||
           decision.user?.type !== "User" || !Number.isSafeInteger(decision.user.id) || !decision.user.login ||
           !Number.isSafeInteger(decision.version) || decision.version < 1 || decision.version > state.counters.spec ||
           !Number.isFinite(Date.parse(decision.decidedAt)) ||
           ["hash", "contextHash", "policyHash"].some((key) => !/^[a-f0-9]{64}$/.test(decision[key] ?? ""))) {
         throw new Error("Invalid persisted Human decision.");
       }
-      const parsed = parseDocumentCommand(decision.commentBody);
-      if (parsed?.action !== (decision.disposition === "resolved" ? "decide" : "defer") ||
-          parsed.questionId !== decision.questionId || parsed.version !== decision.version ||
-          JSON.stringify(parsed.fields) !== JSON.stringify(decision.fields)) throw new Error("Decision receipt differs from its Human command.");
-      comments.add(decision.commentId);
+      const group = comments.get(decision.commentId) ?? [];
+      group.push(decision);
+      comments.set(decision.commentId, group);
+    }
+    for (const group of comments.values()) {
+      const first = group[0];
+      const parsed = parseDocumentCommand(first.commentBody);
+      const decisions = discoveryDecisionCommands(parsed);
+      if (parsed.version !== first.version || group.length !== decisions.length ||
+          group.some((decision, index) =>
+            decision.questionId !== decisions[index].questionId ||
+            decision.disposition !== (decisions[index].action === "decide" ? "resolved" : "deferred") ||
+            JSON.stringify(decision.fields) !== JSON.stringify(decisions[index].fields) ||
+            JSON.stringify(decision.user) !== JSON.stringify(first.user) ||
+            ["commentBody", "decidedAt", "version", "hash", "contextHash", "policyHash"].some((key) => decision[key] !== first[key]))) {
+        throw new Error("Decision receipt differs from its complete Human command.");
+      }
     }
   }
   for (const stage of documentStages) {

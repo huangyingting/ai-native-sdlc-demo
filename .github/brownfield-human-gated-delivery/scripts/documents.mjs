@@ -63,6 +63,13 @@ export function discoveryPacket(state, text, compact = false) {
       `/sdlc defer spec v${version} ${question}`, "Rationale: Why it can wait.",
       "Owner: YOUR-GITHUB-LOGIN", "Follow-up: When and where to revisit it.",
       "Risk: The remaining risk you accept.", "```");
+    lines.push("", "Or answer multiple questions atomically in one comment and request one Spec revision:",
+      "Every answer must be valid; the batch does not approve the Spec. Individual commands remain supported.", "",
+      "````text", `/sdlc decide spec v${version} batch`, "```json",
+      JSON.stringify((blockers.length ? blockers : state.discovery.questions).map((item) => ({
+        action: "decide", questionId: item.id,
+        fields: { Outcome: "The selected behavior or answer.", Rationale: "Why this is the right choice." },
+      })), null, 2), "```", "````");
   }
   return lines.join("\n");
 }
@@ -271,7 +278,7 @@ export class DocumentReview {
       const state = structuredClone(snapshot.state);
       const files = {};
       if (!error) {
-        const versioned = ["approve", "decide", "defer"].includes(command.action);
+        const versioned = ["approve", "decide", "defer", "decide-batch"].includes(command.action);
         const members = versioned
           ? await resolveTeamMembers(this.copilotToken, this.owner, this.config.stages[command.stage].reviewers.teams) : [];
         const doc = versioned ? state.documents[command.stage] : null;
@@ -307,7 +314,7 @@ export class DocumentReview {
       next.receipts.push({ id: comment.id, message });
       await this.parent(intent, snapshot);
       snapshot = await this.save(snapshot, next, error ? {} : files);
-      if (snapshot.state.sealed || (!error && ["revise", "decide", "defer"].includes(command.action))) break;
+      if (snapshot.state.sealed || (!error && ["revise", "decide", "defer", "decide-batch"].includes(command.action))) break;
     }
     if (!snapshot.state.sealed && !snapshot.state.pending) {
       const state = structuredClone(snapshot.state);
@@ -333,6 +340,13 @@ export class DocumentReview {
     const template = readFileSync(new URL(`../prompts/${request.stage}-issue.md`, import.meta.url), "utf8");
     const discoveryInstructions = state.version === 2
       ? readFileSync(new URL("../prompts/discovery-spec.md", import.meta.url), "utf8") : "";
+    const discovery = state.version === 2 ? {
+      questions: state.discovery.questions,
+      decisions: state.discovery.decisions.map(({ commentBody, ...decision }) => decision),
+    } : null;
+    const decisionCommands = state.version === 2
+      ? [...new Map(state.discovery.decisions.map((decision) =>
+        [decision.commentId, { commentId: decision.commentId, commentBody: decision.commentBody }])).values()] : [];
     const prompt = [
       renderPrompt(template, { intent: state.intent }),
       ...(state.version === 2 ? [request.stage === "spec" ? discoveryInstructions :
@@ -345,7 +359,7 @@ export class DocumentReview {
         approvedSpec: request.stage === "plan" ? documents.spec : null,
         approvedSpecHash: request.specHash,
         ...(state.version === 2 ? { reviewProfile: state.reviewProfile,
-          discovery: state.discovery, latestDecisions: latestDecisions(state.discovery) } : {}),
+          discovery, decisionCommands, latestDecisions: latestDecisions(discovery) } : {}),
       }, null, 2),
     ].join("\n\n");
     if (Buffer.byteLength(prompt) > 110000) throw new Error("Document request exceeds 110 KB; narrow the Intent rather than silently truncating requirements.");

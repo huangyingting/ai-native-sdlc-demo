@@ -90,9 +90,41 @@ Follow-up: Open a separate Intent after this delivery.
 Risk: Owners must inspect the queue until then.
 ```
 
+要一次回答多个问题，请提交一条以 `/sdlc decide spec vN batch` 开头的新评论，
+随后附上带 `json` 围栏的数组：
+
+````text
+/sdlc decide spec v1 batch
+```json
+[
+  {
+    "action": "decide",
+    "questionId": "Q-1",
+    "fields": {
+      "Outcome": "Use the fixed local owner list.",
+      "Rationale": "External identity is outside this change."
+    }
+  },
+  {
+    "action": "defer",
+    "questionId": "Q-2",
+    "fields": {
+      "Rationale": "Notifications require separate discovery.",
+      "Owner": "YOUR-GITHUB-LOGIN",
+      "Follow-up": "Open a separate Intent after this delivery.",
+      "Risk": "Owners must inspect the queue until then."
+    }
+  }
+]
+```
+````
+
 请使用实际已发布版本与问题 ID，而不是这些示例值。
-每项被接受的决策都会自动请求新的 Spec 修订；
-再次发出命令或批准前，先阅读该修订。
+每批允许 1 至 20 个不重复的已登记问题，评论最多 60 KB；
+每个 `decide` 或 `defer` 回答必须提供完整字段。
+记录前会验证全部回答；任一回答无效时，整批拒绝，不会部分记录。
+无论一条被接受的评论包含一个回答还是全部回答，都只请求一次新的 Spec 修订，
+不会直接批准尚未审阅的修订。再次发出命令或批准前，先阅读该修订。
 每个问题的最新回执具有权威性，早期回执仍保留为证据。
 延期是显式且有负责人承担的风险，不是问题已解决的证明。
 工具包绝不会发布这些命令或代替评审人作决定。
@@ -382,6 +414,9 @@ Version-2 验证复用编排的状态与交接验证器，
 每项保留决策都必须匹配真实、未编辑的人工评论、
 已配置个人的 Spec 权限/当前策略、精确命令、记录时间戳和成功命令回执。
 被取代的决策不会被忽略。
+同一批回答共享评论和来源版本，且必须与该评论中的完整命令一致。
+`decisionCommentIds` 对每条经验证的命令只列出一次；
+修订计数按批次计算，不按批内回答数量计算。
 格式错误的配置或状态会使采集显式失败；
 不可信账本、缺失评论和不完整交接报告为未验证。
 没有评审记录的旧版文档链接，仍然只是链接。
@@ -455,7 +490,8 @@ node tools/brownfield-demo/cli.mjs readiness \
   未经签证的计数器不能计数。
 - **正常：**Plan 计数器为 1，没有显式 Spec 修订请求或已记录失败。
   结构模式的 Spec 计数器为 1；
-  `decisions-v1` 的 Spec 可以为每项经佐证决策额外恰好有一次已发布修订。
+  `decisions-v1` 的 Spec 可以为每条经佐证决策命令额外恰好有一次已发布修订；
+  一条批量命令中的多个回答只计为一次修订。
 - **修订：**Spec 计数器大于 1，真实未编辑的人工 `/sdlc revise spec` 请求，
   在当前批准之前具有成功的可信回执。
   单独计数器、自动决策修订或被拒请求都不算。
