@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "intent": 1,
+  "tests": [
+    {
+      "name": "ticket ownership action > rejects invalid ownership updates and reports persistence failures",
+      "acceptance": ["AC-5", "AC-6"]
+    },
+    {
+      "name": "Ticket details > shows ownership separately and offers an explicit handoff control",
+      "acceptance": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-10"]
+    },
+    {
+      "name": "TicketStore > supports assigning, handing off, and clearing ownership without changing ticket status",
+      "acceptance": ["AC-2", "AC-3", "AC-4", "AC-8", "AC-9"]
+    },
+    {
+      "name": "TicketStore > filters by owner together with the existing ticket filters",
+      "acceptance": ["AC-7", "AC-8"]
+    },
+    {
+      "name": "TicketStore > preserves existing tickets as unassigned when opening a legacy database",
+      "acceptance": ["AC-8"]
+    },
+    {
+      "name": "Dashboard > shows ticket ownership and the complete owner filter",
+      "acceptance": ["AC-1", "AC-7", "AC-8", "AC-10"]
+    }
+  ]
+}
