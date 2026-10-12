@@ -2,7 +2,38 @@
   "version": 2,
   "reviewProfile": "decisions-v1",
   "discovery": {
-    "questions": [],
+    "questions": [
+      {
+        "id": "Q-1",
+        "question": "What database capability must readiness establish?",
+        "options": "Open-only: lowest probe work but no query evidence / read-only ticket-schema query on every request: recommended, detects read or schema failure but does not establish write capability / write-and-rollback probe: stronger write evidence with locking and side-effect risks; specify isolation and preservation guarantees if selected."
+      },
+      {
+        "id": "Q-2",
+        "question": "May readiness trigger the existing lazy database initialization?",
+        "options": "Allow existing initialization before a read-only probe: recommended for compatibility with fresh instances, permits existing directory creation, WAL setup, schema creation or owner migration, and new-database seeding without rewriting existing business records / strictly side-effect-free readiness: requires a separate initialization boundary and leaves missing or uninitialized databases unready until normal application initialization succeeds."
+      },
+      {
+        "id": "Q-3",
+        "question": "What public endpoint, response, caching, and request-input contract should consumers rely on?",
+        "options": "GET /api/ready with 200 and {\"status\":\"ready\"} on success, 503 and {\"status\":\"unready\"} on dependency failure, application/json, and Cache-Control: no-store in both states: recommended; accept no path, SQL, or configuration overrides, ignore query parameters and GET bodies, use HEAD with matching status and headers but no body, and reject other methods with 405 and Allow: GET, HEAD / choose a different explicit contract and specify all of these behaviors."
+      },
+      {
+        "id": "Q-4",
+        "question": "What failure-diagnostic and responsiveness boundaries are required?",
+        "options": "Generic sanitized readiness-failure event with no raw exception or sensitive values: recommended for diagnostics / no new readiness logs: avoids probe log volume but limits diagnosis / sanitized transition-only events: reduces volume but adds state. Also decide whether to defer a measured latency target or require a numeric response deadline and behavior under SQLite locks; no supported threshold or baseline has been supplied."
+      },
+      {
+        "id": "Q-5",
+        "question": "Which recovery and preservation observations are required for acceptance, and is instance recreation sufficient?",
+        "options": "Recreate an isolated instance after configuration repair: recommended; verify healthy-invalid-repaired HTTP states, repeated probes, dashboard and detail reads, create/assign/reassign/clear/status/filter operations, and unchanged pre-existing records and timestamps except intentional user edits; retain a populated isolated volume across restart and repair / require additional same-process recovery after a transient query failure without configuration changes / require dynamic database-path changes in a running process: changes current shared-store configuration semantics. Also decide whether lock, corrupt-file, missing-schema, and read-only cases must supplement the invalid-path observation."
+      },
+      {
+        "id": "Q-6",
+        "question": "Is database readability an acceptable readiness signal when writes or other application operations can still fail?",
+        "options": "Accept explicitly limited database-read readiness: recommended small increment, with real write operations demonstrated during recovery but no per-probe write guarantee / require ticket-write availability to gate readiness: expands the probe contract and must be reconciled with Q-1 / retain read readiness but use a different endpoint or response vocabulary to avoid implying full traffic admission."
+      }
+    ],
     "decisions": []
   },
   "intent": 18,
@@ -12,21 +43,21 @@
     "body": "### Problem or opportunity\n\nTicket ownership and handoffs in the existing IT service desk have been accepted in huangyingting/ai-native-sdlc-demo#1. The next gap is operational status: the process can remain alive while an unavailable database prevents users from opening the application. A liveness check alone does not distinguish those states.\n\nBetween 2026-10-12T11:44:51Z and 2026-10-12T11:44:52Z, an isolated observation used two instances of the same accepted image:\n\n| Request | Healthy configuration | Invalid database path |\n|---|---|---|\n| GET /api/health | 200, returning {\"status\":\"ok\"} | 200, returning {\"status\":\"ok\"} |\n| GET / | 200, with the ticket dashboard marker | 500, without the ticket dashboard marker |\n| GET /api/ready | 404 | 404 |\n\nThe faulty instance used a database path beneath /dev/null and had no mounted volume. The healthy instance used a fresh isolated volume; its four seeded tickets were verified, and its dashboard remained available after the fault observation. This was deliberate isolated fault injection, not a production incident or a reversal of the earlier functional acceptance. No production failure-rate, recovery-time, or customer-benefit measurements are available.\n\nObserved image:\n`ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:90836abf909410db91b0d3c791812683e5424c5cab7d7a84df1af6772a66ce76`\n\nImage source commit: `1a1e14d0031305ee5da35c523ffbac9fa6f7e58b`.\nMaintenance starting point on main: `f52cc87b435d781af0be40a811d33f0cfd84d66b`.\nThe observation report and four original screenshots are retained outside the repository with timestamps, runtime identities, and checksums. Raw databases and application error logs are not published.\n\n### Proposed outcome\n\nOperators and future release-admission tooling can distinguish process liveness from availability of the database required by the application, explicitly identify an unready instance, and verify recovery after configuration repair.\n\nFirst deliver a small, explicit readiness capability. Traffic switching, failure recovery, and preventive work belong to the subsequent reliability exercise; do not describe unexecuted work as completed.\n\nSuccess must be supported by actual HTTP behavior, database access, error handling, and recovery observations, not just passing unit tests or a model summary. Confirm the precise contract during specification review.\n\n### Affected users and systems\n\n- Operators and demo presenters deciding whether an instance can receive ticket traffic.\n- Service-desk users affected when the ticket dashboard is unavailable.\n- The Next.js service, SQLite database, and container configuration in demos/it-service-desk.\n- Later read-only admission and recovery experiments may consume readiness, but their completion is not assumed here.\n\n### Constraints and non-goals\n\n- Preserve the accepted owner roster, assignment and handoffs, intersecting filters, ticket creation, and status updates.\n- Preserve existing ticket data and timestamps. Do not reset databases or rewrite the previous delivery's frozen specifications, plans, tests, or acceptance records.\n- Keep the existing liveness check compatible and separate its responsibility from the new capability.\n- Do not disclose database paths, exception details, stack traces, ticket contents, or credentials.\n- Inject faults only into disposable isolated resources; do not modify shared instances or existing data volumes.\n- Do not directly introduce authentication, an external monitoring platform, production traffic switching, or cross-version database rollback in this increment.\n- Baseline dependency risks remain unresolved. This work does not establish production certification or completion of the full reliability demonstration.\n- Use English for this Intent, generated Specs and Plans, related Issues, and review comments. Preserve required protocol headings, JSON keys, commands, and code identifiers. Existing bilingual guide and demo documentation remains unchanged.\n\n### Open questions\n\n- What should readiness establish: merely opening the database, or completing a read-only query on every request? Is a write probe needed, and how would probes avoid changing business data?\n- What should the endpoint path, HTTP statuses, response bodies, cache policy, and logging boundaries be for healthy and unhealthy states?\n- Which real operations, data-preservation checks, and restart scenarios should recovery acceptance cover? Must database configuration change dynamically within a running process, or is recreating an instance sufficient?\n\nThese questions remain undecided. Propose evidence-based options in the specification and wait for explicit product decisions; do not present proposals as approved requirements.\n"
   },
   "counters": {
-    "spec": 0,
+    "spec": 1,
     "plan": 0
   },
   "documents": {
-    "spec": null,
+    "spec": {
+      "version": 1,
+      "hash": "f5b68924c0584e69cf6cb8f5c5d5e467fc900a7ef12772f1990e5821aa133c1b",
+      "specHash": null,
+      "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+      "approvals": [],
+      "contextHash": "284abc084f114cb292d2ad48f1903272062886bf1a82f1ebe1f3864537c9dbb8"
+    },
     "plan": null
   },
-  "pending": {
-    "stage": "spec",
-    "version": 1,
-    "feedback": "Initial draft. Use the Human Intent and discussion; expose unresolved decisions.",
-    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-    "specHash": null,
-    "contextHash": "7bc27b29f2a52f2f9191a14d78a5e107e00c1fe2e31033be3331a6b4662fb463"
-  },
+  "pending": null,
   "lastCommentId": 6123798005,
   "receipts": [
     {
