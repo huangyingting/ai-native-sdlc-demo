@@ -17,8 +17,8 @@ before implementation rather than inferred from a finished example.
 |---|---|---|
 | Preparation / 准备 | [Baseline and checks / 基线与检查](preparation.md) | Baseline and automated setup checks passed / 基线验证与自动化配置检查已通过 |
 | Intent / 需求 | [Ticket ownership and handoffs / 工单归属与交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) | Submitted / 已提交 |
-| Spec / 规格 | Product decisions and observable acceptance criteria / 产品决策与可验证的验收条件 | [Latest version and review status / 最新版本与审查状态](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) |
-| Plan / 计划 | Tasks, dependencies and verification methods / 任务、依赖与验证方法 | Pending / 待开始 |
+| Spec / 规格 | Product decisions and observable acceptance criteria / 产品决策与可验证的验收条件 | [Spec v5 approved / Spec v5 已批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6118027964) |
+| Plan / 计划 | [Six implementation tasks / 六项实施任务](https://github.com/huangyingting/ai-native-sdlc-demo/blob/6b7a4ddf96f43c6f1980c2e1ed4b568ec429d427/docs/delivery-runs/brownfield-human-gated-delivery/1/plan.md) | [Latest review and handoff status / 最新审查与交接状态](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) |
 | Tests / 测试 | Reviewed assertions and expected failures / 已审查断言与预期失败 | Pending / 待开始 |
 | Implementation / 实现 | Code review, regressions and application checks / 代码审查、回归与应用检查 | Pending / 待开始 |
 | Delivery / 交付 | Source revision, image digest and user acceptance / 源代码版本、镜像摘要与用户验收 | Pending / 待开始 |
@@ -30,12 +30,15 @@ before implementation rather than inferred from a finished example.
 |---|---|---|
 | [Q-1: optional ownership / 负责人可为空](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117772868) | Existing and new tickets may remain unassigned; owners may be cleared. Do not infer historical owners. / 已有和新建工单均可未分配，允许清空负责人，不替历史工单推定负责人。 | [Spec v2](https://github.com/huangyingting/ai-native-sdlc-demo/blob/f63ee57010f1c83de3b0ae4d6d270c87c62441cf/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
 | [Q-2: local roster / 本地负责人名单](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117828551) | Select Alex Chen or Sam Rivera from a fixed list; no free-text owners, roster management or external identity integration. / 从固定名单中选择 Alex Chen 或 Sam Rivera，不支持自由输入，本次不增加名单管理或外部账号集成。 | [Spec v3](https://github.com/huangyingting/ai-native-sdlc-demo/blob/de5fdb100963c65f19a8f5295602ecf381bf1235/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
+| [Q-3: owner filtering / 按负责人筛选](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117947008) | Filter by either roster member or Unassigned, together with existing search and filters; All owners removes only the ownership restriction. / 可按两位负责人或未分配筛选，并与已有条件同时生效；选择全部负责人时，只取消负责人条件。 | [Spec v4](https://github.com/huangyingting/ai-native-sdlc-demo/blob/dd32ba04871f10017963917471cdef5ee6164f52/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
+| [Q-4: detail-only handoffs / 仅在详情页交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117980837) | Change ownership on details in every existing status; creation stays unchanged, and status and ownership saves remain independent. / 各种状态下均可在详情页分配、转交或清空负责人；建单流程不变，状态与负责人独立保存。 | [Spec v5](https://github.com/huangyingting/ai-native-sdlc-demo/blob/9e183465d985bfa081f239a68eda400340320195/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
 
-Q-3 (owner filtering) and Q-4 (assignment surfaces) still need decisions.
-Recording a decision updates the Spec; it does not approve that version.
+All four decisions are recorded. Spec v5 was separately approved after review.
+Plan review, Tests PR review, implementation review, and application acceptance
+remain distinct gates; follow the Intent for their latest status.
 
-Q-3（是否按负责人筛选）和 Q-4（在哪些页面修改负责人）仍待确认。
-每项决策都会更新 Spec，但不等于批准该版本。
+四项产品决定均已记录，Spec v5 随后经过审查并获得单独批准。
+Plan、测试 PR、实现 PR 和应用验收仍分别设置审核节点，最新状态以需求 Issue 为准。
 
 ## Focused cases / 专题案例
 
