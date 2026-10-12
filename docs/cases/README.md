@@ -15,9 +15,9 @@ before implementation rather than inferred from a finished example.
 
 | Step / 步骤 | What to inspect / 查看内容 | State / 状态 |
 |---|---|---|
-| Preparation / 准备 | [Baseline and local checks / 基线与本地检查](preparation.md) | In progress / 进行中 |
-| Intent / 需求 | Problem, desired outcome and open questions / 问题、目标和待决事项 | Pending / 待开始 |
-| Spec / 规格 | Product decisions and observable acceptance criteria / 产品决策与可验证的验收条件 | Pending / 待开始 |
+| Preparation / 准备 | [Baseline and checks / 基线与检查](preparation.md) | Baseline verified; automation credential pending / 基线已验证，自动化凭据待配置 |
+| Intent / 需求 | [Ticket ownership and handoffs / 工单归属与交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) | Submitted / 已提交 |
+| Spec / 规格 | Product decisions and observable acceptance criteria / 产品决策与可验证的验收条件 | [Latest version and review status / 最新版本与审查状态](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) |
 | Plan / 计划 | Tasks, dependencies and verification methods / 任务、依赖与验证方法 | Pending / 待开始 |
 | Tests / 测试 | Reviewed assertions and expected failures / 已审查断言与预期失败 | Pending / 待开始 |
 | Implementation / 实现 | Code review, regressions and application checks / 代码审查、回归与应用检查 | Pending / 待开始 |

@@ -21,7 +21,7 @@ operation. Each case links to the work actually performed in this repository.
 
 | Case / 案例 | Business or engineering question / 要解决的问题 | Status / 状态 |
 |---|---|---|
-| Ticket ownership / 工单归属 | Who is responsible, and how do we hand over a ticket? / 谁负责，怎样交接？ | Preparing / 准备中 |
+| Ticket ownership / 工单归属 | Who is responsible, and how do we hand over a ticket? / 谁负责，怎样交接？ | [In progress / 进行中](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) |
 | Database readiness / 数据库就绪检查 | Can the application serve requests, not merely keep a process alive? / 进程存活时，应用是否真的可用？ | Not started / 未开始 |
 | Release reliability / 发布可靠性 | Can we detect a bad candidate, recover service and prevent recurrence? / 怎样拒绝异常实例、恢复服务并避免问题复发？ | Not started / 未开始 |
 | Change impact / 变更影响 | How can we add a proxy owner without changing the accountable owner? / 增加代理负责人时，怎样保持原有责任关系？ | Not started / 未开始 |
