@@ -24,7 +24,28 @@
         "options": "Ticket details only is the smaller change and keeps intake unchanged when ownership is optional. Creation plus ticket details permits assignment during intake and is needed if new tickets require an owner. The proposal allows changes in every existing status and keeps status saves independent of ownership; any restriction needs an explicit Human decision."
       }
     ],
-    "decisions": []
+    "decisions": [
+      {
+        "questionId": "Q-1",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Ownership is optional for every ticket. Existing and newly created tickets may remain unassigned. Agents may assign, reassign, or clear the owner. Display tickets without an owner as \"Unassigned\". Do not infer or backfill owners for historical tickets.",
+          "Rationale": "Preserve the current intake workflow and existing ticket data while making responsibility explicit. Unassigned work must remain visible without inventing a responsible person."
+        },
+        "version": 1,
+        "hash": "112cad7d89b166aa6d20edcbdc026f0c8b214d51aa108a54cc982c405c6706d1",
+        "contextHash": "617bc4f07df8ba00503ffefdc8983958ca1ef004dd815921110bb647a877d9ec",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117772868,
+        "commentBody": "/sdlc decide spec v1 Q-1\nOutcome: Ownership is optional for every ticket. Existing and newly created tickets may remain unassigned. Agents may assign, reassign, or clear the owner. Display tickets without an owner as \"Unassigned\". Do not infer or backfill owners for historical tickets.\nRationale: Preserve the current intake workflow and existing ticket data while making responsibility explicit. Unassigned work must remain visible without inventing a responsible person.\n",
+        "decidedAt": "2026-10-12T04:30:12Z"
+      }
+    ]
   },
   "intent": 1,
   "baseline": "3709a7f36f1e0d4e34090f803fbe5a3ada30db32",
@@ -47,8 +68,20 @@
     },
     "plan": null
   },
-  "pending": null,
-  "lastCommentId": 0,
-  "receipts": [],
+  "pending": {
+    "stage": "spec",
+    "version": 2,
+    "feedback": "Apply Human decision #6117772868 for Q-1. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": null,
+    "contextHash": "29b1f5149aaa1105f545be5719fb526d9689b195a815a7a83fa72770a080d91f"
+  },
+  "lastCommentId": 6117772868,
+  "receipts": [
+    {
+      "id": 6117772868,
+      "message": "Command #6117772868 recorded: decide spec v1."
+    }
+  ],
   "sealed": false
 }
