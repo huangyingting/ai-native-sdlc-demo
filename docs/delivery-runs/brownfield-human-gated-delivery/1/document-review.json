@@ -115,7 +115,7 @@
   },
   "counters": {
     "spec": 5,
-    "plan": 0
+    "plan": 1
   },
   "documents": {
     "spec": {
@@ -140,16 +140,16 @@
       ],
       "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
     },
-    "plan": null
+    "plan": {
+      "version": 1,
+      "hash": "37130cb9bc1d899a7f964cc67062a95d1f7a24b7981591b5ba1823785eaa0f39",
+      "specHash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
+      "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+      "approvals": [],
+      "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
+    }
   },
-  "pending": {
-    "stage": "plan",
-    "version": 1,
-    "feedback": "Initial draft. Use the Human Intent and discussion; expose unresolved decisions.",
-    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-    "specHash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
-    "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
-  },
+  "pending": null,
   "lastCommentId": 6118027964,
   "receipts": [
     {
