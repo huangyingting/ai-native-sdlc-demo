@@ -222,6 +222,10 @@ export class TicketStore {
     };
   }
 
+  checkReadiness() {
+    this.database.prepare("SELECT id FROM tickets LIMIT 1").get();
+  }
+
   create(input: CreateTicketInput) {
     const timestamp = new Date().toISOString();
     const result = this.database.prepare(`

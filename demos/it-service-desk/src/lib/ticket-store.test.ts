@@ -6,6 +6,7 @@ import { DatabaseSync } from "node:sqlite";
 import { TicketStore } from "./ticket-store";
 
 const openStores: TicketStore[] = [];
+const temporaryDirectories: string[] = [];
 
 function createTestStore() {
   const ticketStore = new TicketStore(":memory:", false);
@@ -15,6 +16,10 @@ function createTestStore() {
 
 afterEach(() => {
   while (openStores.length) openStores.pop()?.close();
+  while (temporaryDirectories.length) {
+    const directory = temporaryDirectories.pop();
+    if (directory) rmSync(directory, { recursive: true, force: true });
+  }
 });
 
 describe("TicketStore", () => {
@@ -448,4 +453,97 @@ describe("TicketStore", () => {
       rmSync(directory, { recursive: true, force: true });
     }
   });
+});
+
+it("TicketStore readiness reads the actual ticket schema on every invocation", () => {
+  const directory = mkdtempSync(join(tmpdir(), "service-desk-readiness-"));
+  temporaryDirectories.push(directory);
+  const filename = join(directory, "tickets.sqlite");
+  const ticketStore = new TicketStore(filename);
+  openStores.push(ticketStore);
+  const checkReadiness = (ticketStore as TicketStore & {
+    checkReadiness?: () => void;
+  }).checkReadiness;
+
+  expect(checkReadiness).toBeTypeOf("function");
+  if (!checkReadiness) return;
+  expect(() => checkReadiness.call(ticketStore)).not.toThrow();
+
+  const database = new DatabaseSync(filename);
+  let renamed = false;
+  try {
+    database.exec("ALTER TABLE tickets RENAME TO readiness_tickets");
+    renamed = true;
+    expect(() => checkReadiness.call(ticketStore)).toThrow();
+    database.exec("ALTER TABLE readiness_tickets RENAME TO tickets");
+    renamed = false;
+    expect(() => checkReadiness.call(ticketStore)).not.toThrow();
+  } finally {
+    if (renamed) database.exec("ALTER TABLE readiness_tickets RENAME TO tickets");
+    database.close();
+  }
+});
+
+it("TicketStore readiness accepts an initialized empty table without changing records", () => {
+  const emptyDirectory = mkdtempSync(join(tmpdir(), "service-desk-readiness-empty-"));
+  temporaryDirectories.push(emptyDirectory);
+  const emptyStore = new TicketStore(join(emptyDirectory, "tickets.sqlite"), false);
+  openStores.push(emptyStore);
+  const emptyReadiness = (emptyStore as TicketStore & {
+    checkReadiness?: () => void;
+  }).checkReadiness;
+
+  expect(emptyReadiness).toBeTypeOf("function");
+  if (!emptyReadiness) return;
+  expect(() => emptyReadiness.call(emptyStore)).not.toThrow();
+  expect(emptyStore.list()).toEqual([]);
+
+  const legacyDirectory = mkdtempSync(join(tmpdir(), "service-desk-readiness-legacy-"));
+  temporaryDirectories.push(legacyDirectory);
+  const legacyFilename = join(legacyDirectory, "tickets.sqlite");
+  const legacyDatabase = new DatabaseSync(legacyFilename);
+  legacyDatabase.exec(`
+    CREATE TABLE tickets (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      category TEXT NOT NULL,
+      priority TEXT NOT NULL,
+      status TEXT NOT NULL,
+      requester_name TEXT NOT NULL,
+      requester_email TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      updated_at TEXT NOT NULL
+    );
+    INSERT INTO tickets VALUES (
+      1, 'Legacy ticket', 'Keep this record unchanged.', 'Other', 'high', 'open',
+      'Jordan Lee', 'jordan.lee@example.com',
+      '2026-01-02T03:04:05.000Z', '2026-02-03T04:05:06.000Z'
+    );
+  `);
+  legacyDatabase.close();
+
+  const legacyStore = new TicketStore(legacyFilename);
+  openStores.push(legacyStore);
+  const legacyReadiness = (legacyStore as TicketStore & {
+    checkReadiness?: () => void;
+  }).checkReadiness;
+
+  expect(legacyReadiness).toBeTypeOf("function");
+  if (!legacyReadiness) return;
+  expect(() => legacyReadiness.call(legacyStore)).not.toThrow();
+  expect(legacyStore.list()).toEqual([{
+    id: 1,
+    reference: "INC-0001",
+    title: "Legacy ticket",
+    description: "Keep this record unchanged.",
+    category: "Other",
+    priority: "high",
+    status: "open",
+    owner: null,
+    requesterName: "Jordan Lee",
+    requesterEmail: "jordan.lee@example.com",
+    createdAt: "2026-01-02T03:04:05.000Z",
+    updatedAt: "2026-02-03T04:05:06.000Z",
+  }]);
 });
