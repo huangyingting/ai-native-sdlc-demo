@@ -7,16 +7,16 @@ evidence. It never creates a remote repository, dispatches a workflow, edits
 GitHub, approves work, resets the source, or commits/pushes.
 
 **First time running the demo?** Follow the
-[walkthrough's preparation sequence](../../docs/brownfield-human-gated-delivery-walkthrough.md#1-prepare-the-repository)
+[walkthrough's preparation sequence](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery-walkthrough.md#1-prepare-the-repository)
 for export, inspection, Git initialization, remote publication, setup, and
 preflight in the correct order. Use this README as the command reference.
 
-See the [illustrated delivery case study](../../docs/brownfield-human-gated-delivery-case-study.md)
+See the [illustrated delivery case study](../../docs/cases/ownership.en.md)
 for the architecture, screenshots, and actual evidence from a completed
 development-test run. This README remains the command and safety reference.
 
 **Build/Verify/Deploy/Operate follow-up:** use the
-[three reliability loops walkthrough](../../docs/brownfield-reliability-loops.md)
+[three reliability loops walkthrough](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-reliability-loops.md)
 for `qualify`, `verify-image`, and `rehearse`. These additive commands qualify
 readiness tests in a scratch export and exercise real immutable containers,
 read-only local traffic, isolated faults and an owned maintenance draft.
@@ -43,7 +43,7 @@ that the current application is an ownership-free baseline.
 ## 1. Choose one fixed scenario
 
 Data, the Human Intent template, and the unfilled acceptance checklist live in
-[`demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/`](../../demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/).
+[`demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/`](../../demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios).
 
 | ID | Difference in the process, not the feature |
 | --- | --- |
@@ -342,12 +342,12 @@ The destination must not exist. Outputs:
 - `summary.json`: minimal machine-readable corroboration result and limitations.
 
 Replay does not download raw Actions logs or report artifacts. Follow the
-[case study's preservation steps](../../docs/brownfield-human-gated-delivery-case-study.md#preserve-ci-logs-and-reports)
+[CI report and log preservation steps](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md#ci-report-archives)
 to archive available attempt-specific evidence separately, outside Git.
 Reports that were never uploaded cannot be recovered by `replay`.
 Executions using the current Stage CI workflow preserve attempt-scoped Red/Green
 report artifacts for 14 days; see
-[CI report archives](../../docs/brownfield-human-gated-delivery.md#ci-report-archives).
+[CI report archives](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md#ci-report-archives).
 
 Every page says **read-only replay — NOT LIVE**. No markdown/HTML from GitHub
 is executed. Links are constructed for the explicit repository; existing

@@ -144,7 +144,7 @@ engineering branch created by Issue-based handoff does not make a run legacy.
 
 From the repository root, `npm run demo:brownfield -- help` opens the
 [presentation toolkit](../../tools/brownfield-demo/README.md) command reference.
-Demo-specific [scenario manifests](.github/brownfield-human-gated-delivery/scenarios/)
+Demo-specific [scenario manifests](.github/brownfield-human-gated-delivery/scenarios)
 describe the normal, Spec-change/Plan-invalidation, and recovery rehearsals.
 Prepare a pinned source commit into a separate, nonexistent destination; do not
 copy secrets, local SQLite data, or reset the source checkout. Remote creation
@@ -155,10 +155,10 @@ by verified digest, not a mutable tag or a previously running development
 server; clean up only toolkit-managed containers. The Environment's smoke check
 does not create a live hosted service. Read-only HTML replay is rendered from
 real run evidence with escaped content, not simulated approvals or test results.
-Follow the [presenter runbook](../../docs/brownfield-human-gated-delivery-walkthrough.md#presenter-runbook-and-readiness):
+Follow the [presenter runbook](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery-walkthrough.md#presenter-runbook-and-readiness):
 configured prerequisites are not proof of Demo Ready, and three completed
 isolated runs have not yet been established.
 
 See the
-[Brownfield Human-Gated Delivery demo](../../docs/brownfield-human-gated-delivery.md)
+[Brownfield Human-Gated Delivery demo](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md)
 for the complete Intent, Spec, Plan, TDD, implementation, and delivery loop.
