@@ -1,55 +1,54 @@
-# Engineering judgment demo toolkit
+<a id="engineering-judgment-demo-toolkit"></a>
+# 工程判断演示工具包
 
-Dependency-free Node.js 24 tooling for three connected demonstrations:
+[English](README.en.md)
 
-1. Change-impact analysis, explicit proposal review and compatible implementation.
-2. Evidence-based diagnosis of product, test-harness and environment failures.
-3. A fixed-case comparison of direct versus diagnosis-first Copilot proposals.
+这是无依赖的 Node.js 24 工具，用于三个相互关联的演示：
 
-Start with the [step-by-step guide](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.md).
-The independent synthetic app is under
-[`demos/engineering-lab`](../../demos/engineering-lab). It is not the accepted
-IT service desk and does not alter any earlier lifecycle evidence.
+1. 变更影响分析、显式提案评审与兼容实现。
+2. 基于证据诊断产品、测试工具和环境故障。
+3. 用固定案例比较 Copilot 的直接提案与先诊断提案策略。
+
+请从[分步指南](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.md)开始。
+独立合成应用位于 [`demos/engineering-lab`](../../demos/engineering-lab)。
+它不是已验收的 IT 服务台，也不会改变此前任何生命周期证据。
 
 ```sh
 npm run demo:engineering -- --help
 npm run test:engineering-demo
 ```
 
-Offline tests do not call Copilot. The real commands explicitly call the
-installed authenticated CLI and consume its usage allowance. They do not
-change the configured model; results record the observed CLI model and units.
+离线测试不调用 Copilot。真实命令会显式调用已安装、已认证的 CLI，并消耗其用量额度。
+它们不更改已配置的模型；结果记录实际观测到的 CLI 模型和用量单位。
 
-## Boundaries
+<a id="boundaries"></a>
+## 边界
 
-- Only committed synthetic fixture files and measured test output go into
-  prompts. The trusted acceptance oracle and fault labels are not sent.
-- Copilot has no available file, shell, network or GitHub tools. It returns
-  structured candidate text; an allowlisted adapter applies file changes.
-  The adapter explicitly excludes the verified CLI tool set and requires
-  structured telemetry reporting zero available tools and zero tool requests.
-  An empty `--available-tools=` argument is **not** sufficient for the tested
-  CLI. Missing or changed telemetry is an error, not presumed isolation.
-- Responses are extracted losslessly from structured CLI events. Plain terminal
-  rendering can wrap JSON strings; the adapter never guesses how to repair it.
-- Generated code is run only inside a non-root, read-only, network-disabled,
-  resource-limited Docker container with a disposable writable temporary area.
-  This is defense in depth for an authorized experiment, not a security
-  certification or protection against every container escape.
-- Each strategy/case receives fresh identical source and fault input, identical
-  verification and at most two 120-second calls. Direct uses one call;
-  diagnosis-first uses two. No automatic retry or human patch repairs a cell.
-  The execution deadline covers sandbox setup and candidate execution; bounded
-  cleanup is separately accounted for and must finish before success is reported.
-- Candidate failure and false completion claims remain results. A completed
-  benchmark is not necessarily a successful repair.
-- Missing usage is null, not zero. Premium-request and nano-AIU fields are
-  raw CLI-reported units, not invoiced dollars. No price table is guessed.
-- Explicit approval is bound to the proposal and fixture hash. It is a local
-  operator receipt, not GitHub authentication or independent Human acceptance.
-- No remote repository writes, commits, workflow dispatch, issue creation or
-  approval occur inside this toolkit.
+- 只有已提交的合成夹具文件和测得的测试输出会进入提示词。
+  不会发送可信验收判定器及故障标签。
+- Copilot 没有可用的文件、shell、网络或 GitHub 工具。
+  它返回结构化候选文本，由受允许列表约束的适配器应用文件变更。
+  适配器显式排除已验证的 CLI 工具集，并要求结构化遥测报告零可用工具、零工具请求。
+  对于已测试的 CLI，空的 `--available-tools=` 参数**并不足够**。
+  遥测缺失或改变属于错误，不能据此推定已经隔离。
+- 响应从结构化 CLI 事件中无损提取。
+  普通终端渲染可能折行显示 JSON 字符串；适配器绝不猜测如何修复。
+- 生成的代码仅在非 root、只读、禁用网络、限制资源的 Docker 容器中执行，
+  并使用可丢弃的可写临时区域。
+  这是针对已授权实验的纵深防御，不是安全认证，也不能防住所有容器逃逸。
+- 每个策略/案例都获得全新且相同的源码与故障输入、相同的验证，
+  以及最多两次、每次 120 秒的调用。直接执行使用一次调用；先诊断使用两次。
+  不会通过自动重试或人工补丁修复某个实验单元。
+  执行截止时间覆盖沙箱设置与候选执行；有界清理单独计时，
+  且必须在报告成功之前完成。
+- 候选失败与虚假完成声明都保留为结果。
+  基准完成不一定意味着修复成功。
+- 缺失用量是 null，不是零。
+  premium-request 与 nano-AIU 字段是 CLI 原样报告的单位，不是账单美元金额。
+  不会猜测价格表。
+- 显式批准与提案和夹具哈希绑定。
+  它是本地操作员回执，不代表 GitHub 认证或独立人工验收。
+- 工具包内不会发生远程仓库写入、提交、工作流触发、Issue 创建或批准。
 
-Private raw prompts, responses and executions stay under the new external
-experiment directory. Review before publishing. The public summary contains
-measured results and hashes, not source payloads or raw error output.
+私有原始提示词、响应和执行记录保存在新的外部实验目录中。
+发布前请审阅。公开摘要包含测量结果和哈希，不包含源码载荷或原始错误输出。

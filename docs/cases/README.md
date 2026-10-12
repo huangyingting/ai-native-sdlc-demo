@@ -1,135 +1,93 @@
-# Cases and delivery progress / 案例与交付进度
+# 案例与交付进度
 
-[Repository home / 仓库首页](../../README.md)
+[English](README.en.md) · [仓库首页](../../README.md)
 
-**Completed ownership walkthrough / 已完成的工单负责人案例：**
-[中文图文讲解](ownership.zh-CN.md) · [English walkthrough](ownership.en.md) ·
-[Screenshot provenance / 截图来源与校验记录](assets/ownership/manifest.json)
+**已完成的工单负责人案例：**[图文讲解](ownership.zh-CN.md) ·
+[截图来源与校验记录](assets/ownership/manifest.json)
 
-## Main delivery / 交付主线
-
-The service desk already supports creating, searching and updating tickets.
-The first request is to make ticket responsibility visible and support
-handoffs without disrupting those workflows. Product choices are resolved
-before implementation rather than inferred from a finished example.
+## 交付主线
 
 服务台已经支持创建、查询和更新工单。第一项需求是让负责人清晰可见，
 并支持工单交接，同时保持已有流程可用。具体产品规则先讨论决定，
 不从已经完成的案例中反推或照搬答案。
 
-| Step / 步骤 | What to inspect / 查看内容 | State / 状态 |
+| 步骤 | 查看内容 | 状态 |
 |---|---|---|
-| Preparation / 准备 | [Baseline and checks / 基线与检查](preparation.md) | Baseline and automated setup checks passed / 基线验证与自动化配置检查已通过 |
-| Intent / 需求 | [Ticket ownership and handoffs / 工单归属与交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) | Closed after acceptance / 验收后已关闭 |
-| Spec / 规格 | Product decisions and observable acceptance criteria / 产品决策与可验证的验收条件 | [Spec v5 approved / Spec v5 已批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6118027964) |
-| Plan / 计划 | [Six implementation tasks / 六项实施任务](https://github.com/huangyingting/ai-native-sdlc-demo/blob/6b7a4ddf96f43c6f1980c2e1ed4b568ec429d427/docs/delivery-runs/brownfield-human-gated-delivery/1/plan.md) | [Plan v1 approved / Plan v1 已批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6118095114) |
-| Tests / 测试 | [Tests PR / 测试 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) | [Approved after two review rounds / 经两轮修改后批准](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486995544); merged into the delivery branch / 已合并到交付分支 |
-| Implementation / 实现 | [Implementation PR / 实现 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | Approved and merged; 38 tests Green / 已批准并合并，38 项测试全部通过 |
-| Delivery / 交付 | [Exact image acceptance / 确切镜像的验收记录](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) | Published, run and accepted / 已发布、运行并验收 |
-| Operation / 运行 | Observations and follow-up requirements / 运行观察与后续需求 | Pending / 待开始 |
+| 准备 | [基线与检查](preparation.md) | 基线验证与自动化配置检查已通过 |
+| 需求 | [工单负责人及交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) | 验收后已关闭 |
+| 规格 | 产品决策与可验证的验收条件 | [Spec v5 已批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6118027964) |
+| 计划 | [六项实施任务](https://github.com/huangyingting/ai-native-sdlc-demo/blob/6b7a4ddf96f43c6f1980c2e1ed4b568ec429d427/docs/delivery-runs/brownfield-human-gated-delivery/1/plan.md) | [Plan v1 已批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6118095114) |
+| 测试 | [测试 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) | [经两轮修改后批准](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486995544)，已合并到交付分支 |
+| 实现 | [实现 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | 已批准并合并，38 项测试全部通过 |
+| 交付 | [指定镜像的验收记录](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) | 已发布、运行并验收 |
+| 运行 | 运行观察与后续需求 | 待开始 |
 
-### Product decisions / 产品决策
+### 产品决策
 
-| Decision / 决策 | Confirmed behavior / 已确认规则 | Resulting version / 对应版本 |
+| 决策 | 已确认规则 | 对应版本 |
 |---|---|---|
-| [Q-1: optional ownership / 负责人可为空](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117772868) | Existing and new tickets may remain unassigned; owners may be cleared. Do not infer historical owners. / 已有和新建工单均可未分配，允许清空负责人，不替历史工单推定负责人。 | [Spec v2](https://github.com/huangyingting/ai-native-sdlc-demo/blob/f63ee57010f1c83de3b0ae4d6d270c87c62441cf/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
-| [Q-2: local roster / 本地负责人名单](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117828551) | Select Alex Chen or Sam Rivera from a fixed list; no free-text owners, roster management or external identity integration. / 从固定名单中选择 Alex Chen 或 Sam Rivera，不支持自由输入，本次不增加名单管理或外部账号集成。 | [Spec v3](https://github.com/huangyingting/ai-native-sdlc-demo/blob/de5fdb100963c65f19a8f5295602ecf381bf1235/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
-| [Q-3: owner filtering / 按负责人筛选](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117947008) | Filter by either roster member or Unassigned, together with existing search and filters; All owners removes only the ownership restriction. / 可按两位负责人或未分配筛选，并与已有条件同时生效；选择全部负责人时，只取消负责人条件。 | [Spec v4](https://github.com/huangyingting/ai-native-sdlc-demo/blob/dd32ba04871f10017963917471cdef5ee6164f52/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
-| [Q-4: detail-only handoffs / 仅在详情页交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117980837) | Change ownership on details in every existing status; creation stays unchanged, and status and ownership saves remain independent. / 各种状态下均可在详情页分配、转交或清空负责人；建单流程不变，状态与负责人独立保存。 | [Spec v5](https://github.com/huangyingting/ai-native-sdlc-demo/blob/9e183465d985bfa081f239a68eda400340320195/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
-
-All four decisions are recorded. Spec v5, Plan v1, Tests and Implementation
-were approved separately. The published image was then verified and explicitly
-accepted; the Intent closed at `2026-10-12T07:22:08Z`.
+| [Q-1：负责人可为空](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117772868) | 已有和新建工单均可未分配，允许清空负责人，不替历史工单推定负责人。 | [Spec v2](https://github.com/huangyingting/ai-native-sdlc-demo/blob/f63ee57010f1c83de3b0ae4d6d270c87c62441cf/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
+| [Q-2：本地负责人名单](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117828551) | 从固定名单中选择 Alex Chen 或 Sam Rivera，不支持自由输入，本次不增加名单管理或外部账号集成。 | [Spec v3](https://github.com/huangyingting/ai-native-sdlc-demo/blob/de5fdb100963c65f19a8f5295602ecf381bf1235/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
+| [Q-3：按负责人筛选](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117947008) | 可按两位负责人或未分配筛选，并与已有条件同时生效；选择全部负责人时，只取消负责人条件。 | [Spec v4](https://github.com/huangyingting/ai-native-sdlc-demo/blob/dd32ba04871f10017963917471cdef5ee6164f52/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
+| [Q-4：仅在详情页交接](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6117980837) | 各种状态下均可在详情页分配、转交或清空负责人；建单流程不变，状态与负责人独立保存。 | [Spec v5](https://github.com/huangyingting/ai-native-sdlc-demo/blob/9e183465d985bfa081f239a68eda400340320195/docs/delivery-runs/brownfield-human-gated-delivery/1/spec.md) |
 
 四项产品决定均已记录。Spec v5、Plan v1、测试和实现分别获得批准，不相互替代。
-随后对已发布的确切镜像进行了验证，并单独确认验收。
-需求 Issue 于北京时间 2026 年 10 月 12 日 15:22:08 关闭。
+随后对已发布的指定镜像进行了验证，并单独确认验收。
+需求 Issue 于北京时间 2026 年 10 月 12 日 15:22:08（`2026-10-12T07:22:08Z`）关闭。
 
-### Tests: CI success is not review approval / 测试：CI 通过不等于审查通过
+### 测试：CI 通过不等于审查通过
 
-1. The [first CI attempt](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38207729425/attempts/2)
-   failed because the expected-failure names did not match Vitest's JSON report.
-   The [first review](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486811408)
-   also requested genuine legacy database fixtures and stronger acceptance coverage.
-2. The [revised controlled Red check](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38208788465/attempts/2)
-   passed, but [another review](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486915007)
-   found contradictory filter and timestamp assertions, a detached-DOM lookup, and
-   an ineffective no-op timestamp check. Earlier expected failures masked these
-   later assertions. They were corrected before the tests were approved.
-3. [Final Tests CI](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38210170335/attempts/2)
-   passed: 26 baseline tests; then 29 passing tests and exactly nine expected
-   assertion failures on the Tests head, with no skips or infrastructure errors.
-   Lint, TypeScript checking and build also passed.
-4. The approved head, `104be0889c54652bec8f9bc317ffa5f0cf33166f`, was merged as
-   `65939138ada498dca30b572d3baec25cddb5178d`.
-   The [handoff](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38210668893)
-   then assigned implementation. The approved tests and documents are frozen:
-   implementation must make them Green without weakening them.
+1. [首次 CI](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38207729425/attempts/2)
+   因预期失败名称与 Vitest JSON 报告不一致而失败。
+   [第一轮审查](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486811408)
+   还要求使用真实的历史数据库样本，并加强验收场景覆盖。
+2. [修订后的受控 Red](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38208788465/attempts/2)
+   虽然通过，[第二轮审查](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486915007)
+   仍发现筛选结果和时间戳断言矛盾、从错误的 DOM 范围查找元素，以及没有推进时间的无效重复保存检查。
+   这些断言被更早的预期失败遮住，尚未执行到；问题均在测试获批前修正。
+3. [最终测试 CI](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38210170335/attempts/2)
+   通过：26 项基线测试通过；测试提交中 29 项通过、9 项精确匹配的预期断言失败，
+   没有跳过或基础设施错误。lint、TypeScript 检查和构建也通过。
+4. 获批提交 `104be0889c54652bec8f9bc317ffa5f0cf33166f`
+   合并为 `65939138ada498dca30b572d3baec25cddb5178d`，
+   随后的[交接工作流](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38210668893)
+   才分配实现任务。获批测试和文档冻结，实现必须让测试通过，不能通过削弱断言获得绿灯。
 
-首次 CI 发现失败清单与实际报告不一致；第一轮审查还要求补齐真实的数据库迁移、
-筛选和交接测试。修订后的 CI 虽然通过，第二轮审查仍发现了测试本身的逻辑错误：
-筛选结果不符合状态条件、转交后仍要求保留历史更新时间，以及页面元素查找范围错误。
-这些断言位于预期失败之后，运行时尚未执行到，因此不能只看 CI 是否通过。
+九项失败是功能尚未实现造成的预期结果，不是需要掩盖的错误。
+测试获批不代表功能已交付，更不代表用户已经验收。
 
-问题修正后，再次核对具体提交和实际报告，才批准并合并测试。此时的九项失败是
-功能尚未实现造成的预期结果，不是需要掩盖的错误。接下来的实现必须让这些测试通过，
-而不是修改测试来适应实现。测试获批不代表功能已交付，更不代表用户已经验收。
+### 交付与验收
 
-### Delivery and acceptance / 交付与验收
+[实现批准](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9#pullrequestreview-5487362172)
+对应提交 `4ee8225`，按分支保护规则合并为 `1a1e14d`。
+发布时第 2 次执行因镜像包写入权限不足而失败；操作者修正包的 Actions 访问权限后，
+[第 3 次执行通过](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38215333786/attempts/3)。
+最终验证拉取并运行已发布的指定镜像，不以本地源码预览代替，之后才单独验收。
+完整经过和功能验收边界见[图文案例](ownership.zh-CN.md)。
 
-The [implementation approval](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9#pullrequestreview-5487362172)
-covered head `4ee8225`; its protected squash merge is `1a1e14d`.
-Publication attempt 2 failed on package-write access. The operator corrected
-the package's Actions access, and [attempt 3 passed](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38215333786/attempts/3).
-The exact published digest was run and checked before separate acceptance.
-
-实现通过审查后正常合并。发布时曾因镜像包写入权限不足而失败；操作者修复权限后，
-第三次执行成功。最终验证使用从仓库拉取的确切镜像，而不是以本地源码运行结果代替。
-完整经过、页面截图和功能验收边界见[中文案例](ownership.zh-CN.md)。
-
-Accepted digest / 已验收摘要：
+已验收镜像摘要：
 `sha256:90836abf909410db91b0d3c791812683e5424c5cab7d7a84df1af6772a66ce76`。
-Functional acceptance does not resolve the [baseline dependency advisories](preparation.md).
-本次功能验收不等于依赖风险已解决，也不代表已获准用于生产。
+本次功能验收不代表[基线依赖风险](preparation.md)已经解决，也不代表已获准用于生产。
 
-## Focused cases / 专题案例
+## 专题案例
 
-After the required prerequisites are available:
+具备所需前置条件后，将分别开展：
 
-- **Readiness and reliability:** observe dependency failures, review a readiness
-  requirement, qualify tests, verify traffic admission and recovery, and follow
-  up on prevention.
-- **Change impact:** review a proxy-owner proposal before implementing it in
-  the isolated engineering application.
-- **Diagnosis and strategy evaluation:** use fixed faults, independent checks
-  and measured usage to compare repairs and evidence quality.
-- **Agent execution traces:** inspect actual model/tool calls and explain their
-  relationship to the verified result.
+- **就绪检查与可靠性：** 观察依赖故障，审查就绪检查需求，检验测试有效性，
+  验证流量准入和恢复，并跟进预防措施。
+- **变更影响：** 先审查代理负责人方案，再在独立工程实验应用中实现。
+- **故障诊断与策略评估：** 使用固定故障、独立检查和实测用量，比较修复效果与证据质量。
+- **Agent 执行追踪：** 查阅实际模型和工具调用，解释它们与验证结果的关系。
 
-具备前置条件后，将依次补充就绪检查、发布可靠性、代理负责人变更、
-故障诊断与策略评估，并用调用追踪解释 Agent 的执行过程。
 各专题独立记录输入、修改范围、实际结果和未验证项。
 
-## Screenshots and records / 截图与记录
+## 截图与记录
 
-Capture the page when a meaningful step is reached: the submitted requirement,
-published Spec/Plan, a review decision, Red/Green results, publication, application
-operation or a measured experiment. Keep the source URL, capture time, relevant
-commit or workflow run/attempt, and file checksum with each image.
-
-Capture every decision and every resulting document version, not just the final
-version. Include the command receipt when available, and visually check that the
-intended content is visible. Never capture credential-entry pages.
-
-在需求提交、文档发布、审查决定、测试、发布、应用操作和实验完成等每个关键节点截图。
+在需求提交、文档发布、审查决定、测试、发布、应用操作和实验完成等关键节点截图。
 每项决策和由此产生的每版文档都单独保存，不只保留最终版本。
 决策截图尽量包含命令处理回执，并逐张确认内容清楚可见。凭据填写页面不截图。
 每张图记录页面地址、拍摄时间、对应提交或工作流编号与执行次数，以及文件校验值。
 测试和审批结论同时保留原始记录，截图用于讲解，不替代这些记录。
-
-Public evidence is reviewed before publication. Credentials, private prompts,
-unreviewed CLI events, local databases and sensitive logs stay outside Git.
-Failed attempts remain part of the case; a later success does not overwrite them.
 
 资料公开前先检查内容。凭据、私有提示词、未经审查的原始事件、本地数据库和敏感日志
 不提交到 Git。失败尝试单独保留，后续成功不覆盖此前结果。
