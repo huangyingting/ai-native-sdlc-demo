@@ -142,7 +142,14 @@
     },
     "plan": null
   },
-  "pending": null,
+  "pending": {
+    "stage": "plan",
+    "version": 1,
+    "feedback": "Initial draft. Use the Human Intent and discussion; expose unresolved decisions.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
+    "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
+  },
   "lastCommentId": 6118027964,
   "receipts": [
     {
