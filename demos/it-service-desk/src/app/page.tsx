@@ -9,8 +9,11 @@ import { CustomSelect } from "@/app/custom-select";
 import { getTicketStore } from "@/lib/ticket-store";
 import {
   formatTicketStatus,
+  ticketOwnerFilterOptions,
+  ticketOwners,
   ticketPriorities,
   ticketStatuses,
+  type TicketOwner,
   type TicketPriority,
   type TicketStatus,
 } from "@/lib/ticket";
@@ -39,15 +42,20 @@ export default async function Dashboard({
   const params = await searchParams;
   const requestedStatus = firstQueryValue(params.status);
   const requestedPriority = firstQueryValue(params.priority);
+  const requestedOwner = firstQueryValue(params.owner);
   const status = ticketStatuses.includes(requestedStatus as TicketStatus)
     ? requestedStatus as TicketStatus
     : undefined;
   const priority = ticketPriorities.includes(requestedPriority as TicketPriority)
     ? requestedPriority as TicketPriority
     : undefined;
+  const owner = requestedOwner === "unassigned" ||
+    ticketOwners.includes(requestedOwner as TicketOwner)
+    ? requestedOwner as TicketOwner | "unassigned"
+    : undefined;
   const query = firstQueryValue(params.q)?.trim() || undefined;
   const store = getTicketStore();
-  const tickets = store.list({ status, priority, query });
+  const tickets = store.list({ owner, status, priority, query });
   const summary = store.summary();
 
   return (
@@ -100,6 +108,16 @@ export default async function Dashboard({
               </div>
             </div>
             <div className="field">
+              <label htmlFor="owner-filter">Owner</label>
+              <CustomSelect
+                defaultValue={owner ?? ""}
+                id="owner-filter"
+                key={`owner-${owner ?? "all"}`}
+                name="owner"
+                options={ticketOwnerFilterOptions}
+              />
+            </div>
+            <div className="field">
               <label htmlFor="status">Status</label>
               <CustomSelect
                 defaultValue={status ?? ""}
@@ -139,13 +157,19 @@ export default async function Dashboard({
 
           <div className="ticket-list">
             <div className="ticket-list-header">
-              <span>Request</span><span>Status</span><span>Priority</span><span>Updated</span><span />
+              <span>Request</span><span>Owner</span><span>Status</span><span>Priority</span><span>Updated</span><span />
             </div>
             {tickets.length ? tickets.map((ticket) => (
               <Link className="ticket-row" href={`/tickets/${ticket.id}`} key={ticket.id}>
                 <span className="ticket-title">
                   <strong>{ticket.title}</strong>
                   <small>{ticket.reference} · {ticket.requesterName} · {ticket.category}</small>
+                </span>
+                <span className="ticket-owner">
+                  <small>Owner</small>
+                  <strong>{ticket.owner
+                    ? ticketOwnerFilterOptions.find((option) => option.value === ticket.owner)?.label
+                    : "Unassigned"}</strong>
                 </span>
                 <span className={`badge badge-status-${ticket.status}`}>{formatTicketStatus(ticket.status)}</span>
                 <span className={`badge badge-priority-${ticket.priority}`}>{ticket.priority}</span>

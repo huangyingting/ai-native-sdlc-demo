@@ -4,6 +4,7 @@ import { DatabaseSync } from "node:sqlite";
 import {
   type CreateTicketInput,
   type Ticket,
+  type TicketOwner,
   type TicketPriority,
   type TicketStatus,
   type TicketSummary,
@@ -17,6 +18,7 @@ type TicketRow = {
   category: Ticket["category"];
   priority: TicketPriority;
   status: TicketStatus;
+  owner: TicketOwner | null;
   requester_name: string;
   requester_email: string;
   created_at: string;
@@ -39,6 +41,7 @@ function mapTicketRow(row: TicketRow): Ticket {
     category: row.category,
     priority: row.priority,
     status: row.status,
+    owner: row.owner,
     requesterName: row.requester_name,
     requesterEmail: row.requester_email,
     createdAt: row.created_at,
@@ -52,6 +55,9 @@ export class TicketStore {
   constructor(filename: string, seed = true) {
     if (filename !== ":memory:") mkdirSync(dirname(filename), { recursive: true });
     this.database = new DatabaseSync(filename);
+    const hadTicketsTable = Boolean(this.database.prepare(
+      "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = 'tickets'",
+    ).get());
     this.database.exec(`
       PRAGMA journal_mode = WAL;
       PRAGMA foreign_keys = ON;
@@ -63,13 +69,24 @@ export class TicketStore {
         category TEXT NOT NULL,
         priority TEXT NOT NULL CHECK (priority IN ('low', 'medium', 'high', 'critical')),
         status TEXT NOT NULL CHECK (status IN ('open', 'in_progress', 'resolved', 'closed')),
+        owner TEXT CHECK (owner IS NULL OR owner IN ('alex-chen', 'sam-rivera')),
         requester_name TEXT NOT NULL,
         requester_email TEXT NOT NULL,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       );
     `);
-    if (seed) this.seed();
+    if (hadTicketsTable) {
+      const columns = this.database.prepare("PRAGMA table_info(tickets)").all() as { name: string }[];
+      if (!columns.some((column) => column.name === "owner")) {
+        this.database.exec(`
+          ALTER TABLE tickets ADD COLUMN owner TEXT
+          CHECK (owner IS NULL OR owner IN ('alex-chen', 'sam-rivera'))
+        `);
+      }
+    } else if (seed) {
+      this.seed();
+    }
   }
 
   private seed() {
@@ -140,9 +157,20 @@ export class TicketStore {
     }
   }
 
-  list(filters: { status?: TicketStatus; priority?: TicketPriority; query?: string } = {}) {
+  list(filters: {
+    owner?: TicketOwner | "unassigned";
+    status?: TicketStatus;
+    priority?: TicketPriority;
+    query?: string;
+  } = {}) {
     const clauses: string[] = [];
     const values: string[] = [];
+    if (filters.owner === "unassigned") {
+      clauses.push("owner IS NULL");
+    } else if (filters.owner) {
+      clauses.push("owner = ?");
+      values.push(filters.owner);
+    }
     if (filters.status) {
       clauses.push("status = ?");
       values.push(filters.status);
@@ -220,6 +248,18 @@ export class TicketStore {
     const result = this.database.prepare(`
       UPDATE tickets SET status = ?, updated_at = ? WHERE id = ?
     `).run(status, new Date().toISOString(), id);
+    return result.changes > 0;
+  }
+
+  updateOwner(id: number, owner: TicketOwner | null) {
+    const current = this.database.prepare("SELECT owner FROM tickets WHERE id = ?").get(id) as
+      { owner: TicketOwner | null } | undefined;
+    if (!current) return false;
+    if (current.owner === owner) return true;
+
+    const result = this.database.prepare(`
+      UPDATE tickets SET owner = ?, updated_at = ? WHERE id = ?
+    `).run(owner, new Date().toISOString(), id);
     return result.changes > 0;
   }
 

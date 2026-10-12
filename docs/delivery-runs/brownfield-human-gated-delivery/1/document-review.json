@@ -1,0 +1,195 @@
+{
+  "version": 2,
+  "reviewProfile": "decisions-v1",
+  "discovery": {
+    "questions": [
+      {
+        "id": "Q-1",
+        "question": "May tickets remain unassigned, including new tickets and tickets that predate ownership support?",
+        "options": "Optional ownership permits unassigned tickets and clearing an owner. Mandatory ownership for new tickets with a legacy-ticket exception preserves old records but changes intake and prevents later clearing. Mandatory ownership for every ticket requires a Human-specified transition policy and must not fabricate owners or lose existing requests."
+      },
+      {
+        "id": "Q-2",
+        "question": "How should owners be identified and validated?",
+        "options": "A predefined local roster provides consistent identities and exact matching; the Human must supply its members and distinguish duplicate display names. Free text avoids roster setup; the Human must specify acceptable names, length limits, and whitespace/case equivalence so validation and any filtering are unambiguous. Roster administration and external identity integration are not proposed."
+      },
+      {
+        "id": "Q-3",
+        "question": "Is queue visibility sufficient, or must users filter tickets by ownership?",
+        "options": "Visibility only is smaller but requires scanning to find an agent's work. A dedicated owner filter supports All owners, a specific owner, and Unassigned where applicable, combined with existing filters; it adds a control and requires defined owner matching under Q-2."
+      },
+      {
+        "id": "Q-4",
+        "question": "Where should users assign or change ownership?",
+        "options": "Ticket details only is the smaller change and keeps intake unchanged when ownership is optional. Creation plus ticket details permits assignment during intake and is needed if new tickets require an owner. The proposal allows changes in every existing status and keeps status saves independent of ownership; any restriction needs an explicit Human decision."
+      }
+    ],
+    "decisions": [
+      {
+        "questionId": "Q-1",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Ownership is optional for every ticket. Existing and newly created tickets may remain unassigned. Agents may assign, reassign, or clear the owner. Display tickets without an owner as \"Unassigned\". Do not infer or backfill owners for historical tickets.",
+          "Rationale": "Preserve the current intake workflow and existing ticket data while making responsibility explicit. Unassigned work must remain visible without inventing a responsible person."
+        },
+        "version": 1,
+        "hash": "112cad7d89b166aa6d20edcbdc026f0c8b214d51aa108a54cc982c405c6706d1",
+        "contextHash": "617bc4f07df8ba00503ffefdc8983958ca1ef004dd815921110bb647a877d9ec",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117772868,
+        "commentBody": "/sdlc decide spec v1 Q-1\nOutcome: Ownership is optional for every ticket. Existing and newly created tickets may remain unassigned. Agents may assign, reassign, or clear the owner. Display tickets without an owner as \"Unassigned\". Do not infer or backfill owners for historical tickets.\nRationale: Preserve the current intake workflow and existing ticket data while making responsibility explicit. Unassigned work must remain visible without inventing a responsible person.\n",
+        "decidedAt": "2026-10-12T04:30:12Z"
+      },
+      {
+        "questionId": "Q-2",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Use a predefined local roster containing exactly Alex Chen and Sam Rivera. Select owners from this list rather than accepting free-text names. Only roster members are valid non-empty owners; an unassigned ticket remains valid under Q-1. Roster administration and external identity integration are out of scope.",
+          "Rationale": "A small fixed roster gives each owner a consistent identity, prevents spelling variations during handoffs, and keeps this change focused without introducing account integration or a roster management feature."
+        },
+        "version": 2,
+        "hash": "e0f8846d0b0c43d222ce990990c6ee0a7bd99c2c14e195731e770ceade60211d",
+        "contextHash": "29b1f5149aaa1105f545be5719fb526d9689b195a815a7a83fa72770a080d91f",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117828551,
+        "commentBody": "/sdlc decide spec v2 Q-2\nOutcome: Use a predefined local roster containing exactly Alex Chen and Sam Rivera. Select owners from this list rather than accepting free-text names. Only roster members are valid non-empty owners; an unassigned ticket remains valid under Q-1. Roster administration and external identity integration are out of scope.\nRationale: A small fixed roster gives each owner a consistent identity, prevents spelling variations during handoffs, and keeps this change focused without introducing account integration or a roster management feature.\n",
+        "decidedAt": "2026-10-12T04:36:10Z"
+      },
+      {
+        "questionId": "Q-3",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Add a ticket-list owner filter with All owners, Alex Chen, Sam Rivera, and Unassigned options. All owners does not restrict ownership. A selected owner or Unassigned is applied together with the existing search and filter conditions, so tickets must satisfy all active conditions. Preserve the existing search and filtering behavior when All owners is selected.",
+          "Rationale": "Agents and team leads need to find an individual agent's work and identify tickets without an owner without manually scanning the entire queue. Combining ownership with the existing filters preserves the current workflow."
+        },
+        "version": 3,
+        "hash": "1eb0a07fe25f2b4c7e3294947a41b9153747590ab67db5ba3970b85d3e7008b5",
+        "contextHash": "b0d4da17385e43a2c0ad0016e72474aad1c45d9ef29e72c39abe18c6cf8ce885",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117947008,
+        "commentBody": "/sdlc decide spec v3 Q-3\nOutcome: Add a ticket-list owner filter with All owners, Alex Chen, Sam Rivera, and Unassigned options. All owners does not restrict ownership. A selected owner or Unassigned is applied together with the existing search and filter conditions, so tickets must satisfy all active conditions. Preserve the existing search and filtering behavior when All owners is selected.\nRationale: Agents and team leads need to find an individual agent's work and identify tickets without an owner without manually scanning the entire queue. Combining ownership with the existing filters preserves the current workflow.\n",
+        "decidedAt": "2026-10-12T04:48:56Z"
+      },
+      {
+        "questionId": "Q-4",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Support assigning, reassigning, and clearing the owner only on the ticket details page. Keep ticket creation unchanged, without an owner control; newly created tickets start unassigned. Permit ownership changes in every existing ticket status. Changing ownership must not change the ticket status, and saving a status change must preserve the current owner.",
+          "Rationale": "Detail-only ownership controls provide a complete handoff workflow with a small change while preserving the existing intake process. Keeping status and ownership updates independent avoids unintended changes during routine support work."
+        },
+        "version": 4,
+        "hash": "4f702842a61fa30f041ab0584f434a032e140b6707553b22494ffb9459f55d2d",
+        "contextHash": "927324e583b2b77ddf8308ec216bc05a3e06cac087f7b7d5fb39ad7e307ed91c",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117980837,
+        "commentBody": "/sdlc decide spec v4 Q-4\nOutcome: Support assigning, reassigning, and clearing the owner only on the ticket details page. Keep ticket creation unchanged, without an owner control; newly created tickets start unassigned. Permit ownership changes in every existing ticket status. Changing ownership must not change the ticket status, and saving a status change must preserve the current owner.\nRationale: Detail-only ownership controls provide a complete handoff workflow with a small change while preserving the existing intake process. Keeping status and ownership updates independent avoids unintended changes during routine support work.\n",
+        "decidedAt": "2026-10-12T04:52:40Z"
+      }
+    ]
+  },
+  "intent": 1,
+  "baseline": "3709a7f36f1e0d4e34090f803fbe5a3ada30db32",
+  "intentSnapshot": {
+    "title": "Make ticket ownership visible and support handoffs",
+    "body": "### Problem or opportunity\n\nThe existing IT service desk in demos/it-service-desk lets support agents create, search, and update tickets, but tickets have no assignee.\nAgents and team leads cannot see who owns a ticket or find the tickets assigned to a particular agent, making handoffs unclear.\n\n\n### Proposed outcome\n\nSupport agents and team leads can understand who is responsible for a ticket, identify work that has no owner, and coordinate handoffs without losing track of existing requests.\n\n\n### Affected users and systems\n\nService-desk agents and team leads using the existing IT service desk in demos/it-service-desk.\nTicket requesters benefit from clearer responsibility for their incidents and service requests.\n\n\n### Constraints and non-goals\n\n- Preserve existing ticket data and service-desk workflows.\n- Keep this a small improvement to the existing application, not a replacement.\n- External identity integrations, authentication changes, notifications, and SLA policies are out of scope for this change.\n\n\n### Open questions\n\n- Can a ticket remain unassigned?\n- Should owners come from a predefined local list or be entered freely?\n- Is visibility of ownership enough, or should agents also be able to filter tickets by owner?\n"
+  },
+  "counters": {
+    "spec": 5,
+    "plan": 1
+  },
+  "documents": {
+    "spec": {
+      "version": 5,
+      "hash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
+      "specHash": null,
+      "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+      "approvals": [
+        {
+          "user": {
+            "id": 24954047,
+            "login": "huangyingting",
+            "type": "User"
+          },
+          "commentId": 6118027964,
+          "commentBody": "/sdlc approve spec v5\n",
+          "approvedAt": "2026-10-12T04:57:47Z",
+          "hash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
+          "version": 5,
+          "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
+        }
+      ],
+      "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
+    },
+    "plan": {
+      "version": 1,
+      "hash": "37130cb9bc1d899a7f964cc67062a95d1f7a24b7981591b5ba1823785eaa0f39",
+      "specHash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
+      "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+      "approvals": [
+        {
+          "user": {
+            "id": 24954047,
+            "login": "huangyingting",
+            "type": "User"
+          },
+          "commentId": 6118095114,
+          "commentBody": "/sdlc approve plan v1\n",
+          "approvedAt": "2026-10-12T05:04:41Z",
+          "hash": "37130cb9bc1d899a7f964cc67062a95d1f7a24b7981591b5ba1823785eaa0f39",
+          "version": 1,
+          "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
+        }
+      ],
+      "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
+    }
+  },
+  "pending": null,
+  "lastCommentId": 6118095114,
+  "receipts": [
+    {
+      "id": 6117772868,
+      "message": "Command #6117772868 recorded: decide spec v1."
+    },
+    {
+      "id": 6117828551,
+      "message": "Command #6117828551 recorded: decide spec v2."
+    },
+    {
+      "id": 6117947008,
+      "message": "Command #6117947008 recorded: decide spec v3."
+    },
+    {
+      "id": 6117980837,
+      "message": "Command #6117980837 recorded: decide spec v4."
+    },
+    {
+      "id": 6118027964,
+      "message": "Command #6118027964 recorded: approve spec v5."
+    },
+    {
+      "id": 6118095114,
+      "message": "Command #6118095114 recorded: approve plan v1."
+    }
+  ],
+  "sealed": true
+}

@@ -10,11 +10,13 @@ export type SelectOption = {
 
 export function CustomSelect({
   defaultValue,
+  errorId,
   id,
   name,
   options,
 }: {
   defaultValue: string;
+  errorId?: string;
   id: string;
   name: string;
   options: SelectOption[];
@@ -135,8 +137,10 @@ export function CustomSelect({
         aria-activedescendant={isOpen ? `${id}-option-${activeIndex}` : undefined}
         aria-controls={isOpen ? `${id}-options` : undefined}
         aria-describedby={`${id}-value`}
+        aria-errormessage={errorId}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
+        aria-invalid={errorId ? true : undefined}
         className="custom-select-trigger"
         id={id}
         onClick={() => {

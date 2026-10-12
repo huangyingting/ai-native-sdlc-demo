@@ -459,6 +459,7 @@ html[data-theme="dark"] .theme-icon-dark {
 
 .filters {
   display: flex;
+  flex-wrap: wrap;
   align-items: end;
   gap: 12px;
   border-top: 1px solid var(--cp-border);
@@ -642,10 +643,10 @@ textarea {
 .ticket-list-header,
 .ticket-row {
   display: grid;
-  grid-template-columns: minmax(300px, 1fr) 132px 116px 138px 24px;
+  grid-template-columns: minmax(300px, 1fr) 132px 132px 116px 138px 24px;
   align-items: center;
   gap: 16px;
-  min-width: 820px;
+  min-width: 980px;
   padding: 15px 24px;
 }
 
@@ -697,9 +698,20 @@ textarea {
 }
 
 .ticket-title small,
+.ticket-owner small,
 .muted {
   color: var(--cp-text-muted);
   font-size: 12px;
+}
+
+.ticket-owner {
+  display: grid;
+  gap: 2px;
+}
+
+.ticket-owner strong {
+  font-size: 0.8125rem;
+  font-weight: 620;
 }
 
 .muted {
@@ -950,6 +962,10 @@ code {
   }
 
   .ticket-title {
+    grid-column: 1 / -1;
+  }
+
+  .ticket-owner {
     grid-column: 1 / -1;
   }
 
