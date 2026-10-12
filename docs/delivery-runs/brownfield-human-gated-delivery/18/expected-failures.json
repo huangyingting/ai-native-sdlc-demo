@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "intent": 18,
+  "tests": [
+    {
+      "name": "TicketStore readiness reads the actual ticket schema on every invocation",
+      "acceptance": ["AC-2", "AC-4"]
+    },
+    {
+      "name": "TicketStore readiness accepts an initialized empty table without changing records",
+      "acceptance": ["AC-2", "AC-5"]
+    },
+    {
+      "name": "Readiness route GET returns the exact current ready contract",
+      "acceptance": ["AC-2", "AC-9"]
+    },
+    {
+      "name": "Readiness route initialization failures return unavailable and one sanitized event per request",
+      "acceptance": ["AC-3", "AC-9"]
+    },
+    {
+      "name": "Readiness route warm shared-store queries transition from ready to unavailable to ready",
+      "acceptance": ["AC-2", "AC-3", "AC-4"]
+    },
+    {
+      "name": "Readiness route HEAD checks the current dependency without a response body",
+      "acceptance": ["AC-2", "AC-3", "AC-6"]
+    },
+    {
+      "name": "Readiness route GET ignores caller database and SQL inputs",
+      "acceptance": ["AC-6"]
+    },
+    {
+      "name": "Readiness route unsupported methods reject requests without initializing the store",
+      "acceptance": ["AC-6"]
+    }
+  ]
+}
