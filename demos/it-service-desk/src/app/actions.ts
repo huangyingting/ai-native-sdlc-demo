@@ -3,7 +3,11 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getTicketStore } from "@/lib/ticket-store";
-import { createTicketSchema, updateTicketStatusSchema } from "@/lib/ticket";
+import {
+  createTicketSchema,
+  updateTicketOwnerSchema,
+  updateTicketStatusSchema,
+} from "@/lib/ticket";
 
 export type TicketFormState = {
   errors?: Record<string, string[] | undefined>;
@@ -44,6 +48,46 @@ export async function updateTicketStatusAction(formData: FormData) {
 
   const updated = getTicketStore().updateStatus(result.data.id, result.data.status);
   if (!updated) throw new Error("Ticket not found.");
+
+  revalidatePath("/");
+  revalidatePath(`/tickets/${result.data.id}`);
+  redirect(`/tickets/${result.data.id}`);
+}
+
+export async function updateTicketOwnerAction(
+  _previousState: TicketFormState,
+  formData: FormData,
+): Promise<TicketFormState> {
+  const result = updateTicketOwnerSchema.safeParse({
+    id: formData.get("id"),
+    owner: formData.get("owner"),
+  });
+  if (!result.success) {
+    return {
+      errors: result.error.flatten().fieldErrors,
+      message: "Choose an owner from the list or leave the ticket unassigned.",
+    };
+  }
+
+  let updated: boolean;
+  try {
+    updated = getTicketStore().updateOwner(
+      result.data.id,
+      result.data.owner || null,
+    );
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      typeof error.code === "string" &&
+      error.code.startsWith("ERR_SQLITE_")
+    ) {
+      return { message: "Unable to save ownership. Please try again." };
+    }
+    throw error;
+  }
+  if (!updated) return { message: "Ticket not found." };
 
   revalidatePath("/");
   revalidatePath(`/tickets/${result.data.id}`);

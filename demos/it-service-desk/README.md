@@ -8,13 +8,18 @@ Issue-to-PR workflow with GitHub Copilot.
 - View and filter IT incidents and service requests.
 - Create a ticket with server-side validation.
 - View ticket details.
+- Assign, reassign, or clear an optional owner on ticket details, using the
+  Alex Chen and Sam Rivera roster.
+- Filter the queue by owner or unassigned work alongside search, status, and
+  priority.
 - Move a ticket through open, in-progress, resolved, and closed states.
 - Persist data in a local SQLite database.
 
 Search matches titles, requester names, and ticket references such as `INC-0001`
 (case-insensitive). Numeric IDs and shortened references such as `1`, `0001`,
 and `inc-1` also work; surrounding whitespace is ignored. Status and priority
-filters still apply to search results.
+and owner filters still apply to search results. New tickets start unassigned;
+existing databases are upgraded without changing ticket data or timestamps.
 
 The custom dropdowns keep keyboard focus on a labeled combobox. Open with
 Enter, Space, or an arrow key; navigate with arrow keys, Home/End, or
@@ -23,9 +28,9 @@ Tab/Shift+Tab commits and moves focus normally. Clicking outside or moving
 focus away also commits and closes the popup. Menus remain visible above
 short or empty ticket queues.
 
-The application intentionally stops at a practical first release. Assignment,
-SLA policies, comments, audit history, access control, notifications, and
-reporting are suitable follow-up GitHub Issues for live Copilot demos.
+The application intentionally stops at a practical first release. Assignment
+history, SLA policies, comments, access control, notifications, and reporting
+are suitable follow-up GitHub Issues for live Copilot demos.
 
 ## Run locally
 

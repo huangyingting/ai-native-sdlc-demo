@@ -3,8 +3,17 @@ import { notFound } from "next/navigation";
 import { updateTicketStatusAction } from "@/app/actions";
 import { ArrowLeftIcon, CheckIcon } from "@/app/icons";
 import { CustomSelect } from "@/app/custom-select";
+import { TicketOwnerForm } from "@/app/ticket-owner-form";
 import { getTicketStore } from "@/lib/ticket-store";
-import { formatTicketStatus, ticketStatuses } from "@/lib/ticket";
+import {
+  formatTicketStatus,
+  ticketOwnerOptions,
+  ticketStatuses,
+} from "@/lib/ticket";
+
+function formatOwner(owner: string | null) {
+  return ticketOwnerOptions.find((option) => option.value === owner)?.label ?? "Unassigned";
+}
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -54,6 +63,7 @@ export default async function TicketPage({
             <h2>Ticket details</h2>
             <dl className="detail-list">
               <div><dt>Requester</dt><dd>{ticket.requesterName}</dd></div>
+              <div><dt>Owner</dt><dd>{formatOwner(ticket.owner)}</dd></div>
               <div><dt>Email</dt><dd>{ticket.requesterEmail}</dd></div>
               <div><dt>Category</dt><dd>{ticket.category}</dd></div>
               <div><dt>Priority</dt><dd>{ticket.priority}</dd></div>
@@ -76,6 +86,7 @@ export default async function TicketPage({
                 Save status
               </button>
             </form>
+            <TicketOwnerForm id={ticket.id} owner={ticket.owner} />
           </aside>
         </div>
       </div>
