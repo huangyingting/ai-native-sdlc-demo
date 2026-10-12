@@ -2,94 +2,102 @@
 
 ## Intent
 
-Human Intent #18 seeks to distinguish process liveness from database readiness in the IT service desk.
+Human Intent #18 seeks to distinguish process liveness from database-read readiness in the existing IT service desk.
 
-Operators and demo presenters need to identify an instance whose Next.js process responds to HTTP requests but whose configured SQLite database cannot support ticket reads. The increment should also support observing recovery after configuration repair while preserving the ticket ownership, handoff, filtering, creation, and status-update behavior accepted in #1.
+Operators and demo presenters need to recognize a responsive Next.js process whose configured SQLite database cannot support ticket reads, and observe recovery after configuration repair. This increment must preserve the ticket ownership, handoff, filtering, creation, and status-update behavior accepted in #1.
 
-This is specification revision 2 for Human review, not implementation or acceptance evidence. The supplied latest decision for Q-1 establishes the required probe capability. Q-2 through Q-6 remain undecided in the trusted decision record; discussion recommendations are not substitutes for recorded decisions or version-specific specification approval.
+This is specification revision 3 for Human review. It incorporates the supplied latest decisions for Q-1 through Q-6 from comment #6124226071. Those decisions establish requirements for this candidate; they do not approve this specification or establish implementation, deployment, or acceptance.
 
 ## Scope
 
-Introduce a small readiness capability in `demos/it-service-desk`, separate from existing liveness.
+Add a small, explicit database-read readiness capability in `demos/it-service-desk`, separate from process liveness.
 
-**Recorded requirement from Q-1:** Every readiness request must perform a fresh, minimal read-only query against the actual ticket schema through the same configured application database used by ticket operations, including an already-initialized shared store. Opening a connection or executing `SELECT 1` alone is insufficient. A successfully queried empty, initialized tickets table is ready. The probe must not write business records, use a substitute database, or reuse a previous successful result.
+The recorded requirements are:
 
-**Proposed remaining contract, pending Q-2 through Q-6:**
+- Every GET or HEAD readiness request performs a fresh, minimal read-only query against the actual ticket schema through the same configured application database used by ticket operations, including an already-initialized shared store.
+- Normal existing lazy initialization may precede that query. Initialization and query failures both produce the unavailable result.
+- Successful reads of an initialized but empty tickets table count as ready.
+- `GET /api/ready` returns exactly HTTP 200 with `{"status":"ready"}` or HTTP 503 with `{"status":"unavailable"}`. Both states use `application/json` and `Cache-Control: no-store`.
+- `HEAD /api/ready` performs the same current check and returns corresponding status and headers without a body.
+- Other methods return HTTP 405 with `Allow: GET, HEAD`, without initializing or probing the database.
+- Caller inputs cannot override the configured database or query.
+- Each readiness initialization or query failure emits one fixed, generic server-side readiness-failure error event without sensitive or dynamic values.
+- Acceptance requires actual HTTP observations using the delivered immutable image, isolated configuration repair by recreation, populated-volume preservation, real ticket journeys, and deterministic warm-store query failure and recovery coverage.
 
-- Expose `GET /api/ready` and `HEAD /api/ready`.
-- Return HTTP 200 with `{"status":"ready"}` after a successful current probe, or HTTP 503 with `{"status":"unavailable"}` after dependency failure.
-- Return JSON with `Cache-Control: no-store`; HEAD supplies the corresponding status and headers without a body.
-- Reject other methods with HTTP 405 and `Allow: GET, HEAD`, without probing.
-- Prevent caller inputs from overriding database configuration or probe SQL.
-- Allow existing lazy initialization before the read-only probe.
-- Emit one fixed, sanitized server-side event per readiness failure.
-- Observe healthy, invalid-path, repaired, and restarted isolated instances using the immutable delivered image, including data-preservation and real ticket-operation checks.
-- Describe the signal as current database-read capability, not write availability or production admission certification.
-
-The proposed `unavailable` token follows the discussion recommendation. The preserved Q-3 register still contains the earlier `unready` recommendation. Neither token has a recorded Q-3 decision; this revision exposes the difference rather than treating discussion as approval.
+A ready result establishes only successful normal initialization and a current ticket-schema read. It is not a guarantee of writable storage, successful mutations, full application availability, bounded latency, or production admission suitability.
 
 ### Application grounding
 
-Inspection of the existing application establishes:
+Read-only inspection of the existing application establishes:
 
-- `src/app/api/health/route.ts` returns `{"status":"ok"}` without accessing the database.
-- The dashboard is dynamically rendered, calls `getTicketStore()` for ticket listing and summary queries, and includes `data-testid="service-desk-dashboard"`.
-- `getTicketStore()` lazily creates and retains a shared `TicketStore`. It selects `SERVICE_DESK_DB_PATH`, otherwise using `data/service-desk.db` beneath the working directory. It does not reselect the path once the shared store exists.
-- `TicketStore` uses synchronous `node:sqlite`. Initialization can create directories, configure WAL, create the ticket table, migrate an older table by adding the owner column, and seed a newly created table with four tickets.
-- Existing tables are not reseeded merely because they are empty. The owner migration does not update existing ticket timestamps.
-- Ticket creation, status updates, and ownership updates use the same shared store. Server-side schemas validate their inputs.
-- The container uses Node.js 24 and defaults to `/app/data/service-desk.db`.
-- No readiness route exists in the inspected application.
+| Surface | Existing behavior relevant to this specification |
+| --- | --- |
+| `src/app/api/health/route.ts` | Returns `{"status":"ok"}` without database access. |
+| `src/app/page.tsx` | Dynamically renders the dashboard using ticket listing and summary queries; includes `data-testid="service-desk-dashboard"`. |
+| `src/lib/ticket-store.ts` | Uses synchronous `node:sqlite` and a lazily initialized shared `TicketStore`. |
+| Database configuration | `getTicketStore()` selects `SERVICE_DESK_DB_PATH`, otherwise `data/service-desk.db` beneath the working directory. Once initialized, the shared store retains that configuration. |
+| Initialization | May create directories, configure WAL and foreign keys, create the tickets table, add the owner column to an older table, and seed four tickets when the tickets table is newly created. An existing empty table is not reseeded. |
+| Ticket operations | Reads, creation, status updates, and ownership updates use the shared store. Updating ownership to its current value does not change its timestamp. |
+| Validation and filters | Server-side schemas validate business inputs. Owner, search, status, and priority filters intersect. Unsupported enumerated dashboard filter values are ignored. |
+| Container | Uses Node.js 24 and defaults to `/app/data/service-desk.db`. |
+| Existing reliability consumer | `tools/brownfield-demo/probes.mjs` expects `ready` or `unavailable`, JSON, and `Cache-Control: no-store`; it separately checks ticket read journeys. |
 
-A read-only probe therefore does not imply side-effect-free first access. Initialization policy remains Q-2; dynamic configuration recovery and acceptance breadth remain Q-5.
+No readiness route exists in the inspected application. These observations ground the proposed change but do not demonstrate delivered readiness behavior.
 
 ## Non-goals
 
-This increment does not introduce authentication, external monitoring, production traffic switching, automatic recovery, preventive reliability work, cross-version database rollback, or production certification.
+This increment does not introduce authentication, an external monitoring platform, production traffic switching, automatic recovery, preventive reliability work, cross-version database rollback, or production certification.
 
-It does not replace liveness, redefine accepted ticket ownership behavior, reset databases, or rewrite the previous delivery’s frozen specifications, plans, tests, or acceptance records.
+It does not:
 
-The Q-1 probe does not establish write capability, every application journey, or a response-time guarantee. Q-6 still determines whether that limited signal is acceptable under the proposed readiness vocabulary; Q-4 determines responsiveness boundaries.
+- Replace or couple database access to the existing liveness check.
+- Change accepted ownership, handoff, filtering, creation, or status behavior.
+- Reset databases or rewrite the prior delivery's frozen specifications, plans, tests, or acceptance records.
+- Add per-probe business writes, a write-and-rollback probe, a substitute database, or cached readiness results.
+- Require dynamic database-path changes within a running process.
+- Add transition tracking, a new logging dependency, numeric endpoint deadlines, SQLite-lock deadlines, or altered database busy-timeout semantics.
+- Require additional lock-contention, corrupt-file, or read-only write-failure matrices in this increment.
 
-The subsequent reliability exercise, dependency-risk remediation, and future release-admission integration are not claimed as completed.
+Dependency risks and the subsequent reliability exercise remain outside completion claims. A future admission policy must combine this limited signal with relevant application journeys and its own admission criteria.
 
-This review does not execute commands, tests, implementation, or recovery experiments. Existing bilingual guides and demo documentation remain unchanged.
+This document review does not initiate a Plan, implementation, tests, fault injection, or recovery execution. Existing bilingual guides and demo documentation remain unchanged.
 
 ## Actors
 
 | Actor | Responsibility or interest |
 | --- | --- |
-| Human Intent owner and configured reviewers | Record discovery decisions or deferments, inspect the revised specification, and explicitly approve a specific version. |
-| Operators and demo presenters | Distinguish responsive processes from unreadable database dependencies and observe isolated recovery. |
-| Service-desk users | Retain existing dashboard, ticket creation, ownership handoff, filtering, and status-update behavior. |
-| Next.js service and configured SQLite database | Supply the process response and current ticket-schema read capability being assessed. |
-| Future admission consumers | May consume the approved readiness contract; integration and production admission policy are outside this increment. |
+| Human Intent owner and configured reviewers | Own the Intent, record consequential decisions or deferments, inspect this revised specification, and explicitly approve a specific version. |
+| Operators and demo presenters | Distinguish live processes from unavailable ticket-read dependencies and observe isolated recovery. |
+| Service-desk users | Retain established ticket journeys and data despite the operational-status increment. |
+| Next.js service and configured SQLite database | Provide the process response and current ticket-schema read capability being assessed. |
+| Future reliability and admission consumers | May consume the endpoint alongside application journeys; their integration and admission policies are not delivered here. |
 
 ## Constraints
 
-The Intent requires:
+**Compatibility and preservation.** Preserve the Alex Chen and Sam Rivera roster, optional ownership, assignment, reassignment, clearing, intersecting filters, ticket creation, and status updates. Preserve existing ticket values and timestamps except intentional valid user edits. Do not reset, reseed, or update existing business records through readiness. An intentionally empty existing tickets table remains empty.
 
-- Preserve the Alex Chen and Sam Rivera roster, optional ownership, assignment, reassignment, clearing, intersecting filters, ticket creation, and status updates.
-- Preserve existing ticket values and timestamps except changes caused by intentional valid user operations. Readiness probes must not modify business records.
-- Keep `GET /api/health` compatible and independent of database availability.
-- Do not disclose database paths, exception details, stack traces, ticket contents, or credentials in readiness responses or newly introduced readiness diagnostics.
-- Inject faults only into disposable isolated resources. Do not modify shared instances or existing data volumes.
-- Support later acceptance with actual HTTP behavior, database access, error handling, recovery observations, and data-preservation evidence. Unit tests or a model summary alone are insufficient.
-- Keep this specification and related review material in English while preserving protocol headings, JSON keys, commands, and code identifiers.
-- Keep baseline dependency risks visible; this increment does not resolve them.
+**Initialization boundary.** Readiness may invoke existing normal lazy initialization, including directory creation, WAL setup, schema creation, owner-column migration, and normal new-database seeding. The probe is read-only after initialization; the first request is not guaranteed to be entirely side-effect-free. Initialization failure is unavailable, not a healthy fallback.
 
-The recorded Q-1 decision additionally requires fresh ticket-schema reads through the actual application database on every readiness request, including warm-store requests. Connection-open success, database-independent expressions, substitute databases, and cached successes cannot satisfy that requirement. Zero returned tickets must not by itself cause failure.
+**Current dependency evidence.** Connection opening or `SELECT 1` alone is insufficient. Each accepted readiness request must query the actual ticket schema through the configured application database. Previous success cannot mask a later query failure, and previous failure cannot permanently mask a later successful query.
 
-Initialization permission, exact HTTP behavior, diagnostic policy, recovery coverage, and acceptance of limited read readiness remain proposed. No numeric latency or SQLite-lock deadline is supplied or recorded as deferred. The synchronous database implementation makes this an explicit Q-4 concern, not an implicit guarantee.
+**HTTP and privacy.** Preserve `GET /api/health` as HTTP 200 with `{"status":"ok"}`, independent of database access. Readiness responses disclose only the generic state. Ignore readiness query parameters and GET bodies; accept no caller-provided database path, SQL, or configuration overrides. Do not disclose paths, exceptions, messages, stacks, ticket contents, credentials, request inputs, or other dynamic sensitive values in newly introduced readiness diagnostics.
+
+**Diagnostics.** Each initialization or query failure produces one fixed generic readiness-failure error event. Repeated failures each produce their own event; no transition tracking or stateful result caching is introduced.
+
+**Accepted responsiveness limitation.** There is no numeric endpoint-latency or SQLite-lock deadline requirement, and database busy-timeout semantics remain unchanged. Synchronous SQLite contention can delay readiness and other requests. This is an accepted limitation, not measured responsiveness. The recorded follow-up owner is huangyingting: before any bounded traffic-admission latency or production-readiness claim, measure representative contention on the supported runtime and separately specify any needed timeout or execution isolation.
+
+**Isolation and evidence.** Faults are injected only into disposable isolated resources, never shared instances or existing shared data volumes. Later acceptance must use actual HTTP, database access, sanitized error handling, recovery observations, business journeys, and preservation comparisons. Unit tests or a model summary alone are insufficient.
+
+**Review and language.** Use English for this specification and related Intent review material while preserving protocol headings, JSON keys, commands, and identifiers. Discovery decisions, checklists, AI comments, and successful validation are not specification approval. No version-specific approval is supplied.
 
 ## Discovery
 
 ```json
 {
   "problem": "Operators and demo presenters cannot distinguish a responsive IT service desk process from an instance whose database failure prevents the ticket dashboard from opening. Service-desk users can encounter application failure despite successful liveness checks.",
-  "evidence": "The Intent reports isolated fault injection on 2026-10-12T11:44:51Z through 2026-10-12T11:44:52Z using accepted image sha256:90836abf909410db91b0d3c791812683e5424c5cab7d7a84df1af6772a66ce76, sourced from commit 1a1e14d0031305ee5da35c523ffbac9fa6f7e58b. Both configurations returned 200 from /api/health; the healthy dashboard returned 200 with its marker, the invalid-path dashboard returned 500 without it, and /api/ready returned 404 on both. The healthy instance used a fresh isolated volume with four verified seed tickets and remained available afterward. Reports and screenshots are retained outside the repository and were not independently inspected in this review. Application inspection confirms database-independent liveness, database-dependent dashboard rendering, a shared SQLite store, and lazy initialization with schema and seed side effects. Production incidence, customer benefit, recovery-time baselines, workload measurements, and delivered readiness behavior are unknown.",
-  "successMeasure": "Demonstrate fresh ticket-schema reads for every readiness request, including an initialized shared store and an empty initialized table; distinguish healthy and invalid-path isolated instances over actual HTTP; and observe repaired and restarted instances with real ticket operations and preserved data. The precise HTTP contract and required recovery breadth remain pending Q-3 and Q-5. No production improvement target or numeric response-time threshold is supplied; responsiveness remains Q-4.",
-  "alternatives": "Do nothing: no change, but liveness continues to conceal database failure. Use dashboard HTTP checks only: no new endpoint, but rendering is a heavier and less explicit dependency signal. Open the database only: smaller probe, but no ticket-schema query evidence and does not meet the required capability. Query the actual ticket schema on every request: minimal current read evidence without business writes, but no write or full-journey guarantee. Add a write-and-rollback probe: stronger write evidence with locking and side-effect risks, outside the required read-only probe and requiring reconciliation if pursued.",
+  "evidence": "The Intent reports isolated fault injection between 2026-10-12T11:44:51Z and 2026-10-12T11:44:52Z using image ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:90836abf909410db91b0d3c791812683e5424c5cab7d7a84df1af6772a66ce76, sourced from commit 1a1e14d0031305ee5da35c523ffbac9fa6f7e58b; the maintenance starting point is f52cc87b435d781af0be40a811d33f0cfd84d66b. Both configurations returned 200 with status ok from /api/health. The healthy dashboard returned 200 with its marker, the invalid-path dashboard returned 500 without it, and /api/ready returned 404 on both. The healthy isolated volume had four verified seed tickets and its dashboard remained available afterward. Reports and screenshots are retained outside the repository and were not independently inspected in this review. Current application inspection confirms database-independent liveness, database-dependent dashboard rendering, synchronous shared SQLite storage, preservation of existing empty tables, and lazy initialization side effects. Existing reliability tooling expects the unavailable token and separately evaluates ticket read journeys. Production incidence, customer benefit, recovery-time baselines, representative contention measurements, and delivered readiness behavior are unknown.",
+  "successMeasure": "Observe the delivered immutable image over actual HTTP: healthy database reads yield 200 with status ready; invalid-path initialization yields 503 with status unavailable; both responses are JSON and no-store while liveness remains 200 with status ok. Demonstrate a fresh actual ticket-schema query on each GET or HEAD request, warm-store failure followed by recovery, healthy restart and repaired recreation using one populated isolated volume, preservation except intentional edits, initialization compatibility, and real ticket read and write journeys. No production improvement target or numeric latency baseline is supplied. Contention measurement and any bounded-latency requirement remain a follow-up rather than evidence of performance.",
+  "alternatives": "Do nothing: no change, but liveness continues to conceal database failure. Use dashboard HTTP checks only: no new endpoint, but rendering is a heavier and less explicit dependency signal. Open the database only or execute SELECT 1: smaller probe, but no actual ticket-schema read evidence. Query the actual ticket schema on each request: small current read signal without business writes, but no write or full-journey guarantee. Add a write-and-rollback probe: stronger write evidence with locking and side-effect risks, beyond this read-only increment. Separate initialization from readiness: stricter first-request side-effect isolation, but expands the initialization boundary and compatibility work.",
   "questions": [
     {
       "id": "Q-1",
@@ -125,9 +133,39 @@ Initialization permission, exact HTTP behavior, diagnostic policy, recovery cove
   "decisionMapping": [
     {
       "questionId": "Q-1",
-      "commentId": 6124026970,
+      "commentId": 6124226071,
       "acceptanceIds": ["AC-2", "AC-4", "AC-6"],
-      "explanation": "AC-2 now requires a fresh minimal read-only query against the actual ticket schema through the configured application database, including an initialized shared store, and accepts successful empty-table reads. AC-4 requires a new query after earlier success so current query or schema failure cannot be hidden by cached success. AC-6 applies that same database and query boundary despite caller-supplied overrides. Connection opening, SELECT 1 alone, substitute databases, business-record writes, and reused successful results are excluded. This establishes read capability only; initialization permission, HTTP details, recovery breadth, and acceptance of the write limitation remain separate questions."
+      "explanation": "Require a fresh minimal read-only actual ticket-schema query through the configured application database on every GET or HEAD request, including the warm shared store. Empty initialized tables are ready. Exclude connection-only checks, SELECT 1 alone, substitute databases, business writes, and cached success."
+    },
+    {
+      "questionId": "Q-2",
+      "commentId": 6124226071,
+      "acceptanceIds": ["AC-3", "AC-5", "AC-6"],
+      "explanation": "Permit existing lazy initialization before the probe, including normal schema and owner migration and genuine new-database seeding, while preserving existing records, timestamps, and intentionally empty tables. Initialization failures use the unavailable contract. Unsupported methods do not initialize. First-request side-effect freedom is explicitly not guaranteed."
+    },
+    {
+      "questionId": "Q-3",
+      "commentId": 6124226071,
+      "acceptanceIds": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-6", "AC-9"],
+      "explanation": "Make /api/ready, exact 200/ready and 503/unavailable JSON responses, no-store caching, fresh HEAD checks without bodies, and 405 with Allow: GET, HEAD required rather than proposed. Ignore query parameters and GET bodies and prohibit configuration or SQL overrides. Preserve database-independent 200/ok liveness. The selected unavailable token supersedes the historical unready recommendation preserved in the question options."
+    },
+    {
+      "questionId": "Q-4",
+      "commentId": 6124226071,
+      "acceptanceIds": ["AC-3", "AC-4", "AC-9"],
+      "explanation": "Require one fixed sanitized server-side error event for each initialization or query failure, without raw exceptions or dynamic sensitive values, transition tracking, stateful caching, or a new logging dependency. Record the accepted absence of numeric endpoint or lock deadlines and unchanged busy-timeout semantics; contention measurement and any timeout or isolation requirement remain a follow-up, not a responsiveness guarantee."
+    },
+    {
+      "questionId": "Q-5",
+      "commentId": 6124226071,
+      "acceptanceIds": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-5", "AC-7", "AC-8", "AC-9"],
+      "explanation": "Require immutable-image live HTTP evidence for healthy, invalid-path, and repaired states; retain a populated isolated volume across healthy restart and repaired recreation; verify preservation and real ticket journeys. Require deterministic warm-store query failure and subsequent recovery plus fresh, empty-existing-table, and pre-owner initialization coverage. Dynamic path changes and additional lock-contention, corrupt-file, and read-only write-failure matrices are outside this increment."
+    },
+    {
+      "questionId": "Q-6",
+      "commentId": 6124226071,
+      "acceptanceIds": ["AC-2", "AC-8", "AC-9"],
+      "explanation": "Define ready solely as successful normal initialization and a current ticket-schema read. Demonstrate real writes during isolated recovery acceptance, not per probe. Exclude guarantees of writable storage, mutations, full journeys, authentication, latency, production fitness, or production admission; subsequent reliability work must combine this signal with relevant journeys and its own policy."
     }
   ]
 }
@@ -135,103 +173,101 @@ Initialization permission, exact HTTP behavior, diagnostic policy, recovery cove
 
 ## Acceptance scenarios
 
-Acceptance IDs are retained from revision 1. Q-1 behavior below is a recorded requirement. Other endpoint details and additional recovery coverage are explicitly proposed pending their named questions. No scenario is claimed to have been executed.
+AC-1 through AC-9 retain their existing IDs and behavioral subjects. The formerly pending requirements below now incorporate the supplied latest decisions. No scenario is claimed to have been executed.
 
 ### AC-1: Preserve database-independent liveness
 
-**Given** an isolated instance whose process is responsive, with either a healthy database configuration or a deliberately invalid database path.
+**Given** a responsive isolated instance with either a healthy database configuration or a deliberately invalid database path.
 
-**When** an operator sends `GET /api/health`.
+**When** an operator sends `GET /api/health`, before or after readiness requests.
 
-**Then** it returns HTTP 200 with JSON `{"status":"ok"}` in both configurations, without requiring successful database initialization or access.
+**Then** the response is HTTP 200 with JSON `{"status":"ok"}` in both configurations, without initializing or accessing the database. Readiness failures do not change this contract.
 
 ### AC-2: Report current database-read readiness
 
-**Given** an isolated instance whose configured application database has a readable, initialized ticket schema, including an intentionally empty tickets table or an already-initialized shared store.
+**Given** an isolated instance whose configured application database has a readable initialized ticket schema, including an intentionally empty tickets table or an already-initialized shared store.
 
-**When** an operator sends a readiness request, including repeated requests.
+**When** an operator sends `GET /api/ready`, including repeated requests.
 
-**Then** each request must perform a fresh, minimal read-only query against the actual ticket schema through the same configured database used by ticket operations. Successfully querying an empty initialized table counts as ready. Opening a connection or executing `SELECT 1` alone does not satisfy this scenario; no business records are written, no substitute database is used, and no previous success is reused. Pending Q-3, the proposed GET response is HTTP 200 with `{"status":"ready"}`, JSON content type, and `Cache-Control: no-store`, without ticket contents.
+**Then** each request performs a fresh minimal read-only query against the actual ticket schema through the same configured database used by ticket operations and returns HTTP 200 with exactly `{"status":"ready"}`, `application/json`, and `Cache-Control: no-store`. An empty initialized table counts as ready. No ticket contents are returned. Connection opening, `SELECT 1` alone, substitute databases, business-record writes, and reused success do not satisfy the scenario. The response establishes current database-read capability only, not write or full-journey availability.
 
 ### AC-3: Report invalid configuration without masking failure
 
-**Given** a responsive isolated instance configured with a database path beneath `/dev/null`, without a mounted data volume.
+**Given** a responsive isolated instance configured with a database path beneath `/dev/null`, without a mounted data volume, or another deterministic isolated initialization failure.
 
-**When** an operator sends `GET /api/ready`.
+**When** an operator sends `GET /api/ready`, including repeated failing requests.
 
-**Then** under the proposed Q-3 contract, it returns HTTP 503 with `{"status":"unavailable"}`, JSON content type, and `Cache-Control: no-store`, rather than an unhandled failure page or healthy fallback. No database path, exception detail, stack trace, ticket content, or credential is disclosed. Under the proposed Q-4 policy, one fixed sanitized server-side failure event is emitted without the raw exception or sensitive values. Liveness remains compatible under AC-1. The response token and diagnostic policy remain undecided.
+**Then** each failed initialization returns HTTP 503 with exactly `{"status":"unavailable"}`, `application/json`, and `Cache-Control: no-store`, rather than an unhandled failure page or healthy fallback. Each failure emits one fixed generic server-side readiness-failure error event. Neither response nor event includes raw exceptions, messages, stacks, paths, ticket contents, credentials, request inputs, or other dynamic sensitive values. Liveness remains compatible under AC-1. No numeric response deadline is asserted.
 
-### AC-4: Re-evaluate failure after an earlier success
+### AC-4: Re-evaluate failure and recovery after an earlier success
 
-**Given** an isolated instance whose shared store previously passed readiness and a disposable deterministic condition that makes the next ticket-schema query fail.
+**Given** a warm shared store that previously passed readiness, and a deterministic disposable condition that makes its next actual ticket-schema query fail.
 
-**When** another readiness request reaches the instance.
+**When** readiness is requested during that failure and again after the query can succeed, without changing database configuration.
 
-**Then** it must execute a fresh query through that same configured application database and report dependency failure, not reuse the earlier success or substitute another database. Pending Q-3 and Q-4, the proposed response and diagnostic match AC-3. As additional proposed Q-5 coverage, removing the transient failure without changing configuration permits a subsequent request to execute another fresh query and return the AC-2 healthy result. This same-process recovery coverage is not yet a recorded requirement and does not promise dynamic path changes, recovery from every fault, or bounded latency.
+**Then** each request executes a fresh query through the same configured application database. Failed queries return the AC-3 unavailable response and produce one fixed sanitized event per failure; a subsequent successful query returns the AC-2 ready response. Neither cached success nor permanent cached failure is permitted. Coverage demonstrates this warm-store transition without claiming dynamic database-path recovery, recovery from every fault, or bounded latency.
 
 ### AC-5: Make initialization side effects explicit
 
 **Given** a fresh isolated database location, a disposable compatible older database lacking the owner column, or an existing initialized database whose tickets table is intentionally empty.
 
-**When** readiness is requested before a dashboard request and then requested repeatedly.
+**When** readiness is requested before the dashboard and then requested repeatedly.
 
-**Then** under the proposed Q-2 option, normal initialization may precede the read-only probe: a new table receives the usual four seeded tickets; the older table receives the existing owner migration without rewriting existing records or timestamps; and the intentionally empty existing table remains empty. Repeated requests do not duplicate seeds or reset data. The probe itself performs no business-record writes. The first readiness request is not promised to be side-effect-free under this option. Selecting strictly side-effect-free readiness would require revising this scenario before approval.
+**Then** normal existing initialization may precede the read-only query. A genuinely new database receives the usual four seed tickets; the older table receives the existing owner-column migration without rewriting existing ticket values or timestamps; and the intentionally empty existing table remains empty and can return ready. Repeated requests do not duplicate seeds, reset data, or update business records. Initialization failure follows AC-3. Read-only describes the probe after initialization, not a guarantee of entirely side-effect-free first access.
 
 ### AC-6: Prevent caller-controlled database access
 
-**Given** a readiness request containing query parameters or a GET body suggesting another database path, SQL statement, or configuration value, or a request using HEAD or another method.
+**Given** requests to `/api/ready` with query parameters or a GET body suggesting another database path, SQL, or configuration value, and requests using HEAD, POST, PUT, PATCH, DELETE, or OPTIONS.
 
-**When** the endpoint receives the request.
+**When** the endpoint receives those requests.
 
-**Then** caller inputs must not cause the Q-1 probe to use a substitute database or replace its fresh read-only ticket-schema query. Under the proposed Q-3 contract, query parameters and GET bodies are ignored without reflecting their values; GET performs the ordinary current probe; HEAD performs the same current probe and returns the corresponding status and headers without a body; other methods return HTTP 405 with `Allow: GET, HEAD` and do not probe or mutate the database.
+**Then** GET ignores query parameters and its body, does not reflect their values, and performs the ordinary configured ticket-schema query. HEAD performs the same fresh dependency check and returns the corresponding 200 or 503 status, JSON content type, and `Cache-Control: no-store`, without a response body; its failures follow the same diagnostic rule. Other methods return HTTP 405 with `Allow: GET, HEAD` and do not initialize, query, or mutate the database, including before first access. No caller input can select a substitute database or replace probe SQL.
 
 ### AC-7: Observe repair and persistent-data recovery
 
-**Given** the immutable delivered image, a populated disposable database with privately recorded ticket values and timestamps, a healthy isolated reference instance, and a separate faulty instance exhibiting AC-3.
+**Given** the delivered immutable image, one populated disposable application volume with privately recorded ticket values and timestamps, a healthy isolated reference, and a faulty isolated configuration exhibiting AC-3 without access to shared data.
 
-**When** an operator observes a healthy restart with the populated volume, repairs the faulty configuration, recreates the instance using that retained isolated volume, and requests readiness, the dashboard, and known ticket details.
+**When** an operator observes a healthy restart using the populated volume, repairs the faulty configuration, recreates the instance using that retained volume, and sends actual HTTP requests for readiness, the dashboard, and known ticket details.
 
-**Then** under the proposed Q-5 coverage, readiness returns the AC-2 healthy response; the dashboard returns HTTP 200 with `data-testid="service-desk-dashboard"`; known details remain readable; and existing records and timestamps match their recorded values except intentional user edits. Repeated probes and recreation preserve those results. The healthy reference remains available throughout the fault observation. No shared instance or existing shared data volume is modified, reset, or replaced. This proposal does not require changing the database path dynamically within a running process.
+**Then** restarted and repaired instances return the AC-2 ready response, the dashboard returns HTTP 200 with `data-testid="service-desk-dashboard"`, and known details remain readable. Repeated probes preserve those results. Existing records and timestamps match their recorded values except intentional valid user edits. The healthy reference remains available through the fault observation. No shared instance or existing shared data volume is modified, reset, or replaced. Configuration repair by recreation is sufficient; dynamic path changes in a running process are not required.
 
 ### AC-8: Preserve accepted ticket behavior and validation
 
-**Given** the repaired isolated instance, the accepted owner roster, and the existing ticket workflows.
+**Given** the repaired isolated instance, the accepted owner roster, and existing ticket workflows.
 
-**When** a user creates a valid ticket, assigns it to Alex Chen, hands it to Sam Rivera, clears ownership, updates status, and combines owner, search, status, and priority filters; the user also submits invalid creation, ownership, and status inputs.
+**When** a user creates a valid ticket, assigns it to Alex Chen, reassigns it to Sam Rivera, clears ownership, updates status, and combines owner, search, status, and priority filters; the user also submits invalid creation, ownership, and status inputs and repeats an unchanged-owner submission.
 
-**Then** valid operations retain existing behavior and persistence, new tickets start unassigned, and filters intersect as before. Invalid inputs retain existing server-side validation and error behavior without creating invalid records or unintended changes. An unchanged-owner submission retains its existing no-op timestamp behavior. Only intentional valid operations change the relevant records or timestamps; readiness polling does not. Real write operations are proposed recovery evidence under Q-5, not proof that each successful read probe establishes write availability. Acceptance of that limitation remains Q-6.
+**Then** valid operations retain existing persistence and user-facing behavior, new tickets start unassigned, and filters intersect. Unsupported enumerated dashboard filters retain their existing ignored-value behavior. Invalid business inputs retain existing server-side validation and error behavior without invalid records or unintended changes. An unchanged-owner submission does not alter its timestamp. Only intentional valid operations change relevant records or timestamps; readiness polling does not. Actual successful writes are recovery acceptance evidence, not a guarantee that each ready response establishes write capability.
 
 ### AC-9: Keep acceptance evidence proportionate and private
 
-**Given** a subsequently approved specification and later isolated observations of healthy, faulty, repaired, and restarted instances.
+**Given** a subsequently approved specification and later isolated observations covering healthy, invalid-path, restarted, and repaired instances, plus deterministic initialization and warm-store failure/recovery coverage.
 
 **When** evidence is assembled for Human acceptance.
 
-**Then** it identifies the immutable exercised artifact and isolated configurations; records actual HTTP statuses, readiness bodies and cache headers, dashboard-marker presence, probe outcomes, recovery journeys, and preservation comparisons; and distinguishes observations from unexecuted cases and limitations. Sensitive database contents, raw error logs, paths, and credentials are not published. Tests, AI comments, checklists, discovery decisions, and successful observations do not themselves constitute version-specific Human specification approval or final acceptance.
+**Then** it identifies the delivered immutable artifact and isolated resource relationships; records actual HTTP statuses, exact readiness bodies, content type, cache headers, HEAD and method behavior, dashboard-marker presence, ticket journeys, and preservation comparisons; and establishes fresh-query behavior and sanitized failure diagnostics. Evidence distinguishes live observations from deterministic coverage and unexecuted cases. Sensitive database contents, raw error logs, paths, and credentials are not published.
+
+**Then** the evidence explicitly limits readiness to current database-read capability. It does not claim write guarantees, full application readiness, numeric latency guarantees, production certification, or completion of broader reliability exercises. Additional lock-contention, corrupt-file, and read-only write-failure matrices remain outside this increment. Tests, AI comments, checklists, discovery decisions, and successful observations do not themselves constitute version-specific Human specification approval or final acceptance.
 
 ## Revision summary
 
-Revision 2 incorporates the sole supplied latest decision: Q-1, recorded in comment #6124026970. The per-request actual ticket-schema read is now required rather than merely recommended. AC-2, AC-4, and AC-6 explicitly enforce current reads through the configured application database, including the initialized shared store, accept successful empty-table reads, and exclude connection-only checks, `SELECT 1` alone, substitute databases, cached successes, and business-record writes.
+Revision 3 integrates all six supplied latest decisions from comment #6124226071 into the behavioral contract and acceptance scenarios.
 
-All six discovery questions and their options are preserved exactly, including Q-1. One decision mapping connects its recorded outcome to the affected stable acceptance IDs.
+Q-1 retains the fresh actual ticket-schema query requirement. Q-2 now permits normal lazy initialization while preserving existing records, timestamps, and empty tables. Q-3 makes the exact `/api/ready` contract mandatory, including the selected `unavailable` token, HEAD behavior, unsupported-method handling, and input isolation. Q-4 requires fixed per-failure diagnostics and explicitly accepts the absence of latency and lock deadlines. Q-5 requires immutable-image HTTP recovery evidence, retained-volume preservation, real journeys, initialization compatibility, and deterministic warm-store failure/recovery. Q-6 accepts database-read readiness with explicit write, full-journey, latency, and production-admission limitations.
 
-Application inspection confirms the initialization, empty-table preservation, shared-store configuration, liveness, and validation behavior described here. It does not establish delivered readiness behavior or recovery results.
+All discovery questions and options remain unchanged, including Q-3's historical `unready` recommendation. Its recorded outcome selects `unavailable`; the historical option is not the operative requirement. Exactly one mapping per latest decision links the selected outcome to existing acceptance IDs.
 
-The discussion’s remaining recommendations inform proposals, not recorded requirements. In particular, this revision proposes `unavailable` instead of the previous `unready` token, per-failure sanitized diagnostics, and deterministic warm-store recovery coverage. Q-3, Q-4, and Q-5 still require recorded disposition. Suggested latency deferral is not treated as a recorded deferment.
+Previously pending proposals are now requirements in this candidate. Unselected alternatives remain discussion history, not agreed behavior. Operational branch-restoration and document-generation discussion does not alter product requirements.
 
-No specification approval, implementation completion, or acceptance is claimed. Operational branch-restoration discussion does not change the product requirements.
+This revision claims neither specification approval nor implemented or verified readiness. The Human must inspect and explicitly approve this version separately.
 
 ## Open questions
 
-Q-1 has a recorded decision and is integrated into the proposed behavior. The following unanswered register items block approval until a configured Human records a decision or deferment:
+There are no unanswered discovery-register items: the supplied latest decisions address Q-1 through Q-6. Their questions and options remain visible in Discovery for continuity, and their outcomes are integrated into the acceptance scenarios.
 
-- **Q-2 — Initialization:** May readiness trigger existing initialization, migration, and genuine new-table seeding, or must first access be strictly side-effect-free? This revision proposes compatibility with existing initialization while preserving existing records, timestamps, and empty tables.
-- **Q-3 — Public contract:** Confirm path, statuses, bodies, caching, caller-input handling, and methods. The unchanged register recommends `unready`; discussion and this revision propose `unavailable`. The exact token remains undecided.
-- **Q-4 — Diagnostics and responsiveness:** Confirm per-failure sanitized events or another logging policy, and decide whether numeric response and lock deadlines are required or deferred. No measured baseline or recorded deferment exists.
-- **Q-5 — Recovery breadth:** Confirm immutable-image HTTP observations, populated-volume restart and repaired recreation, initialization coverage, real journeys, preservation checks, and deterministic warm-store failure/recovery. Decide whether broader fault cases or dynamic configuration recovery are required.
-- **Q-6 — Meaning of readiness:** Confirm whether database-read capability alone is acceptable despite possible write or full-journey failures, or choose a compatible narrower vocabulary. Any write-gating requirement must be reconciled with the recorded read-only Q-1 contract.
+**Deferred performance risk — Q-4:** Synchronous SQLite contention may delay readiness and other requests. No endpoint or lock deadline is required in this increment, and no responsiveness baseline has been established. Follow-up owner: huangyingting. Representative runtime measurements and a separately specified timeout or execution-isolation requirement are needed before claiming bounded admission latency or production readiness. This risk has not been measured or solved by specification review.
 
-**Deferred risks:** No deferments are recorded. Latency under synchronous SQLite access, lock behavior, broader failure recovery, and production suitability remain visible unknowns rather than resolved limitations.
+**Accepted scope limitations — Q-5 and Q-6:** Additional contention, corrupt-file, and read-only write-failure matrices are not required here. A ready response does not establish writable storage, successful mutations, all journeys, or production admission suitability. Broader reliability work and baseline dependency risks remain outstanding; they are not evidence of completed recovery or certification.
 
-The discussion’s batch selection does not record decisions for Q-2 through Q-6 in the supplied latest decisions. The Human must inspect the revised specification after further decisions are integrated and explicitly approve a specific version; decision mappings alone do not establish correctness or approval.
+No version-specific specification approval is supplied. Recorded decisions and their mappings do not replace Human inspection of the revised behavior.
 
