@@ -169,8 +169,10 @@ describe("TicketStore", () => {
         });
 
         const assignedUpdatedAt = assigned.updatedAt;
+        const assignedSnapshot = ticketStore.find(created.id);
+        vi.setSystemTime(new Date(Date.now() + 1_000));
         expect(setOwner("alex-chen")).toBe(true);
-        expect(ticketStore.find(created.id)?.updatedAt).toBe(assignedUpdatedAt);
+        expect(ticketStore.find(created.id)).toEqual(assignedSnapshot);
 
         vi.setSystemTime(new Date(Date.now() + 1_000));
         expect(setOwner("sam-rivera")).toBe(true);
@@ -269,7 +271,7 @@ describe("TicketStore", () => {
     expect(storeWithOwnership.list({
       status: "open",
       query: "VPN",
-    }).map((ticket) => ticket.id)).toEqual([unassigned.id, alex.id, sam.id]);
+    }).map((ticket) => ticket.id)).toEqual([unassigned.id, alex.id]);
     expect(storeWithOwnership.list({
       owner: "alex-chen",
       status: "closed",
@@ -288,6 +290,7 @@ describe("TicketStore", () => {
     const directory = mkdtempSync(join(tmpdir(), "service-desk-legacy-"));
     const filename = join(directory, "populated-legacy.sqlite");
     const emptyFilename = join(directory, "empty-legacy.sqlite");
+    vi.useFakeTimers();
     const statuses = ["open", "in_progress", "resolved", "closed"] as const;
     const expected = statuses.map((status, index) => ({
       id: index + 1,
@@ -366,53 +369,47 @@ describe("TicketStore", () => {
         }
       }
 
-      const reopenAndExpectOwner = (owner: "alex-chen" | "sam-rivera" | null) => {
+      let expectedSnapshot: ReturnType<TicketStore["list"]> = [];
+      let savedUpdatedAt = expected[0].updatedAt;
+      vi.setSystemTime(new Date("2026-03-01T00:00:00.000Z"));
+      for (const owner of ["alex-chen", "sam-rivera", null] as const) {
+        vi.setSystemTime(new Date(Date.now() + 1_000));
+        const nextUpdatedAt = new Date().toISOString();
+        const updateStore = new TicketStore(filename, false) as unknown as {
+          updateOwner?: (id: number, owner: "alex-chen" | "sam-rivera" | null) => boolean;
+          list(): ReturnType<TicketStore["list"]>;
+          close(): void;
+        };
+        let actualSnapshot: ReturnType<TicketStore["list"]> = [];
+        try {
+          expect(updateStore.updateOwner).toBeTypeOf("function");
+          if (!updateStore.updateOwner) return;
+          expect(updateStore.updateOwner(1, owner)).toBe(true);
+          actualSnapshot = updateStore.list().sort((left, right) => left.id - right.id);
+        } finally {
+          updateStore.close();
+        }
+
+        expect(actualSnapshot[0]).toEqual({
+          ...expected[0],
+          owner,
+          updatedAt: nextUpdatedAt,
+        });
+        expect(actualSnapshot[0].updatedAt).not.toBe(savedUpdatedAt);
+        expect(actualSnapshot.slice(1)).toEqual(expected.slice(1));
+        expectedSnapshot = actualSnapshot;
+        savedUpdatedAt = actualSnapshot[0].updatedAt;
+
         const reopened = new TicketStore(filename);
         try {
-          expect(reopened.find(1)).toMatchObject({ ...expected[0], owner });
-          expect(reopened.list()).toHaveLength(expected.length);
+          expect(reopened.list().sort((left, right) => left.id - right.id))
+            .toEqual(expectedSnapshot);
         } finally {
           reopened.close();
         }
-      };
-
-      const assignStore = new TicketStore(filename, false) as unknown as {
-        updateOwner?: (id: number, owner: "alex-chen" | "sam-rivera" | null) => boolean;
-        close(): void;
-      };
-      try {
-        expect(assignStore.updateOwner).toBeTypeOf("function");
-        if (!assignStore.updateOwner) return;
-        expect(assignStore.updateOwner(1, "alex-chen")).toBe(true);
-      } finally {
-        assignStore.close();
       }
-      reopenAndExpectOwner("alex-chen");
-
-      const reassignStore = new TicketStore(filename, false) as unknown as {
-        updateOwner?: (id: number, owner: "alex-chen" | "sam-rivera" | null) => boolean;
-        close(): void;
-      };
-      try {
-        if (!reassignStore.updateOwner) return;
-        expect(reassignStore.updateOwner(1, "sam-rivera")).toBe(true);
-      } finally {
-        reassignStore.close();
-      }
-      reopenAndExpectOwner("sam-rivera");
-
-      const clearStore = new TicketStore(filename, false) as unknown as {
-        updateOwner?: (id: number, owner: "alex-chen" | "sam-rivera" | null) => boolean;
-        close(): void;
-      };
-      try {
-        if (!clearStore.updateOwner) return;
-        expect(clearStore.updateOwner(1, null)).toBe(true);
-      } finally {
-        clearStore.close();
-      }
-      reopenAndExpectOwner(null);
     } finally {
+      vi.useRealTimers();
       rmSync(directory, { recursive: true, force: true });
     }
   });

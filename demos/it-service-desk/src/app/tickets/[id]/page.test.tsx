@@ -82,6 +82,7 @@ describe("Ticket details", () => {
 
     const container = document.createElement("div");
     container.innerHTML = html;
+    document.body.append(container);
     try {
       const forms = [...container.querySelectorAll("form")];
       const ownerForm = forms.find((form) => form.querySelector('[name="owner"]'))!;
