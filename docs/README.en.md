@@ -13,6 +13,7 @@ unchanged by translation.
 ## Start here
 
 1. **Understand the result:** [ticket ownership case study](cases/ownership.en.md).
+   Then follow the [database-readiness maintenance delivery](cases/readiness.en.md).
 2. **Present it:** [presentation route](presenter.en.md).
 3. **Check scope and progress:** [case index](cases/README.en.md).
 4. **Inspect original records:**
@@ -24,7 +25,9 @@ unchanged by translation.
 ## Current scope
 
 Ticket ownership is accepted, with 38 passing tests and verification of the
-published image by its exact digest. Readiness, release reliability, change impact,
+published image by its exact digest. Database readiness is also accepted: all
+47 current tests pass, and the exact published digest passed isolated fault,
+recovery and real business-journey checks. Release reliability, change impact,
 diagnosis and Agent strategy evaluation are not completed cases in this repository.
 Another repository's records do not establish completion here.
 
@@ -32,6 +35,7 @@ Another repository's records do not establish completion here.
 
 - [cases/](cases/README.en.md): case narratives and progress.
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json): 14 original screenshots with source, time and hashes.
+- [cases/assets/readiness/](cases/assets/readiness/manifest.json): 21 readiness screenshots with distinct baseline and delivered-image identities.
 - [delivery-runs/](delivery-runs/brownfield-human-gated-delivery/1/spec.md):
   workflow-managed specifications, plans and review artifacts, unchanged by reorganization or translation.
 

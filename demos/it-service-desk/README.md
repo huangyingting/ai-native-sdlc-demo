@@ -50,6 +50,23 @@ npm run dev
 只有在可随时丢弃的本地开发环境中，才可删除该文件来重置演示数据。
 不要为了演示重置共享的工作副本；请使用下文说明的隔离预备副本。
 
+<a id="liveness-and-database-readiness"></a>
+## 进程存活与数据库就绪
+
+`GET /api/health` 不依赖数据库，返回 200 和 `{"status":"ok"}`。
+`GET /api/ready` 每次请求都对已配置的工单数据库执行最新的最小只读查询：
+返回 200 `{"status":"ready"}` 或 503 `{"status":"unavailable"}`，
+两者均使用 JSON 内容类型及 `Cache-Control: no-store`。
+HEAD 检查同一当前依赖，但不返回正文；
+POST、PUT、PATCH、DELETE 和 OPTIONS 返回 405 及 `Allow: GET, HEAD`，不初始化数据库。
+查询参数及 GET 正文不能覆盖配置或 SQL。
+
+首次探测可以触发现有延迟初始化和新数据库的种子数据。
+已有记录、时间戳及有意保持为空的表会保留。
+每次失败只记录一个固定的通用诊断事件，不记录原始异常。
+这是数据库读取就绪信号，不是可写保证、响应期限或生产认证。
+指定产物和验证边界见[已验收的就绪检查案例](../../docs/cases/readiness.md)。
+
 <a id="validate"></a>
 ## 验证
 
