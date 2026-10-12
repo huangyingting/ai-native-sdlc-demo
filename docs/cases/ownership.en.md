@@ -1,6 +1,6 @@
 # From request to acceptance: ticket ownership and handoffs
 
-[Case index](README.md) · [中文](ownership.zh-CN.md) ·
+[Case index](README.en.md) · [中文](ownership.zh-CN.md) ·
 [Screenshot provenance](assets/ownership/manifest.json)
 
 This case follows a completed change, not a hypothetical “ask AI to build a
@@ -240,7 +240,7 @@ failures remain evidence to diagnose, not details to hide behind a green badge.
 
 **Limits:** this case does not establish production availability, capacity,
 SLA compliance or resolved security risk. The
-[eight baseline dependency advisories](preparation.md) remain unresolved.
+[eight baseline dependency advisories](preparation.en.md) remain unresolved.
 The deployment was temporary and local, not a continuously hosted public
 service. Readiness, release reliability and further engineering cases are
 separate work.
