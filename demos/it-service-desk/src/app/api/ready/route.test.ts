@@ -15,6 +15,7 @@ type ClosableStore = { close(): void };
 
 const temporaryDirectories: string[] = [];
 const openStores: ClosableStore[] = [];
+const readinessFailureEvent = "Service desk readiness check failed";
 
 afterEach(() => {
   while (openStores.length) openStores.pop()?.close();
@@ -49,6 +50,17 @@ function routeHandler(route: ReadinessRoute, method: keyof ReadinessRoute) {
   return handler as RouteHandler;
 }
 
+async function expectReadinessResponse(
+  response: Response,
+  status: 200 | 503,
+  state: "ready" | "unavailable",
+) {
+  expect(response.status).toBe(status);
+  expect(response.headers.get("content-type")).toBe("application/json");
+  expect(response.headers.get("cache-control")).toBe("no-store");
+  expect(await response.json()).toEqual({ status: state });
+}
+
 async function captureSharedStore() {
   const ticketStoreModule = await vi.importActual<typeof import("@/lib/ticket-store")>(
     "@/lib/ticket-store",
@@ -66,10 +78,7 @@ it("Readiness route GET returns the exact current ready contract", async () => {
   const response = await routeHandler(route, "GET")(
     new Request("http://localhost/api/ready"),
   );
-  expect(response.status).toBe(200);
-  expect(response.headers.get("content-type")).toBe("application/json");
-  expect(response.headers.get("cache-control")).toBe("no-store");
-  expect(await response.json()).toEqual({ status: "ready" });
+  await expectReadinessResponse(response, 200, "ready");
   await captureSharedStore();
 });
 
@@ -82,19 +91,20 @@ it("Readiness route initialization failures return unavailable and one sanitized
   const route = await loadReadinessRoute();
   if (!route) return;
 
-  const error = vi.spyOn(console, "error").mockImplementation(() => {});
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
   const get = routeHandler(route, "GET");
   for (let request = 0; request < 2; request += 1) {
-    const response = await get(new Request("http://localhost/api/ready"));
-    expect(response.status).toBe(503);
-    expect(response.headers.get("content-type")).toBe("application/json");
-    expect(response.headers.get("cache-control")).toBe("no-store");
-    expect(await response.json()).toEqual({ status: "unavailable" });
+    const url = new URL("http://localhost/api/ready");
+    url.searchParams.set("database", blocker);
+    url.searchParams.set("sql", "SELECT sensitive_request_value");
+    const response = await get(new Request(url));
+    await expectReadinessResponse(response, 503, "unavailable");
   }
 
-  expect(error).toHaveBeenCalledTimes(2);
-  expect(error.mock.calls[0]).toEqual(error.mock.calls[1]);
-  expect(JSON.stringify(error.mock.calls)).not.toContain(blocker);
+  expect(consoleError.mock.calls).toEqual([
+    [readinessFailureEvent],
+    [readinessFailureEvent],
+  ]);
 });
 
 it("Readiness route warm shared-store queries transition from ready to unavailable to ready", async () => {
@@ -104,30 +114,37 @@ it("Readiness route warm shared-store queries transition from ready to unavailab
   const store = await captureSharedStore();
   const database = new DatabaseSync(databasePath);
   let renamed = false;
-  const error = vi.spyOn(console, "error").mockImplementation(() => {});
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
   try {
     expect(store.list()).toHaveLength(4);
+    const get = routeHandler(route, "GET");
+    const initiallyReady = await get(new Request("http://localhost/api/ready"));
+    await expectReadinessResponse(initiallyReady, 200, "ready");
+    expect(consoleError).not.toHaveBeenCalled();
     expect(getHealth().status).toBe(200);
+    expect(await getHealth().json()).toEqual({ status: "ok" });
     database.exec("ALTER TABLE tickets RENAME TO readiness_tickets");
     renamed = true;
 
-    const get = routeHandler(route, "GET");
     for (let request = 0; request < 2; request += 1) {
       const unavailable = await get(new Request("http://localhost/api/ready"));
-      expect(unavailable.status).toBe(503);
-      expect(await unavailable.json()).toEqual({ status: "unavailable" });
+      await expectReadinessResponse(unavailable, 503, "unavailable");
+      expect(consoleError.mock.calls).toEqual(
+        Array.from({ length: request + 1 }, () => [readinessFailureEvent]),
+      );
     }
     expect(getHealth().status).toBe(200);
     expect(await getHealth().json()).toEqual({ status: "ok" });
-    expect(error).toHaveBeenCalledTimes(2);
-    expect(error.mock.calls[0]).toEqual(error.mock.calls[1]);
 
     database.exec("ALTER TABLE readiness_tickets RENAME TO tickets");
     renamed = false;
     const ready = await get(new Request("http://localhost/api/ready"));
-    expect(ready.status).toBe(200);
-    expect(await ready.json()).toEqual({ status: "ready" });
+    await expectReadinessResponse(ready, 200, "ready");
+    expect(consoleError.mock.calls).toEqual([
+      [readinessFailureEvent],
+      [readinessFailureEvent],
+    ]);
     expect(await captureSharedStore()).toBe(store);
   } finally {
     if (renamed) database.exec("ALTER TABLE readiness_tickets RENAME TO tickets");
@@ -142,6 +159,7 @@ it("Readiness route HEAD checks the current dependency without a response body",
   await captureSharedStore();
   const database = new DatabaseSync(databasePath);
   let renamed = false;
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
   try {
     const head = routeHandler(route, "HEAD");
@@ -150,6 +168,7 @@ it("Readiness route HEAD checks the current dependency without a response body",
     expect(ready.headers.get("content-type")).toBe("application/json");
     expect(ready.headers.get("cache-control")).toBe("no-store");
     expect(await ready.text()).toBe("");
+    expect(consoleError).not.toHaveBeenCalled();
 
     database.exec("ALTER TABLE tickets RENAME TO readiness_tickets");
     renamed = true;
@@ -160,9 +179,18 @@ it("Readiness route HEAD checks the current dependency without a response body",
     expect(unavailable.headers.get("content-type")).toBe("application/json");
     expect(unavailable.headers.get("cache-control")).toBe("no-store");
     expect(await unavailable.text()).toBe("");
+    expect(consoleError.mock.calls).toEqual([[readinessFailureEvent]]);
 
     database.exec("ALTER TABLE readiness_tickets RENAME TO tickets");
     renamed = false;
+    const recovered = await head(
+      new Request("http://localhost/api/ready", { method: "HEAD" }),
+    );
+    expect(recovered.status).toBe(200);
+    expect(recovered.headers.get("content-type")).toBe("application/json");
+    expect(recovered.headers.get("cache-control")).toBe("no-store");
+    expect(await recovered.text()).toBe("");
+    expect(consoleError.mock.calls).toEqual([[readinessFailureEvent]]);
   } finally {
     if (renamed) database.exec("ALTER TABLE readiness_tickets RENAME TO tickets");
     database.close();
@@ -179,13 +207,29 @@ it("Readiness route GET ignores caller database and SQL inputs", async () => {
   url.searchParams.set("database", callerPath);
   url.searchParams.set("dbPath", callerPath);
   url.searchParams.set("sql", "DROP TABLE tickets");
-  const response = await routeHandler(route, "GET")(new Request(url));
+  const request = new Request(url);
+  const bodyReaders = {
+    arrayBuffer: vi.fn(async () => new ArrayBuffer(0)),
+    blob: vi.fn(async () => new Blob()),
+    formData: vi.fn(async () => new FormData()),
+    json: vi.fn(async () => ({ database: callerPath, sql: "DROP TABLE tickets" })),
+    text: vi.fn(async () => JSON.stringify({
+      database: callerPath,
+      sql: "DROP TABLE tickets",
+    })),
+  };
+  for (const [method, reader] of Object.entries(bodyReaders)) {
+    Object.defineProperty(request, method, { configurable: true, value: reader });
+  }
+  const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+  const response = await routeHandler(route, "GET")(request);
 
-  expect(response.status).toBe(200);
-  const body = await response.text();
-  expect(JSON.parse(body)).toEqual({ status: "ready" });
+  const body = await response.clone().text();
+  await expectReadinessResponse(response, 200, "ready");
   expect(body).not.toContain(callerPath);
   expect(existsSync(callerPath)).toBe(false);
+  expect(Object.values(bodyReaders).every((reader) => reader.mock.calls.length === 0)).toBe(true);
+  expect(consoleError).not.toHaveBeenCalled();
   await captureSharedStore();
 });
 
