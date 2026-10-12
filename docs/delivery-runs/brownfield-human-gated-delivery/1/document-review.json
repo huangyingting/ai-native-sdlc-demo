@@ -64,6 +64,26 @@
         "commentId": 6117828551,
         "commentBody": "/sdlc decide spec v2 Q-2\nOutcome: Use a predefined local roster containing exactly Alex Chen and Sam Rivera. Select owners from this list rather than accepting free-text names. Only roster members are valid non-empty owners; an unassigned ticket remains valid under Q-1. Roster administration and external identity integration are out of scope.\nRationale: A small fixed roster gives each owner a consistent identity, prevents spelling variations during handoffs, and keeps this change focused without introducing account integration or a roster management feature.\n",
         "decidedAt": "2026-10-12T04:36:10Z"
+      },
+      {
+        "questionId": "Q-3",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Add a ticket-list owner filter with All owners, Alex Chen, Sam Rivera, and Unassigned options. All owners does not restrict ownership. A selected owner or Unassigned is applied together with the existing search and filter conditions, so tickets must satisfy all active conditions. Preserve the existing search and filtering behavior when All owners is selected.",
+          "Rationale": "Agents and team leads need to find an individual agent's work and identify tickets without an owner without manually scanning the entire queue. Combining ownership with the existing filters preserves the current workflow."
+        },
+        "version": 3,
+        "hash": "1eb0a07fe25f2b4c7e3294947a41b9153747590ab67db5ba3970b85d3e7008b5",
+        "contextHash": "b0d4da17385e43a2c0ad0016e72474aad1c45d9ef29e72c39abe18c6cf8ce885",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117947008,
+        "commentBody": "/sdlc decide spec v3 Q-3\nOutcome: Add a ticket-list owner filter with All owners, Alex Chen, Sam Rivera, and Unassigned options. All owners does not restrict ownership. A selected owner or Unassigned is applied together with the existing search and filter conditions, so tickets must satisfy all active conditions. Preserve the existing search and filtering behavior when All owners is selected.\nRationale: Agents and team leads need to find an individual agent's work and identify tickets without an owner without manually scanning the entire queue. Combining ownership with the existing filters preserves the current workflow.\n",
+        "decidedAt": "2026-10-12T04:48:56Z"
       }
     ]
   },
@@ -88,8 +108,15 @@
     },
     "plan": null
   },
-  "pending": null,
-  "lastCommentId": 6117828551,
+  "pending": {
+    "stage": "spec",
+    "version": 4,
+    "feedback": "Apply Human decision #6117947008 for Q-3. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": null,
+    "contextHash": "927324e583b2b77ddf8308ec216bc05a3e06cac087f7b7d5fb39ad7e307ed91c"
+  },
+  "lastCommentId": 6117947008,
   "receipts": [
     {
       "id": 6117772868,
@@ -98,6 +125,10 @@
     {
       "id": 6117828551,
       "message": "Command #6117828551 recorded: decide spec v2."
+    },
+    {
+      "id": 6117947008,
+      "message": "Command #6117947008 recorded: decide spec v3."
     }
   ],
   "sealed": false
