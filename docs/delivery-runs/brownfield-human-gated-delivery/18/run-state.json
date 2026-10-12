@@ -4,8 +4,8 @@
   "repository": "huangyingting/ai-native-sdlc-demo",
   "baseline": "f52cc87b435d781af0be40a811d33f0cfd84d66b",
   "mode": "live",
-  "status": "active",
-  "lastCommentId": 0,
+  "status": "accepted",
+  "lastCommentId": 6133959987,
   "delivery": {
     "runId": "38311999223",
     "runAttempt": 2,
@@ -16,7 +16,21 @@
     "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38311999223",
     "verified": true,
     "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-    "acceptances": [],
+    "acceptances": [
+      {
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting"
+        },
+        "commentId": 6133959987,
+        "commentBody": "/sdlc accept sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4\nFinal acceptance approved for the verified image from merged source 06e9fe31d5c00bb75a2438e49af00ea4fac8b134, publication run38311999223 attempt2, following the assistant-run evidence in comment6133700328. The merged source passed all47 tests. Exact-image HTTP checks established DB-independent liveness, healthy/invalid/repaired readiness, GET/HEAD/no-store/method/input contracts, same-process query recovery and empty-table readiness without reseeding. A populated isolated volume survived restart and exclusive repair handover with all4 original records and timestamps preserved. Real browser submissions verified new-ticket unassigned creation,12 ownership checks across4 statuses, valid status changes, invalid creation/owner/status rejection, unchanged-owner timestamp preservation and7 filter checks. Repeated probes preserved all5 records after intentional new-ticket edits. All7 task containers and3 owned volumes were removed; shared resources were not changed. Accept this bounded database-read readiness increment, not write availability per probe, latency guarantees, production certification or completion of broader reliability work. Baseline dependency advisories and agreed deferred risks remain outstanding.",
+        "notes": "Final acceptance approved for the verified image from merged source 06e9fe31d5c00bb75a2438e49af00ea4fac8b134, publication run38311999223 attempt2, following the assistant-run evidence in comment6133700328. The merged source passed all47 tests. Exact-image HTTP checks established DB-independent liveness, healthy/invalid/repaired readiness, GET/HEAD/no-store/method/input contracts, same-process query recovery and empty-table readiness without reseeding. A populated isolated volume survived restart and exclusive repair handover with all4 original records and timestamps preserved. Real browser submissions verified new-ticket unassigned creation,12 ownership checks across4 statuses, valid status changes, invalid creation/owner/status rejection, unchanged-owner timestamp preservation and7 filter checks. Repeated probes preserved all5 records after intentional new-ticket edits. All7 task containers and3 owned volumes were removed; shared resources were not changed. Accept this bounded database-read readiness increment, not write availability per probe, latency guarantees, production certification or completion of broader reliability work. Baseline dependency advisories and agreed deferred risks remain outstanding.",
+        "at": "2026-10-12T22:38:17Z",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "runId": "38311999223",
+        "runAttempt": 2
+      }
+    ],
     "rejection": null
   },
   "failure": null,
@@ -87,6 +101,18 @@
       "at": "2026-10-12T21:46:21.929Z",
       "runId": "38311999223",
       "runAttempt": 2
+    },
+    {
+      "type": "accept",
+      "at": "2026-10-12T22:38:17Z",
+      "commentId": 6133959987,
+      "actor": "huangyingting"
+    },
+    {
+      "type": "command-receipt",
+      "at": "2026-10-12T22:38:17Z",
+      "commentId": 6133959987,
+      "message": "Command #6133959987 recorded: accept."
     }
   ]
 }
