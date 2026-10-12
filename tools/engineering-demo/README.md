@@ -6,9 +6,9 @@ Dependency-free Node.js 24 tooling for three connected demonstrations:
 2. Evidence-based diagnosis of product, test-harness and environment failures.
 3. A fixed-case comparison of direct versus diagnosis-first Copilot proposals.
 
-Start with the [step-by-step guide](../../docs/engineering-judgment-demos.md).
+Start with the [step-by-step guide](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.md).
 The independent synthetic app is under
-[`demos/engineering-lab`](../../demos/engineering-lab/). It is not the accepted
+[`demos/engineering-lab`](../../demos/engineering-lab). It is not the accepted
 IT service desk and does not alter any earlier lifecycle evidence.
 
 ```sh

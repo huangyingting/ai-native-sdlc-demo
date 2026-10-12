@@ -10,18 +10,26 @@ operation. Each case links to the work actually performed in this repository.
 
 ## Start here / 从这里开始
 
-- **[Cases and delivery progress / 案例与交付进度](docs/cases/README.md)**:
-  the entry point for the examples in this repository.
+- **[Demo documentation / 演示文档](docs/README.md)**:
+  cases, presentation route and evidence for this repository.
+- **[Presentation route / 演示路线](docs/presenter.md)**:
+  a 30-minute tour of the completed ownership delivery.
+- **Ticket ownership, end to end / 工单负责人完整案例**:
+  [中文图文讲解](docs/cases/ownership.zh-CN.md) · [English walkthrough](docs/cases/ownership.en.md).
 - **[Application / 运行服务台](demos/it-service-desk/README.md)**:
   local installation and application commands.
-- **[Delivery commands / 交付命令参考](docs/brownfield-human-gated-delivery.md)**:
+- **[Delivery commands / 交付命令参考](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md)**:
   document review, pull-request checks and image acceptance.
+
+Reusable guides live in the [source repository](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/README.md);
+this repository keeps only demonstration narratives, screenshots and delivery records.
+通用方法和操作说明统一在指南仓库维护，本仓库不保留重复副本。
 
 ## Cases / 案例
 
 | Case / 案例 | Business or engineering question / 要解决的问题 | Status / 状态 |
 |---|---|---|
-| Ticket ownership / 工单归属 | Who is responsible, and how do we hand over a ticket? / 谁负责，怎样交接？ | [In progress / 进行中](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) |
+| Ticket ownership / 工单归属 | Who is responsible, and how do we hand over a ticket? / 谁负责，怎样交接？ | [Accepted / 已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
 | Database readiness / 数据库就绪检查 | Can the application serve requests, not merely keep a process alive? / 进程存活时，应用是否真的可用？ | Not started / 未开始 |
 | Release reliability / 发布可靠性 | Can we detect a bad candidate, recover service and prevent recurrence? / 怎样拒绝异常实例、恢复服务并避免问题复发？ | Not started / 未开始 |
 | Change impact / 变更影响 | How can we add a proxy owner without changing the accountable owner? / 增加代理负责人时，怎样保持原有责任关系？ | Not started / 未开始 |
@@ -45,12 +53,14 @@ AI 起草文档和代码，GitHub Actions 执行检查并保存版本记录。
 产品决策和对应版本的批准需要审查者 `huangyingting` 确认。
 生成任务成功，不代表文档已经批准或应用已经验收。
 
-The service desk starts without ticket ownership. The engineering application
-starts without proxy ownership. Screenshots and measured results will be added
-as work completes; a planned case is not a completed delivery.
+The initial service-desk baseline had no ticket ownership; the first delivery
+now includes it and has been accepted. The engineering application still has
+no proxy ownership. Screenshots and measured results are added as work
+completes; a planned case is not a completed delivery.
 
-服务台从尚未实现工单归属的状态开始；工程实验应用则尚未实现代理负责人。
-截图和测量结果随实际进度补充，未完成的案例会明确保留其当前状态。
+服务台的初始基线不支持工单归属；目前该功能已完成交付并通过验收。
+工程实验应用的代理负责人功能仍未开始。截图和测量结果随实际进度补充，
+未完成的案例会明确保留其当前状态。
 
 ## Validation / 验证
 

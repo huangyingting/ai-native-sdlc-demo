@@ -101,6 +101,30 @@ repository is a different resource even when its name matches a deleted one.
 若沿用已有令牌，必须重新确认它选择的是当前仓库：同名重建的仓库不是原来的资源。
 文档生成使用工作流自带的 GitHub 令牌，不需要把个人令牌交给模型。
 
+## Package access during delivery / 交付时的镜像包权限
+
+The first executable publication attempt built the merged image, but GHCR
+rejected the upload with `permission_denied: write_package`. The job log
+confirmed that its `GITHUB_TOKEN` had `Packages: write`; that declaration did
+not by itself grant access to the existing package.
+
+The operator configured the current repository's access under the package's
+**Package settings → Manage Actions access**, with **Write** permission.
+[Publication attempt 3](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38215333786/attempts/3)
+then succeeded without changing application code or replacing a token.
+
+首次实际执行发布时，镜像构建成功，但上传被 GHCR 拒绝。任务日志确认已有
+`Packages: write`，因此不能只在工作流中重复添加同一权限。
+操作者在镜像包的 **Package settings → Manage Actions access** 中，
+为当前仓库配置 **Write** 后，重试成功；没有修改应用代码或更换令牌。
+
+When recreating a repository, check package Actions access separately from
+repository secrets. Do not delete the package, make it public, or send a token
+through chat merely to work around an access failure.
+
+仓库同名重建后，除了检查 Secret，还应单独检查镜像包对当前仓库的授权。
+不要为了排除权限问题而删除包、改成公开包，或把令牌发到聊天里。
+
 ## Review and acceptance / 审查与验收
 
 The [ownership requirement](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1)
