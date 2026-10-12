@@ -3,28 +3,40 @@
   "intent": 1,
   "tests": [
     {
-      "name": "ticket ownership action > rejects invalid ownership updates and reports persistence failures",
+      "name": "ticket ownership action saves assignment, handoff, and clearing independently from status",
+      "acceptance": ["AC-2", "AC-3", "AC-4", "AC-8"]
+    },
+    {
+      "name": "ticket ownership action rejects forged updates and reports SQLite write failures without success effects",
       "acceptance": ["AC-5", "AC-6"]
     },
     {
-      "name": "Ticket details > shows ownership separately and offers an explicit handoff control",
-      "acceptance": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-10"]
+      "name": "Dashboard shows each current owner separately from the requester and keeps global summaries",
+      "acceptance": ["AC-1", "AC-7", "AC-8", "AC-10"]
     },
     {
-      "name": "TicketStore > supports assigning, handing off, and clearing ownership without changing ticket status",
+      "name": "Dashboard forwards each owner filter with active filters and preserves them for All owners",
+      "acceptance": ["AC-7", "AC-8", "AC-10"]
+    },
+    {
+      "name": "TicketStore supports assigning, handing off, and clearing ownership in every status",
       "acceptance": ["AC-2", "AC-3", "AC-4", "AC-8", "AC-9"]
     },
     {
-      "name": "TicketStore > filters by owner together with the existing ticket filters",
+      "name": "TicketStore filters assigned and unassigned tickets together with existing filters and ordering",
       "acceptance": ["AC-7", "AC-8"]
     },
     {
-      "name": "TicketStore > preserves existing tickets as unassigned when opening a legacy database",
+      "name": "TicketStore migrates populated and empty legacy databases without reseeding and preserves owner updates across reopen",
       "acceptance": ["AC-8"]
     },
     {
-      "name": "Dashboard > shows ticket ownership and the complete owner filter",
-      "acceptance": ["AC-1", "AC-7", "AC-8", "AC-10"]
+      "name": "TicketStore surfaces a real SQLite owner-write failure without changing the ticket",
+      "acceptance": ["AC-6"]
+    },
+    {
+      "name": "Ticket details shows ownership separately and offers an explicit handoff control",
+      "acceptance": ["AC-1", "AC-2", "AC-3", "AC-4", "AC-8", "AC-10"]
     }
   ]
 }

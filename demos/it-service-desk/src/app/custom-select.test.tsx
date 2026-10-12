@@ -234,4 +234,102 @@ describe("CustomSelect", () => {
     expect(formValue()).toBe("in_progress");
     expect(document.activeElement).toBe(next);
   });
+
+  it("offers the exact owner roster accessibly and waits for explicit save", () => {
+    act(() => root.render(
+      <form id="owner-form">
+        <label htmlFor="owner">Owner</label>
+        <CustomSelect
+          defaultValue=""
+          id="owner"
+          name="owner"
+          options={[
+            { value: "", label: "Unassigned" },
+            { value: "alex-chen", label: "Alex Chen" },
+            { value: "sam-rivera", label: "Sam Rivera" },
+          ]}
+        />
+        <p id="owner-error" role="alert">Choose an owner or leave the ticket unassigned.</p>
+        <button id="save-owner" type="submit">Save ownership</button>
+      </form>,
+    ));
+    const form = container.querySelector<HTMLFormElement>("#owner-form")!;
+    const ownerTrigger = container.querySelector<HTMLButtonElement>("#owner")!;
+    const save = container.querySelector<HTMLButtonElement>("#save-owner")!;
+    const submit = vi.fn((event: Event) => event.preventDefault());
+    form.addEventListener("submit", submit);
+    act(() => ownerTrigger.focus());
+
+    expect(ownerTrigger.getAttribute("role")).toBe("combobox");
+    expect(ownerTrigger.labels?.[0].textContent).toBe("Owner");
+    expect(document.getElementById(ownerTrigger.getAttribute("aria-describedby")!)?.textContent)
+      .toBe("Unassigned");
+    expect(container.querySelector('[role="alert"]')?.textContent)
+      .toContain("Choose an owner");
+
+    press("ArrowDown");
+    expect([...container.querySelectorAll<HTMLElement>('[role="option"]')]
+      .map((option) => option.textContent?.trim())).toEqual([
+      "Unassigned",
+      "Alex Chen",
+      "Sam Rivera",
+    ]);
+    press("s");
+    expect(document.getElementById(ownerTrigger.getAttribute("aria-activedescendant")!)?.textContent)
+      .toBe("Sam Rivera");
+    press("Escape");
+    expect(new FormData(form).get("owner")).toBe("");
+
+    press("ArrowDown");
+    press("ArrowDown");
+    press("Enter");
+    expect(new FormData(form).get("owner")).toBe("alex-chen");
+    expect(submit).not.toHaveBeenCalled();
+    act(() => form.requestSubmit(save));
+    expect(submit).toHaveBeenCalledOnce();
+    expect(new FormData(form).get("owner")).toBe("alex-chen");
+  });
+
+  it("offers every owner-filter choice and applies the selection only on submit", () => {
+    act(() => root.render(
+      <form id="owner-filter-form">
+        <label htmlFor="owner-filter">Owner</label>
+        <CustomSelect
+          defaultValue=""
+          id="owner-filter"
+          name="owner"
+          options={[
+            { value: "", label: "All owners" },
+            { value: "alex-chen", label: "Alex Chen" },
+            { value: "sam-rivera", label: "Sam Rivera" },
+            { value: "unassigned", label: "Unassigned" },
+          ]}
+        />
+        <button id="apply-owner-filter" type="submit">Apply filters</button>
+      </form>,
+    ));
+    const form = container.querySelector<HTMLFormElement>("#owner-filter-form")!;
+    const ownerTrigger = container.querySelector<HTMLButtonElement>("#owner-filter")!;
+    const submit = vi.fn((event: Event) => event.preventDefault());
+    form.addEventListener("submit", submit);
+    act(() => ownerTrigger.focus());
+
+    expect(ownerTrigger.labels?.[0].textContent).toBe("Owner");
+    expect(document.getElementById(ownerTrigger.getAttribute("aria-describedby")!)?.textContent)
+      .toBe("All owners");
+    press("ArrowDown");
+    expect([...container.querySelectorAll<HTMLElement>('[role="option"]')]
+      .map((option) => option.textContent?.trim())).toEqual([
+      "All owners",
+      "Alex Chen",
+      "Sam Rivera",
+      "Unassigned",
+    ]);
+    press("End");
+    press("Enter");
+    expect(new FormData(form).get("owner")).toBe("unassigned");
+    expect(submit).not.toHaveBeenCalled();
+    act(() => form.requestSubmit(container.querySelector<HTMLButtonElement>("#apply-owner-filter")!));
+    expect(submit).toHaveBeenCalledOnce();
+  });
 });
