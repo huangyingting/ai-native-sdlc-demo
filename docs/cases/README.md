@@ -5,7 +5,11 @@
 **已完成的工单负责人案例：**[图文讲解](ownership.zh-CN.md) ·
 [截图来源与校验记录](assets/ownership/manifest.json)
 
-## 交付主线
+**已完成的数据库就绪检查案例：**[图文讲解](readiness.md) ·
+[截图来源与校验记录](assets/readiness/manifest.json)
+
+<a id="交付主线"></a>
+## 首项交付：工单负责人
 
 服务台已经支持创建、查询和更新工单。第一项需求是让负责人清晰可见，
 并支持工单交接，同时保持已有流程可用。具体产品规则先讨论决定，
@@ -20,7 +24,7 @@
 | 测试 | [测试 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) | [经两轮修改后批准](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486995544)，已合并到交付分支 |
 | 实现 | [实现 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | 已批准并合并，38 项测试全部通过 |
 | 交付 | [指定镜像的验收记录](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) | 已发布、运行并验收 |
-| 运行 | 运行观察与后续需求 | 待开始 |
+| 运行 | [数据库就绪维护交付](readiness.md) | 已验收；后续发布可靠性演练待开始 |
 
 ### 产品决策
 
@@ -69,12 +73,29 @@
 `sha256:90836abf909410db91b0d3c791812683e5424c5cab7d7a84df1af6772a66ce76`。
 本次功能验收不代表[基线依赖风险](preparation.md)已经解决，也不代表已获准用于生产。
 
-## 专题案例
+## 维护交付：数据库就绪检查
+
+[需求 #18](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18)
+已验收并关闭，当前 47 项测试全部通过。
+
+| 关卡 | 原始记录 | 结果 |
+| --- | --- | --- |
+| 产品决定 | [六项批量决定](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6124226071) | 一条命令产生一版新规格，不直接批准 |
+| 规格与计划 | [Spec v3 批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6124496828) · [Plan v2 批准](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6124971454) | 分别记录，绑定准确版本 |
+| 测试 | [PR #25](https://github.com/huangyingting/ai-native-sdlc-demo/pull/25) | 38 项基线通过；47 项候选测试中 39 项通过、8 项精确断言 Red，一轮审查修改后批准 |
+| 实现 | [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | 47 项全部 Green，七个获批增量文件保持不变，保护流程合并为 `06e9fe3` |
+| 发布 | [指定摘要验证](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38311999223/attempts/2) | OCI 来源与合并提交一致 |
+| 验收 | [用户验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) · [回执](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133963982) | 真实故障、恢复、数据保留和业务操作通过，需求关闭 |
+
+完整边界及图文证据见[就绪检查案例](readiness.md)。
+数据库可读信号不代表写入保证、响应期限或生产认证，发布可靠性演练仍待开展。
+
+<a id="专题案例"></a>
+## 后续专题
 
 具备所需前置条件后，将分别开展：
 
-- **就绪检查与可靠性：** 观察依赖故障，审查就绪检查需求，检验测试有效性，
-  验证流量准入和恢复，并跟进预防措施。
+- **发布可靠性：** 就绪检查已验收；后续验证流量准入与恢复，并跟进预防措施。
 - **变更影响：** 先审查代理负责人方案，再在独立工程实验应用中实现。
 - **故障诊断与策略评估：** 使用固定故障、独立检查和实测用量，比较修复效果与证据质量。
 - **Agent 执行追踪：** 查阅实际模型和工具调用，解释它们与验证结果的关系。

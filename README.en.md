@@ -11,6 +11,7 @@ operation. Each case links to the work actually performed in this repository.
 - **[Demo documentation](docs/README.en.md)**: cases, presentation route and evidence.
 - **[Presentation route](docs/presenter.en.md)**: a 30-minute tour of the completed ownership delivery.
 - **[Ticket ownership, end to end](docs/cases/ownership.en.md)**: the illustrated case study.
+- **[Database readiness](docs/cases/readiness.en.md)**: batch decisions, controlled Red, a read probe and exact-image acceptance.
 - **[Application](demos/it-service-desk/README.en.md)**: local installation and application commands.
 - **[Delivery commands](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.en.md)**:
   document review, pull-request checks and image acceptance.
@@ -24,7 +25,7 @@ not duplicate guide copies.
 | Case | Business or engineering question | Status |
 |---|---|---|
 | Ticket ownership | Who is responsible, and how do we hand over a ticket? | [Accepted](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
-| Database readiness | Can the application serve requests, not merely keep a process alive? | Not started |
+| Database readiness | Can we distinguish a live process from an unreadable ticket database? | [Accepted](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
 | Release reliability | Can we detect a bad candidate, recover service and prevent recurrence? | Not started |
 | Change impact | How can we add a proxy owner without changing the accountable owner? | Not started |
 | Failure diagnosis | Is a failure caused by product code, a test or configuration? | Not started |
@@ -45,7 +46,10 @@ generation job is not an approval.
 
 The initial service-desk baseline had no ticket ownership; the first delivery
 now includes it and has been accepted. The engineering application still has
-no proxy ownership. Screenshots and measured results are added as work
+no proxy ownership. Database readiness is also accepted, with all 47 current
+tests Green; release reliability is still pending, and a ready response does
+not guarantee full application availability or production traffic admission.
+Screenshots and measured results are added as work
 completes; a planned case is not a completed delivery.
 
 ## Validation

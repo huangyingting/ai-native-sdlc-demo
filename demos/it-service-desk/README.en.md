@@ -51,6 +51,23 @@ For disposable local development only, deleting that file resets demo data.
 Do not reset a shared checkout for a presentation; use an isolated prepared
 copy as described below.
 
+## Liveness and database readiness
+
+`GET /api/health` remains database-independent and returns 200 with
+`{"status":"ok"}`. `GET /api/ready` performs a fresh minimal read of the configured
+ticket database on each request: 200 `{"status":"ready"}` or 503
+`{"status":"unavailable"}`, with JSON content type and `Cache-Control: no-store`.
+HEAD checks the same current dependency without a body; POST, PUT, PATCH,
+DELETE and OPTIONS return 405 with `Allow: GET, HEAD` and do not initialize it.
+Query parameters and GET bodies cannot override configuration or SQL.
+
+The first probe may invoke existing lazy initialization and new-database
+seeding. Existing records, timestamps and intentionally empty tables are
+preserved. Failure diagnostics use one fixed generic event, not raw exceptions.
+This is database-read readiness, not write availability, a latency deadline or
+production certification. See the [accepted readiness case](../../docs/cases/readiness.en.md)
+for the exact artifact and verification boundaries.
+
 ## Validate
 
 ```powershell

@@ -10,6 +10,7 @@
 ## 从这里开始
 
 1. **了解交付结果：**[工单负责人图文案例](cases/ownership.zh-CN.md)。
+   后续维护交付见[数据库就绪检查图文案例](cases/readiness.md)。
 2. **准备讲解：**[演示路线](presenter.md)。
 3. **核对范围与进度：**[案例索引](cases/README.md)。
 4. **查阅原始记录：**
@@ -21,13 +22,15 @@
 ## 当前范围
 
 工单负责人和交接功能已验收：38 项测试通过，镜像已发布，并按指定摘要验证。
-数据库就绪检查、发布可靠性、变更影响、故障诊断和 Agent 策略评估尚未在本仓库完成，
+数据库就绪检查也已验收：当前 47 项测试通过，指定发布摘要完成隔离故障、恢复与真实业务操作验证。
+发布可靠性、变更影响、故障诊断和 Agent 策略评估尚未在本仓库完成，
 不能拿其他仓库的记录代替。
 
 ## 文件与证据
 
 - [cases/](cases/README.md)：案例正文与进度。
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json)：14 张原始截图及来源、时间和哈希。
+- [cases/assets/readiness/](cases/assets/readiness/manifest.json)：21 张就绪检查截图，区分基线与新发布镜像的来源。
 - [delivery-runs/](delivery-runs/brownfield-human-gated-delivery/1/spec.md)：
   工作流管理的规格、计划和审查文件，不随文档整理或翻译改写。
 

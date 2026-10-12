@@ -5,7 +5,11 @@
 **Completed ownership walkthrough:**
 [Illustrated case](ownership.en.md) · [Screenshot provenance](assets/ownership/manifest.json)
 
-## Main delivery
+**Completed database-readiness maintenance delivery:**
+[Illustrated case](readiness.en.md) · [Screenshot provenance](assets/readiness/manifest.json)
+
+<a id="main-delivery"></a>
+## First delivery: ticket ownership
 
 The service desk already supports creating, searching and updating tickets.
 The first request is to make ticket responsibility visible and support
@@ -21,7 +25,7 @@ before implementation rather than inferred from a finished example.
 | Tests | [Tests PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) | [Approved after two revision rounds](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486995544); merged into the delivery branch |
 | Implementation | [Implementation PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | Approved and merged; 38 tests Green |
 | Delivery | [Exact image acceptance](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) | Published, run and accepted |
-| Operation | Observations and follow-up requirements | Pending |
+| Operation | [Database-readiness maintenance delivery](readiness.en.md) | Accepted; subsequent release reliability is pending |
 
 ### Product decisions
 
@@ -75,12 +79,31 @@ Accepted digest:
 Functional acceptance does not resolve the [baseline dependency advisories](preparation.en.md)
 or authorize production use.
 
-## Focused cases
+## Maintenance delivery: database readiness
+
+[Intent #18](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18)
+is accepted and closed, with all 47 current tests Green.
+
+| Gate | Original record | Result |
+| --- | --- | --- |
+| Product decisions | [Six-answer batch](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6124226071) | One command produces one Spec revision, not approval |
+| Spec and Plan | [Spec v3 approval](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6124496828) · [Plan v2 approval](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6124971454) | Separate exact-version records |
+| Tests | [PR #25](https://github.com/huangyingting/ai-native-sdlc-demo/pull/25) | 38 baseline passes; head 47 total, 39 passing and 8 exact assertion Red; approved after one correction round |
+| Implementation | [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | 47 Green, seven approved increment files unchanged, protected merge `06e9fe3` |
+| Publication | [Digest verification](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38311999223/attempts/2) | OCI source matches the merge |
+| Acceptance | [User acceptance](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) · [Receipt](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133963982) | Real fault/recovery, preservation and business journeys passed; Intent closed |
+
+See the [readiness case](readiness.en.md) for the full boundaries and illustrated evidence.
+Database readability is not a write guarantee, deadline or production certification;
+release reliability remains a separate pending exercise.
+
+<a id="focused-cases"></a>
+## Remaining focused cases
 
 After the required prerequisites are available:
 
-- **Readiness and reliability:** observe dependency failures, review a readiness
-  requirement, qualify tests, verify traffic admission and recovery, and follow up on prevention.
+- **Release reliability:** readiness is accepted; subsequently verify traffic
+  admission and recovery, then follow up on prevention.
 - **Change impact:** review a proxy-owner proposal before implementing it in the isolated engineering application.
 - **Diagnosis and strategy evaluation:** use fixed faults, independent checks and measured usage to compare repairs and evidence quality.
 - **Agent execution traces:** inspect actual model/tool calls and explain their relationship to verified results.

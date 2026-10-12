@@ -11,6 +11,7 @@
 - **[演示文档](docs/README.md)**：本仓库的案例、演示路线和证据入口。
 - **[演示路线](docs/presenter.md)**：用 30 分钟讲解已经完成的负责人交接案例。
 - **[工单负责人完整案例](docs/cases/ownership.zh-CN.md)**：从需求到验收的图文记录。
+- **[数据库就绪检查案例](docs/cases/readiness.md)**：批量决定、受控 Red、只读探测和指定镜像验收。
 - **[运行服务台](demos/it-service-desk/README.md)**：本地安装和应用命令。
 - **[交付命令参考](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md)**：
   文档审查、PR 检查和镜像验收。
@@ -23,7 +24,7 @@
 | 案例 | 要解决的问题 | 状态 |
 |---|---|---|
 | 工单负责人 | 谁负责，怎样交接？ | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
-| 数据库就绪检查 | 进程存活时，应用是否真的可用？ | 未开始 |
+| 数据库就绪检查 | 进程存活时，工单数据库是否可读？ | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
 | 发布可靠性 | 怎样拒绝异常实例、恢复服务并避免问题复发？ | 未开始 |
 | 变更影响 | 增加代理负责人时，怎样保持原有责任关系？ | 未开始 |
 | 故障诊断 | 问题出在产品代码、测试还是配置？ | 未开始 |
@@ -42,6 +43,8 @@ AI 起草文档和代码，GitHub Actions 执行检查并保存版本记录。
 生成任务成功，不代表文档已经批准或应用已经验收。
 
 服务台的初始基线不支持工单负责人；目前该功能已完成交付并通过验收。
+后续数据库就绪检查也已验收，当前 47 项测试全部通过；
+发布可靠性演练仍未完成，就绪响应不代表完整应用或生产流量准入保证。
 工程实验应用的代理负责人功能仍未开始。截图和测量结果随实际进度补充，
 未完成的案例会明确保留其当前状态。
 
