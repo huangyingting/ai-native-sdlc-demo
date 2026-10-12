@@ -44,6 +44,26 @@
         "commentId": 6117772868,
         "commentBody": "/sdlc decide spec v1 Q-1\nOutcome: Ownership is optional for every ticket. Existing and newly created tickets may remain unassigned. Agents may assign, reassign, or clear the owner. Display tickets without an owner as \"Unassigned\". Do not infer or backfill owners for historical tickets.\nRationale: Preserve the current intake workflow and existing ticket data while making responsibility explicit. Unassigned work must remain visible without inventing a responsible person.\n",
         "decidedAt": "2026-10-12T04:30:12Z"
+      },
+      {
+        "questionId": "Q-2",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Use a predefined local roster containing exactly Alex Chen and Sam Rivera. Select owners from this list rather than accepting free-text names. Only roster members are valid non-empty owners; an unassigned ticket remains valid under Q-1. Roster administration and external identity integration are out of scope.",
+          "Rationale": "A small fixed roster gives each owner a consistent identity, prevents spelling variations during handoffs, and keeps this change focused without introducing account integration or a roster management feature."
+        },
+        "version": 2,
+        "hash": "e0f8846d0b0c43d222ce990990c6ee0a7bd99c2c14e195731e770ceade60211d",
+        "contextHash": "29b1f5149aaa1105f545be5719fb526d9689b195a815a7a83fa72770a080d91f",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6117828551,
+        "commentBody": "/sdlc decide spec v2 Q-2\nOutcome: Use a predefined local roster containing exactly Alex Chen and Sam Rivera. Select owners from this list rather than accepting free-text names. Only roster members are valid non-empty owners; an unassigned ticket remains valid under Q-1. Roster administration and external identity integration are out of scope.\nRationale: A small fixed roster gives each owner a consistent identity, prevents spelling variations during handoffs, and keeps this change focused without introducing account integration or a roster management feature.\n",
+        "decidedAt": "2026-10-12T04:36:10Z"
       }
     ]
   },
@@ -68,12 +88,23 @@
     },
     "plan": null
   },
-  "pending": null,
-  "lastCommentId": 6117772868,
+  "pending": {
+    "stage": "spec",
+    "version": 3,
+    "feedback": "Apply Human decision #6117828551 for Q-2. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": null,
+    "contextHash": "b0d4da17385e43a2c0ad0016e72474aad1c45d9ef29e72c39abe18c6cf8ce885"
+  },
+  "lastCommentId": 6117828551,
   "receipts": [
     {
       "id": 6117772868,
       "message": "Command #6117772868 recorded: decide spec v1."
+    },
+    {
+      "id": 6117828551,
+      "message": "Command #6117828551 recorded: decide spec v2."
     }
   ],
   "sealed": false
