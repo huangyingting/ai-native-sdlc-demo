@@ -20,7 +20,12 @@
     "plan": null
   },
   "pending": null,
-  "lastCommentId": 0,
-  "receipts": [],
+  "lastCommentId": 6123798005,
+  "receipts": [
+    {
+      "id": 6123798005,
+      "message": "Command #6123798005 recorded: retry."
+    }
+  ],
   "sealed": false
 }
