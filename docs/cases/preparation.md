@@ -65,6 +65,15 @@ and reported the same eight unresolved advisories.
 
 ## Automation credential / 自动化凭据
 
+**Status on 2026-10-12:** the repository secret was configured at
+`04:27:13Z`. Its presence and the automated setup checks were verified without
+reading its value. No setup blockers remain. Actual token-dependent coding
+operations still need to succeed when their stages are reached.
+
+**2026-10-12 状态：**仓库 Secret 已于北京时间 12:27:13 配置。
+已确认 Secret 存在，自动化配置检查通过，全程未读取令牌值。
+后续进入代码任务时，仍需通过实际执行验证对应权限。
+
 `COPILOT_ASSIGN_TOKEN` must be configured before assigning the reviewed coding
 tasks. Document generation uses the workflow's own GitHub token and does not
 require copying a personal token into a prompt or Issue.
