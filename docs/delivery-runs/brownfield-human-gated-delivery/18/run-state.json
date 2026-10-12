@@ -48,6 +48,13 @@
       "stage": "documents",
       "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38250830410",
       "message": "Document generation, command processing or handoff failed; inspect the Actions log."
+    },
+    {
+      "type": "workflow-failed",
+      "at": "2026-10-12T12:46:03.181Z",
+      "stage": "documents",
+      "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38250830410",
+      "message": "Document generation, command processing or handoff failed; inspect the Actions log."
     }
   ]
 }
