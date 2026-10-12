@@ -2,7 +2,28 @@
   "version": 2,
   "reviewProfile": "decisions-v1",
   "discovery": {
-    "questions": [],
+    "questions": [
+      {
+        "id": "Q-1",
+        "question": "May tickets remain unassigned, including new tickets and tickets that predate ownership support?",
+        "options": "Optional ownership permits unassigned tickets and clearing an owner. Mandatory ownership for new tickets with a legacy-ticket exception preserves old records but changes intake and prevents later clearing. Mandatory ownership for every ticket requires a Human-specified transition policy and must not fabricate owners or lose existing requests."
+      },
+      {
+        "id": "Q-2",
+        "question": "How should owners be identified and validated?",
+        "options": "A predefined local roster provides consistent identities and exact matching; the Human must supply its members and distinguish duplicate display names. Free text avoids roster setup; the Human must specify acceptable names, length limits, and whitespace/case equivalence so validation and any filtering are unambiguous. Roster administration and external identity integration are not proposed."
+      },
+      {
+        "id": "Q-3",
+        "question": "Is queue visibility sufficient, or must users filter tickets by ownership?",
+        "options": "Visibility only is smaller but requires scanning to find an agent's work. A dedicated owner filter supports All owners, a specific owner, and Unassigned where applicable, combined with existing filters; it adds a control and requires defined owner matching under Q-2."
+      },
+      {
+        "id": "Q-4",
+        "question": "Where should users assign or change ownership?",
+        "options": "Ticket details only is the smaller change and keeps intake unchanged when ownership is optional. Creation plus ticket details permits assignment during intake and is needed if new tickets require an owner. The proposal allows changes in every existing status and keeps status saves independent of ownership; any restriction needs an explicit Human decision."
+      }
+    ],
     "decisions": []
   },
   "intent": 1,
@@ -12,21 +33,21 @@
     "body": "### Problem or opportunity\n\nThe existing IT service desk in demos/it-service-desk lets support agents create, search, and update tickets, but tickets have no assignee.\nAgents and team leads cannot see who owns a ticket or find the tickets assigned to a particular agent, making handoffs unclear.\n\n\n### Proposed outcome\n\nSupport agents and team leads can understand who is responsible for a ticket, identify work that has no owner, and coordinate handoffs without losing track of existing requests.\n\n\n### Affected users and systems\n\nService-desk agents and team leads using the existing IT service desk in demos/it-service-desk.\nTicket requesters benefit from clearer responsibility for their incidents and service requests.\n\n\n### Constraints and non-goals\n\n- Preserve existing ticket data and service-desk workflows.\n- Keep this a small improvement to the existing application, not a replacement.\n- External identity integrations, authentication changes, notifications, and SLA policies are out of scope for this change.\n\n\n### Open questions\n\n- Can a ticket remain unassigned?\n- Should owners come from a predefined local list or be entered freely?\n- Is visibility of ownership enough, or should agents also be able to filter tickets by owner?\n"
   },
   "counters": {
-    "spec": 0,
+    "spec": 1,
     "plan": 0
   },
   "documents": {
-    "spec": null,
+    "spec": {
+      "version": 1,
+      "hash": "112cad7d89b166aa6d20edcbdc026f0c8b214d51aa108a54cc982c405c6706d1",
+      "specHash": null,
+      "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+      "approvals": [],
+      "contextHash": "617bc4f07df8ba00503ffefdc8983958ca1ef004dd815921110bb647a877d9ec"
+    },
     "plan": null
   },
-  "pending": {
-    "stage": "spec",
-    "version": 1,
-    "feedback": "Initial draft. Use the Human Intent and discussion; expose unresolved decisions.",
-    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-    "specHash": null,
-    "contextHash": "7bc27b29f2a52f2f9191a14d78a5e107e00c1fe2e31033be3331a6b4662fb463"
-  },
+  "pending": null,
   "lastCommentId": 0,
   "receipts": [],
   "sealed": false
