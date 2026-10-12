@@ -63,6 +63,13 @@ export function discoveryPacket(state, text, compact = false) {
       `/sdlc defer spec v${version} ${question}`, "Rationale: Why it can wait.",
       "Owner: YOUR-GITHUB-LOGIN", "Follow-up: When and where to revisit it.",
       "Risk: The remaining risk you accept.", "```");
+    lines.push("", "Or answer multiple questions atomically in one comment and request one Spec revision:",
+      "Every answer must be valid; the batch does not approve the Spec. Individual commands remain supported.", "",
+      "````text", `/sdlc decide spec v${version} batch`, "```json",
+      JSON.stringify((blockers.length ? blockers : state.discovery.questions).map((item) => ({
+        action: "decide", questionId: item.id,
+        fields: { Outcome: "The selected behavior or answer.", Rationale: "Why this is the right choice." },
+      })), null, 2), "```", "````");
   }
   return lines.join("\n");
 }
@@ -271,7 +278,7 @@ export class DocumentReview {
       const state = structuredClone(snapshot.state);
       const files = {};
       if (!error) {
-        const versioned = ["approve", "decide", "defer"].includes(command.action);
+        const versioned = ["approve", "decide", "defer", "decide-batch"].includes(command.action);
         const members = versioned
           ? await resolveTeamMembers(this.copilotToken, this.owner, this.config.stages[command.stage].reviewers.teams) : [];
         const doc = versioned ? state.documents[command.stage] : null;
@@ -307,7 +314,7 @@ export class DocumentReview {
       next.receipts.push({ id: comment.id, message });
       await this.parent(intent, snapshot);
       snapshot = await this.save(snapshot, next, error ? {} : files);
-      if (snapshot.state.sealed || (!error && ["revise", "decide", "defer"].includes(command.action))) break;
+      if (snapshot.state.sealed || (!error && ["revise", "decide", "defer", "decide-batch"].includes(command.action))) break;
     }
     if (!snapshot.state.sealed && !snapshot.state.pending) {
       const state = structuredClone(snapshot.state);

@@ -303,6 +303,41 @@ test("replay exports immutable bound discovery, all decisions, latest receipts a
   assert.ok(mock.calls.some((call) => call.endpoint === "graphql" && call.payload.variables.id === "document-ledger-node"));
 });
 
+test("replay corroborates every batch answer but counts one command and one revision per batch", async (t) => {
+  const documentReview = discoveryFixture({ batch: true });
+  const mock = mockGithub({ documentReview, reviewConfig: documentReview.config });
+  const { summary } = await replay({ repo: "example/demo", intent: "42", dest: join(artifacts(t), "batch") }, mock);
+  assert.equal(summary.documentReview.verified, true);
+  assert.equal(summary.documentReview.discovery.decisionEvidenceVerified, true);
+  assert.equal(summary.documentReview.discovery.decisions.length, 3);
+  assert.deepEqual(summary.documentReview.decisionCommentIds, [4001, 4002]);
+  assert.equal(summary.documentReview.counters.spec, 3);
+  assert.equal(summary.documentReview.discovery.questions[0].decision.commentId, 4002);
+  assert.equal(summary.documentReview.discovery.questions[1].decision.commentId, 4001);
+});
+
+test("replay rejects missing, edited or partially persisted batch receipts", async (t) => {
+  for (const [index, mutate] of [
+    (fixture) => { fixture.comments = fixture.comments.filter((comment) => comment.id !== 4001); },
+    (fixture) => { fixture.comments[0].updatedAt = "2026-09-27T00:00:00Z"; },
+    (fixture) => { fixture.state.discovery.decisions.splice(1, 1); },
+    (fixture) => { fixture.state.receipts[0].message = "Command #4001 recorded: decide spec v1."; },
+  ].entries()) {
+    const documentReview = discoveryFixture({ batch: true });
+    mutate(documentReview);
+    const dest = join(artifacts(t), `invalid-batch-${index}`);
+    const mock = mockGithub({ documentReview, reviewConfig: documentReview.config });
+    if (index === 2) {
+      await assert.rejects(replay({ repo: "example/demo", intent: "42", dest }, mock), /complete Human command/);
+      assert.equal(existsSync(dest), false);
+    } else {
+      const { summary } = await replay({ repo: "example/demo", intent: "42", dest }, mock);
+      assert.equal(summary.documentReview.verified, false);
+      assert.equal(summary.documentReview.discovery.decisionEvidenceVerified, false);
+    }
+  }
+});
+
 test("replay keeps blockers, trust failures and missing decision comments distinct from accepted delivery", async (t) => {
   const directory = artifacts(t);
   const missingComment = discoveryFixture();
