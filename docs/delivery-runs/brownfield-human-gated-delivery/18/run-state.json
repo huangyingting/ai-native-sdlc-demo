@@ -6,7 +6,19 @@
   "mode": "live",
   "status": "active",
   "lastCommentId": 0,
-  "delivery": null,
+  "delivery": {
+    "runId": "38311999223",
+    "runAttempt": 2,
+    "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk",
+    "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+    "mergeSha": "06e9fe31d5c00bb75a2438e49af00ea4fac8b134",
+    "pullNumber": 26,
+    "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38311999223",
+    "verified": true,
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "acceptances": [],
+    "rejection": null
+  },
   "failure": null,
   "events": [
     {
@@ -69,6 +81,12 @@
     {
       "type": "workflow-recovered",
       "at": "2026-10-12T12:56:56.451Z"
+    },
+    {
+      "type": "verification-passed",
+      "at": "2026-10-12T21:46:21.929Z",
+      "runId": "38311999223",
+      "runAttempt": 2
     }
   ]
 }
