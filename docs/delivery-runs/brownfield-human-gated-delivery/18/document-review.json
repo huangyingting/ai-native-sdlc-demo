@@ -193,13 +193,27 @@
       "hash": "15c4d4948968d6e1d96375dbe54c95452528368ab08096440e44b025655a0a3a",
       "specHash": null,
       "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-      "approvals": [],
+      "approvals": [
+        {
+          "user": {
+            "id": 24954047,
+            "login": "huangyingting",
+            "type": "User"
+          },
+          "commentId": 6124496828,
+          "commentBody": "/sdlc approve spec v3",
+          "approvedAt": "2026-10-12T12:43:33Z",
+          "hash": "15c4d4948968d6e1d96375dbe54c95452528368ab08096440e44b025655a0a3a",
+          "version": 3,
+          "contextHash": "12cca10d0122e2f00708591b69387972621b75d037e919aeea404615a56bea61"
+        }
+      ],
       "contextHash": "12cca10d0122e2f00708591b69387972621b75d037e919aeea404615a56bea61"
     },
     "plan": null
   },
   "pending": null,
-  "lastCommentId": 6124337489,
+  "lastCommentId": 6124496828,
   "receipts": [
     {
       "id": 6123798005,
@@ -216,6 +230,10 @@
     {
       "id": 6124337489,
       "message": "Command #6124337489 recorded: retry."
+    },
+    {
+      "id": 6124496828,
+      "message": "Command #6124496828 recorded: approve spec v3."
     }
   ],
   "sealed": false
