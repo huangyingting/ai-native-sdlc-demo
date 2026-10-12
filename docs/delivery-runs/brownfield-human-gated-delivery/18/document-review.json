@@ -64,28 +64,21 @@
     "body": "### Problem or opportunity\n\nTicket ownership and handoffs in the existing IT service desk have been accepted in huangyingting/ai-native-sdlc-demo#1. The next gap is operational status: the process can remain alive while an unavailable database prevents users from opening the application. A liveness check alone does not distinguish those states.\n\nBetween 2026-10-12T11:44:51Z and 2026-10-12T11:44:52Z, an isolated observation used two instances of the same accepted image:\n\n| Request | Healthy configuration | Invalid database path |\n|---|---|---|\n| GET /api/health | 200, returning {\"status\":\"ok\"} | 200, returning {\"status\":\"ok\"} |\n| GET / | 200, with the ticket dashboard marker | 500, without the ticket dashboard marker |\n| GET /api/ready | 404 | 404 |\n\nThe faulty instance used a database path beneath /dev/null and had no mounted volume. The healthy instance used a fresh isolated volume; its four seeded tickets were verified, and its dashboard remained available after the fault observation. This was deliberate isolated fault injection, not a production incident or a reversal of the earlier functional acceptance. No production failure-rate, recovery-time, or customer-benefit measurements are available.\n\nObserved image:\n`ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:90836abf909410db91b0d3c791812683e5424c5cab7d7a84df1af6772a66ce76`\n\nImage source commit: `1a1e14d0031305ee5da35c523ffbac9fa6f7e58b`.\nMaintenance starting point on main: `f52cc87b435d781af0be40a811d33f0cfd84d66b`.\nThe observation report and four original screenshots are retained outside the repository with timestamps, runtime identities, and checksums. Raw databases and application error logs are not published.\n\n### Proposed outcome\n\nOperators and future release-admission tooling can distinguish process liveness from availability of the database required by the application, explicitly identify an unready instance, and verify recovery after configuration repair.\n\nFirst deliver a small, explicit readiness capability. Traffic switching, failure recovery, and preventive work belong to the subsequent reliability exercise; do not describe unexecuted work as completed.\n\nSuccess must be supported by actual HTTP behavior, database access, error handling, and recovery observations, not just passing unit tests or a model summary. Confirm the precise contract during specification review.\n\n### Affected users and systems\n\n- Operators and demo presenters deciding whether an instance can receive ticket traffic.\n- Service-desk users affected when the ticket dashboard is unavailable.\n- The Next.js service, SQLite database, and container configuration in demos/it-service-desk.\n- Later read-only admission and recovery experiments may consume readiness, but their completion is not assumed here.\n\n### Constraints and non-goals\n\n- Preserve the accepted owner roster, assignment and handoffs, intersecting filters, ticket creation, and status updates.\n- Preserve existing ticket data and timestamps. Do not reset databases or rewrite the previous delivery's frozen specifications, plans, tests, or acceptance records.\n- Keep the existing liveness check compatible and separate its responsibility from the new capability.\n- Do not disclose database paths, exception details, stack traces, ticket contents, or credentials.\n- Inject faults only into disposable isolated resources; do not modify shared instances or existing data volumes.\n- Do not directly introduce authentication, an external monitoring platform, production traffic switching, or cross-version database rollback in this increment.\n- Baseline dependency risks remain unresolved. This work does not establish production certification or completion of the full reliability demonstration.\n- Use English for this Intent, generated Specs and Plans, related Issues, and review comments. Preserve required protocol headings, JSON keys, commands, and code identifiers. Existing bilingual guide and demo documentation remains unchanged.\n\n### Open questions\n\n- What should readiness establish: merely opening the database, or completing a read-only query on every request? Is a write probe needed, and how would probes avoid changing business data?\n- What should the endpoint path, HTTP statuses, response bodies, cache policy, and logging boundaries be for healthy and unhealthy states?\n- Which real operations, data-preservation checks, and restart scenarios should recovery acceptance cover? Must database configuration change dynamically within a running process, or is recreating an instance sufficient?\n\nThese questions remain undecided. Propose evidence-based options in the specification and wait for explicit product decisions; do not present proposals as approved requirements.\n"
   },
   "counters": {
-    "spec": 1,
+    "spec": 2,
     "plan": 0
   },
   "documents": {
     "spec": {
-      "version": 1,
-      "hash": "f5b68924c0584e69cf6cb8f5c5d5e467fc900a7ef12772f1990e5821aa133c1b",
+      "version": 2,
+      "hash": "527d8fcba4e6c6a7ba0e1d7af887b885dabdfc206a5611102b120c2a422fb89f",
       "specHash": null,
       "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
       "approvals": [],
-      "contextHash": "284abc084f114cb292d2ad48f1903272062886bf1a82f1ebe1f3864537c9dbb8"
+      "contextHash": "885b129ff67ad72b7c384eade56263cfaceb728d82f3877fafde2a3f5924e42b"
     },
     "plan": null
   },
-  "pending": {
-    "stage": "spec",
-    "version": 2,
-    "feedback": "Apply Human decision #6124026970 for Q-1. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.",
-    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-    "specHash": null,
-    "contextHash": "885b129ff67ad72b7c384eade56263cfaceb728d82f3877fafde2a3f5924e42b"
-  },
+  "pending": null,
   "lastCommentId": 6124026970,
   "receipts": [
     {
