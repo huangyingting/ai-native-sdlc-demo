@@ -7,11 +7,7 @@
   "status": "active",
   "lastCommentId": 0,
   "delivery": null,
-  "failure": {
-    "stage": "documents",
-    "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38247936145",
-    "message": "Document generation, command processing or handoff failed; inspect the Actions log."
-  },
+  "failure": null,
   "events": [
     {
       "type": "workflow-failed",
@@ -30,6 +26,10 @@
       "stage": "documents",
       "runUrl": "https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38247936145",
       "message": "Document generation, command processing or handoff failed; inspect the Actions log."
+    },
+    {
+      "type": "workflow-recovered",
+      "at": "2026-10-12T12:36:46.486Z"
     }
   ]
 }
