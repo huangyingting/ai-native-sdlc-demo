@@ -1,0 +1,77 @@
+name: "Copilot CLI demo: Direct execution"
+description: Run a traced task without subagent delegation.
+title: "[Copilot CLI: Direct] "
+labels: [copilot-agent-demo, "copilot-pattern:direct-execution"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Runs the task directly to establish a latency, token, and cost baseline. The orchestration behavior is applied automatically.
+  - type: dropdown
+    id: orchestrator_model
+    attributes:
+      label: Orchestrator model
+      options:
+        - gpt-6-luna
+        - gpt-6-sol
+        - gpt-6-astra
+        - gpt-5.6-luna
+        - gpt-5.6-terra
+        - gpt-5.6-sol
+        - gpt-5.5
+        - gpt-5.4
+        - gpt-5.4-mini
+        - gpt-5.3-codex
+        - gpt-5-mini
+        - claude-sonnet-5
+        - claude-sonnet-4.6
+        - gemini-3.8-flash
+        - grok-4.7
+        - mai-code-1.1-flash
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: subagent_model
+    attributes:
+      label: Subagent model
+      description: Retained for consistent comparisons; this pattern does not create subagents.
+      options:
+        - gpt-6-luna
+        - gpt-6-sol
+        - gpt-6-astra
+        - gpt-5.6-luna
+        - gpt-5.6-terra
+        - gpt-5.6-sol
+        - gpt-5.5
+        - gpt-5.4
+        - gpt-5.4-mini
+        - gpt-5.3-codex
+        - gpt-5-mini
+        - claude-sonnet-5
+        - claude-sonnet-4.6
+        - gemini-3.8-flash
+        - grok-4.7
+        - mai-code-1.1-flash
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: task_prompt
+    attributes:
+      label: Task or question
+      value: |
+        Analyze the Copilot CLI Trace Viewer workflow and interface, identify the highest-impact improvement, and support the recommendation with repository evidence.
+    validations:
+      required: true
+  - type: dropdown
+    id: trace_detail
+    attributes:
+      label: Trace detail
+      description: Detailed tracing includes redacted request and response payloads in the public Pages report and HTML artifact.
+      options:
+        - Include redacted request and response payloads
+        - Metadata only
+      default: 0
+    validations:
+      required: true

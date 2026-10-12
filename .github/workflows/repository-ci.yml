@@ -1,0 +1,68 @@
+name: Repository CI
+
+on:
+  pull_request:
+    paths:
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/brownfield-human-gated-delivery/**"
+      - ".github/mcp.json"
+      - ".github/scripts/**"
+      - ".github/workflows/brownfield-human-gated-delivery-advance.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-kickoff.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-documents.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-pr-coordinator.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-publish.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-stage-ci.yml"
+      - ".github/workflows/brownfield-reliability.yml"
+      - ".github/workflows/copilot-cli-agent-demos.yml"
+      - ".github/workflows/it-service-desk-ci.yml"
+      - ".github/workflows/publish-trace-site.yml"
+      - ".github/workflows/repository-ci.yml"
+      - "tools/trace-viewer/**"
+      - "tools/brownfield-demo/**"
+      - "tools/engineering-demo/**"
+      - "demos/engineering-lab/**"
+      - "demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/**"
+      - ".node-version"
+      - "package.json"
+  push:
+    branches: [main]
+    paths:
+      - ".github/ISSUE_TEMPLATE/**"
+      - ".github/brownfield-human-gated-delivery/**"
+      - ".github/mcp.json"
+      - ".github/scripts/**"
+      - ".github/workflows/brownfield-human-gated-delivery-advance.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-kickoff.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-documents.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-pr-coordinator.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-publish.yml"
+      - ".github/workflows/brownfield-human-gated-delivery-stage-ci.yml"
+      - ".github/workflows/brownfield-reliability.yml"
+      - ".github/workflows/copilot-cli-agent-demos.yml"
+      - ".github/workflows/it-service-desk-ci.yml"
+      - ".github/workflows/publish-trace-site.yml"
+      - ".github/workflows/repository-ci.yml"
+      - "tools/trace-viewer/**"
+      - "tools/brownfield-demo/**"
+      - "tools/engineering-demo/**"
+      - "demos/engineering-lab/**"
+      - "demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/**"
+      - ".node-version"
+      - "package.json"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+      - run: npm test
+      - name: Verify independent engineering fixture
+        run: npm --prefix demos/engineering-lab test

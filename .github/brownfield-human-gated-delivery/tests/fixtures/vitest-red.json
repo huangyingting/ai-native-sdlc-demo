@@ -1,0 +1,55 @@
+{
+  "numTotalTestSuites": 2,
+  "numPassedTestSuites": 0,
+  "numFailedTestSuites": 2,
+  "numPendingTestSuites": 0,
+  "numTotalTests": 3,
+  "numPassedTests": 1,
+  "numFailedTests": 2,
+  "numPendingTests": 0,
+  "numTodoTests": 0,
+  "snapshot": { "added": 0, "failure": false, "unchecked": 0, "unmatched": 0 },
+  "startTime": 1780000000000,
+  "success": false,
+  "testResults": [
+    {
+      "assertionResults": [
+        {
+          "ancestorTitles": ["TicketStore"],
+          "fullName": "TicketStore assigns a ticket",
+          "status": "failed",
+          "title": "assigns a ticket",
+          "duration": 4,
+          "failureMessages": ["AssertionError: expected undefined to be 'alice'"],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": ["TicketStore"],
+          "fullName": "TicketStore filters assignees",
+          "status": "failed",
+          "title": "filters assignees",
+          "duration": 2,
+          "failureMessages": ["AssertionError: expected 2 to be 1"],
+          "meta": {},
+          "tags": []
+        },
+        {
+          "ancestorTitles": ["TicketStore"],
+          "fullName": "TicketStore creates tickets",
+          "status": "passed",
+          "title": "creates tickets",
+          "duration": 1,
+          "failureMessages": [],
+          "meta": {},
+          "tags": []
+        }
+      ],
+      "startTime": 1780000000000,
+      "endTime": 1780000000007,
+      "status": "failed",
+      "message": "",
+      "name": "/repo/src/ticket-store.test.ts"
+    }
+  ]
+}

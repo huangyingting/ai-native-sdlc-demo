@@ -1,0 +1,87 @@
+name: "Copilot CLI demo: Parallel delegation"
+description: Run independent dynamic subagents concurrently and synthesize their results.
+title: "[Copilot CLI: Parallel] "
+labels: [copilot-agent-demo, "copilot-pattern:parallel-delegation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Runs independent subagents concurrently. The orchestration behavior is applied automatically.
+  - type: dropdown
+    id: orchestrator_model
+    attributes:
+      label: Orchestrator model
+      options:
+        - gpt-6-luna
+        - gpt-6-sol
+        - gpt-6-astra
+        - gpt-5.6-luna
+        - gpt-5.6-terra
+        - gpt-5.6-sol
+        - gpt-5.5
+        - gpt-5.4
+        - gpt-5.4-mini
+        - gpt-5.3-codex
+        - gpt-5-mini
+        - claude-sonnet-5
+        - claude-sonnet-4.6
+        - gemini-3.8-flash
+        - grok-4.7
+        - mai-code-1.1-flash
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: subagent_model
+    attributes:
+      label: Subagent model
+      options:
+        - gpt-6-luna
+        - gpt-6-sol
+        - gpt-6-astra
+        - gpt-5.6-luna
+        - gpt-5.6-terra
+        - gpt-5.6-sol
+        - gpt-5.5
+        - gpt-5.4
+        - gpt-5.4-mini
+        - gpt-5.3-codex
+        - gpt-5-mini
+        - claude-sonnet-5
+        - claude-sonnet-4.6
+        - gemini-3.8-flash
+        - grok-4.7
+        - mai-code-1.1-flash
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: allow_url
+    attributes:
+      label: Internet access
+      description: This AWS/Azure comparison preapproves AWS documentation; choose block all for tasks that do not need it.
+      options:
+        - Block all external URLs
+        - Allow https://docs.aws.amazon.com
+      default: 1
+    validations:
+      required: true
+  - type: textarea
+    id: task_prompt
+    attributes:
+      label: Task or question
+      value: |
+        Compare Amazon S3 and Azure Blob Storage versioning, encryption, lifecycle/access tiers, and access control. Use only docs.aws.amazon.com for AWS and Microsoft Learn MCP for Azure, cite the sources, and clearly identify non-equivalent features.
+    validations:
+      required: true
+  - type: dropdown
+    id: trace_detail
+    attributes:
+      label: Trace detail
+      description: Detailed tracing includes redacted request and response payloads in the public Pages report and HTML artifact.
+      options:
+        - Include redacted request and response payloads
+        - Metadata only
+      default: 0
+    validations:
+      required: true

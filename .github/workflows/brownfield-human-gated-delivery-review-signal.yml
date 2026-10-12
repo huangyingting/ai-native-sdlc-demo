@@ -1,0 +1,14 @@
+name: Brownfield Delivery · Review Signal
+
+on:
+  pull_request_review:
+    types: [submitted, dismissed, edited]
+
+permissions: {}
+
+jobs:
+  signal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 1
+    steps:
+      - run: echo "The default-branch coordinator will re-read the current PR and reviews."

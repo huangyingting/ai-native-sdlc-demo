@@ -1,0 +1,12 @@
+{
+  "name": "@ai-native-sdlc/trace-viewer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Dependency-free Copilot CLI OpenTelemetry trace renderer.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test render-trace-report.test.mjs"
+  }
+}

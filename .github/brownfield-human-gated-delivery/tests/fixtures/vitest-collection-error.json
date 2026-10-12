@@ -1,0 +1,8 @@
+{
+  "assertionResults": [],
+  "startTime": 1780000000000,
+  "endTime": 1780000000000,
+  "status": "failed",
+  "message": "Cannot find module './missing-module' imported from '/repo/src/broken.test.ts'",
+  "name": "/repo/src/broken.test.ts"
+}

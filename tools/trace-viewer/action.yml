@@ -1,0 +1,38 @@
+name: Copilot CLI Trace Viewer
+description: Render Copilot CLI OpenTelemetry JSONL into a Job Summary, self-contained HTML viewer, and canonical SPA data.
+inputs:
+  trace-path:
+    description: Path to the Copilot CLI OpenTelemetry JSONL file.
+    required: true
+  html-path:
+    description: Destination path for the self-contained HTML viewer.
+    required: true
+  data-path:
+    description: Optional destination for the canonical machine-readable trace model used by the online SPA.
+    default: ""
+  include-messages:
+    description: Include redacted request/response payloads with safe hydration of runner-temp tool output.
+    default: "false"
+  require-model:
+    description: Comma-separated models that must be observed; every model call must use one of them. Enforced independently of pattern validation.
+    default: ""
+  require-pattern-evidence:
+    description: Orchestration pattern ID whose expected trace topology must be observed; false disables validation.
+    default: "false"
+  pricing-path:
+    description: Optional path to a model-keyed pricing JSON file; defaults to the bundled GitHub Copilot catalog.
+    default: ""
+runs:
+  using: composite
+  steps:
+    - name: Render trace report
+      shell: bash
+      env:
+        TRACE_HTML_PATH: ${{ inputs.html-path }}
+        TRACE_DATA_PATH: ${{ inputs.data-path }}
+        TRACE_INCLUDE_MESSAGES: ${{ inputs.include-messages }}
+        REQUIRE_MODEL: ${{ inputs.require-model }}
+        REQUIRE_PATTERN_EVIDENCE: ${{ inputs.require-pattern-evidence }}
+        TRACE_PATTERN: ${{ inputs.require-pattern-evidence }}
+        PRICING_PATH: ${{ inputs.pricing-path }}
+      run: node "$GITHUB_ACTION_PATH/render-trace-report.mjs" "${{ inputs.trace-path }}"

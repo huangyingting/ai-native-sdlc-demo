@@ -1,0 +1,76 @@
+name: "Copilot CLI demo: Sequential pipeline"
+description: Run dependent dynamic subagents as an ordered pipeline.
+title: "[Copilot CLI: Sequential] "
+labels: [copilot-agent-demo, "copilot-pattern:sequential-pipeline"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Runs two dependent subagent stages in sequence. The orchestration behavior is applied automatically.
+  - type: dropdown
+    id: orchestrator_model
+    attributes:
+      label: Orchestrator model
+      options:
+        - gpt-6-luna
+        - gpt-6-sol
+        - gpt-6-astra
+        - gpt-5.6-luna
+        - gpt-5.6-terra
+        - gpt-5.6-sol
+        - gpt-5.5
+        - gpt-5.4
+        - gpt-5.4-mini
+        - gpt-5.3-codex
+        - gpt-5-mini
+        - claude-sonnet-5
+        - claude-sonnet-4.6
+        - gemini-3.8-flash
+        - grok-4.7
+        - mai-code-1.1-flash
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: subagent_model
+    attributes:
+      label: Subagent model
+      options:
+        - gpt-6-luna
+        - gpt-6-sol
+        - gpt-6-astra
+        - gpt-5.6-luna
+        - gpt-5.6-terra
+        - gpt-5.6-sol
+        - gpt-5.5
+        - gpt-5.4
+        - gpt-5.4-mini
+        - gpt-5.3-codex
+        - gpt-5-mini
+        - claude-sonnet-5
+        - claude-sonnet-4.6
+        - gemini-3.8-flash
+        - grok-4.7
+        - mai-code-1.1-flash
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: task_prompt
+    attributes:
+      label: Task or question
+      value: |
+        Use a solution-design stage followed by a dependent critical-review stage to propose the next iteration of the Copilot CLI Trace Viewer with clear goals, architecture decisions, risks, and acceptance criteria.
+    validations:
+      required: true
+  - type: dropdown
+    id: trace_detail
+    attributes:
+      label: Trace detail
+      description: Detailed tracing includes redacted request and response payloads in the public Pages report and HTML artifact.
+      options:
+        - Include redacted request and response payloads
+        - Metadata only
+      default: 0
+    validations:
+      required: true

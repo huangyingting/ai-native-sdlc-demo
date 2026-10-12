@@ -1,0 +1,249 @@
+name: Copilot CLI Agent Demos
+
+on:
+  issues:
+    types: [opened, reopened]
+  workflow_dispatch:
+    inputs:
+      pattern:
+        description: "Orchestration pattern to demonstrate"
+        type: choice
+        default: Parallel delegation
+        options:
+          - Direct execution
+          - Parallel delegation
+          - Critic-reviser loop
+          - Sequential pipeline
+      orchestrator_model:
+        description: "Model that delegates to subagents and synthesizes the final result"
+        type: choice
+        default: gpt-6-luna
+        options:
+          - gpt-6-luna
+          - gpt-6-sol
+          - gpt-6-astra
+          - gpt-5.6-luna
+          - gpt-5.6-terra
+          - gpt-5.6-sol
+          - gpt-5.5
+          - gpt-5.4
+          - gpt-5.4-mini
+          - gpt-5.3-codex
+          - gpt-5-mini
+          - claude-sonnet-5
+          - claude-sonnet-4.6
+          - gemini-3.8-flash
+          - grok-4.7
+          - mai-code-1.1-flash
+      subagent_model:
+        description: "Model shared by the specialist agents"
+        type: choice
+        default: gpt-6-luna
+        options:
+          - gpt-6-luna
+          - gpt-6-sol
+          - gpt-6-astra
+          - gpt-5.6-luna
+          - gpt-5.6-terra
+          - gpt-5.6-sol
+          - gpt-5.5
+          - gpt-5.4
+          - gpt-5.4-mini
+          - gpt-5.3-codex
+          - gpt-5-mini
+          - claude-sonnet-5
+          - claude-sonnet-4.6
+          - gemini-3.8-flash
+          - grok-4.7
+          - mai-code-1.1-flash
+      include_messages:
+        description: "Include redacted request/response payloads in the public Pages report and HTML artifact"
+        type: boolean
+        default: true
+      task_prompt:
+        description: "Concrete task for this demo; leave empty to use a generic repository task"
+        type: string
+        required: false
+      agent_instructions:
+        description: "Optional guidance for how Copilot should divide the task among dynamic subagents"
+        type: string
+        required: false
+
+permissions:
+  contents: read
+  copilot-requests: write
+  issues: write
+
+concurrency:
+  group: copilot-agent-demo-${{ github.event.issue.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  demo:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        contains(github.event.issue.labels.*.name, 'copilot-agent-demo') &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.issue.author_association)
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      COPILOT_OTEL_ENABLED: "true"
+      COPILOT_OTEL_EXPORTER_TYPE: file
+      OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: "false"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+      - name: Prepare demo request
+        id: request
+        env:
+          INPUT_ORCHESTRATOR_MODEL: ${{ inputs.orchestrator_model }}
+          INPUT_SUBAGENT_MODEL: ${{ inputs.subagent_model }}
+          INPUT_INCLUDE_MESSAGES: ${{ inputs.include_messages }}
+          INPUT_PATTERN: ${{ inputs.pattern }}
+          INPUT_TASK_PROMPT: ${{ inputs.task_prompt }}
+          INPUT_AGENT_INSTRUCTIONS: ${{ inputs.agent_instructions }}
+          TRACE_PROMPT_PATH: ${{ runner.temp }}/copilot-demo-prompt.txt
+          TRACE_INSTRUCTION_PATH: ${{ runner.temp }}/copilot-demo-instruction.txt
+        run: node .github/scripts/prepare-demo-request.mjs
+      - name: Run orchestrated read-only analysis
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ORCHESTRATOR_MODEL: ${{ steps.request.outputs.orchestrator_model }}
+          TRACE_PROMPT_PATH: ${{ runner.temp }}/copilot-demo-prompt.txt
+          TRACE_INSTRUCTION_PATH: ${{ runner.temp }}/copilot-demo-instruction.txt
+          EXECUTION_MODE: ${{ steps.request.outputs.execution }}
+          ALLOWED_URL: ${{ steps.request.outputs.allowed_url }}
+          GITHUB_COPILOT_PROMPT_MODE_WORKSPACE_MCP: "true"
+          OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT: ${{ steps.request.outputs.include_messages }}
+          COPILOT_OTEL_FILE_EXPORTER_PATH: ${{ runner.temp }}/copilot-otel.jsonl
+        run: |
+          set -o pipefail
+          mkdir -p trace-report
+          REQUEST="$(cat "$TRACE_PROMPT_PATH")"
+          INSTRUCTION="$(cat "$TRACE_INSTRUCTION_PATH")"
+          EXTRA_ARGS=()
+          if [ "$EXECUTION_MODE" = "fleet" ]; then
+            EXTRA_ARGS+=(--fleet)
+          fi
+          if [ -n "$ALLOWED_URL" ]; then
+            EXTRA_ARGS+=(--allow-url="$ALLOWED_URL")
+          else
+            EXTRA_ARGS+=(--available-tools='view,glob,rg,task,read_agent,list_agents,sql,microsoft-learn')
+          fi
+          copilot --model "$ORCHESTRATOR_MODEL" -p "$INSTRUCTION
+
+          Task:
+          $REQUEST" \
+            "${EXTRA_ARGS[@]}" \
+            --allow-tool='web_fetch,microsoft-learn' \
+            --deny-tool=write --deny-tool=shell | tee trace-report/copilot-response.md
+      - name: Render trace report
+        if: always()
+        uses: ./tools/trace-viewer
+        with:
+          trace-path: ${{ runner.temp }}/copilot-otel.jsonl
+          html-path: ${{ github.workspace }}/trace-report/copilot-trace-report.html
+          data-path: ${{ github.workspace }}/trace-report/trace-data.json
+          include-messages: ${{ steps.request.outputs.include_messages }}
+          require-model: ${{ steps.request.outputs.required_models }}
+          require-pattern-evidence: ${{ steps.request.outputs.pattern }}
+      - name: Capture dependency graph
+        if: always()
+        run: |
+          if [ ! -f trace-report/copilot-trace-report.html ]; then
+            echo "HTML trace report is unavailable; skipping dependency-graph capture." >&2
+            exit 1
+          fi
+          node tools/trace-viewer/capture-dependency-graph.mjs \
+            trace-report/copilot-trace-report.html \
+            trace-report/dependency-graph.png
+      - name: Attach HTML trace viewer
+        if: always()
+        id: trace_artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: copilot-trace-viewer
+          path: trace-report/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Publish dependency image
+        id: media
+        if: always() && github.event_name == 'issues'
+        env:
+          MEDIA_TOKEN: ${{ secrets.AGENT_TRACE_MEDIA_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$MEDIA_TOKEN" ]; then
+            echo "::notice::AGENT_TRACE_MEDIA_TOKEN is not configured; the issue comment will use a Mermaid dependency graph."
+            exit 0
+          fi
+          FILE='trace-report/dependency-graph.png'
+          NAME="$(basename -- "$FILE")"
+          MIME='image/png'
+          REPO='${{ github.repository }}'
+          if [ ! -f "$FILE" ]; then
+            echo "::warning::Dependency-map image is unavailable; the issue comment will use Mermaid."
+            exit 0
+          fi
+          REPO_ID="$(GH_TOKEN="$MEDIA_TOKEN" gh api "repos/$REPO" --jq .id)" || {
+            echo "::warning::Repository lookup for the dependency image failed; the issue comment will use Mermaid."
+            exit 0
+          }
+          case "$REPO_ID" in
+            ''|*[!0-9]*)
+              echo "::warning::Repository ID is invalid; the issue comment will use Mermaid."
+              exit 0
+              ;;
+          esac
+          RESPONSE_PATH="$RUNNER_TEMP/dependency-image-upload.json"
+          if ! curl --fail-with-body -sS -X POST \
+            'https://uploads.github.com/user-attachments/assets' \
+            --url-query "name=$NAME" \
+            --url-query "content_type=$MIME" \
+            --url-query "repository_id=$REPO_ID" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/octet-stream' \
+            -H 'X-GitHub-Api-Version: 2022-11-28' \
+            -H "Authorization: Bearer $MEDIA_TOKEN" \
+            --data-binary "@$FILE" > "$RESPONSE_PATH"; then
+            echo "::warning::GitHub rejected the dependency image upload; the issue comment will use Mermaid."
+            exit 0
+          fi
+          URL="$(jq -r '.url // empty' "$RESPONSE_PATH")"
+          case "$URL" in
+            https://*) echo "url=$URL" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::warning::GitHub returned no dependency image URL; the issue comment will use Mermaid." ;;
+          esac
+      - name: Post result to issue
+        if: always() && github.event_name == 'issues'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ORCHESTRATOR_MODEL: ${{ steps.request.outputs.orchestrator_model || 'unavailable' }}
+          SUBAGENT_MODEL: ${{ steps.request.outputs.subagent_model || 'unavailable' }}
+          PATTERN_LABEL: ${{ steps.request.outputs.pattern_label || 'unavailable' }}
+          DEMO_RESULT_PATH: ${{ github.workspace }}/trace-report/copilot-response.md
+          TRACE_DATA_PATH: ${{ github.workspace }}/trace-report/trace-data.json
+          COMMENT_PATH: ${{ runner.temp }}/copilot-demo-comment.md
+          MEDIA_URL: ${{ steps.media.outputs.url }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          PAGES_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/viewer/?run=${{ github.run_id }}
+          ARTIFACT_URL: ${{ steps.trace_artifact.outputs.artifact-url }}
+        run: |
+          node .github/scripts/build-demo-result-comment.mjs
+          COMMENT_ID="$(
+            gh api --paginate "repos/${{ github.repository }}/issues/$ISSUE_NUMBER/comments" \
+              --jq '[.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- copilot-agent-demo-result -->")))][-1].id // empty'
+          )"
+          if [ -n "$COMMENT_ID" ]; then
+            jq -n --rawfile body "$COMMENT_PATH" '{body: $body}' \
+              | gh api --method PATCH "repos/${{ github.repository }}/issues/comments/$COMMENT_ID" --input -
+          else
+            gh issue comment "$ISSUE_NUMBER" --repo "${{ github.repository }}" --body-file "$COMMENT_PATH"
+          fi

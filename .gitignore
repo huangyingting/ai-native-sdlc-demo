@@ -1,0 +1,10 @@
+# Repository-level Node tooling
+/node_modules/
+/coverage/
+
+# Generated trace output
+/trace-report/
+
+# Local editor and operating-system files
+.DS_Store
+*.log

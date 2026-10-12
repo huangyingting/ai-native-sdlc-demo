@@ -1,0 +1,88 @@
+name: IT Service Desk CI
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, reopened, synchronize, edited, ready_for_review]
+  push:
+    branches: [main]
+    paths:
+      - "demos/it-service-desk/**"
+      - ".github/workflows/it-service-desk-ci.yml"
+      - "tools/brownfield-demo/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      github.event.pull_request.base.ref == github.event.repository.default_branch ||
+      !startsWith(github.event.pull_request.base.ref, 'brownfield-delivery/') ||
+      !contains(github.event.pull_request.body, 'Delivery Demo: brownfield-human-gated-delivery') ||
+      !(
+        contains(github.event.pull_request.body, 'Delivery Stage: spec') ||
+        contains(github.event.pull_request.body, 'Delivery Stage: plan') ||
+        contains(github.event.pull_request.body, 'Delivery Stage: tests')
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: demos/it-service-desk
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: demos/it-service-desk/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - name: Verify lifecycle hook reporter against installed Vitest
+        working-directory: .
+        run: >-
+          node --test --test-name-pattern="installed Vitest runtime"
+          .github/brownfield-human-gated-delivery/tests/core.test.mjs
+      - run: npm run lint
+      - run: npm run build
+
+  container-smoke:
+    needs: validate
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' ||
+      github.event.pull_request.base.ref == github.event.repository.default_branch ||
+      !startsWith(github.event.pull_request.base.ref, 'brownfield-delivery/') ||
+      !contains(github.event.pull_request.body, 'Delivery Demo: brownfield-human-gated-delivery') ||
+      !(
+        contains(github.event.pull_request.body, 'Delivery Stage: spec') ||
+        contains(github.event.pull_request.body, 'Delivery Stage: plan') ||
+        contains(github.event.pull_request.body, 'Delivery Stage: tests')
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Build container
+        run: docker build --tag it-service-desk:ci demos/it-service-desk
+      - name: Verify immutable image and fault control
+        run: |
+          image="$(docker image inspect it-service-desk:ci --format '{{.Id}}')"
+          profile=baseline
+          if test -f demos/it-service-desk/src/app/api/ready/route.ts; then profile=readiness; fi
+          node tools/brownfield-demo/cli.mjs verify-image \
+            --image "$image" --profile "$profile" --dest "$RUNNER_TEMP/container-verification"
+      - name: Preserve sanitized container verification
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: container-verification-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/container-verification/evidence.json
+          if-no-files-found: error
+          retention-days: 14

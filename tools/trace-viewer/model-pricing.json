@@ -1,0 +1,129 @@
+{
+  "source": "https://docs.github.com/en/copilot/reference/copilot-billing/models-and-pricing",
+  "updated": "2026-09-25",
+  "unit": "USD per 1 million tokens",
+  "models": {
+    "gpt-5-mini": {
+      "default": { "input": 0.25, "cachedInput": 0.025, "cacheWrite": 0, "output": 2 }
+    },
+    "gpt-5.3-codex": {
+      "default": { "input": 1.75, "cachedInput": 0.175, "cacheWrite": 0, "output": 14 }
+    },
+    "gpt-5.4": {
+      "longContextThreshold": 272000,
+      "default": { "input": 2.5, "cachedInput": 0.25, "cacheWrite": 0, "output": 15 },
+      "longContext": { "input": 5, "cachedInput": 0.5, "cacheWrite": 0, "output": 22.5 }
+    },
+    "gpt-5.4-mini": {
+      "default": { "input": 0.75, "cachedInput": 0.075, "cacheWrite": 0, "output": 4.5 }
+    },
+    "gpt-5.4-nano": {
+      "default": { "input": 0.2, "cachedInput": 0.02, "cacheWrite": 0, "output": 1.25 }
+    },
+    "gpt-5.5": {
+      "longContextThreshold": 272000,
+      "default": { "input": 5, "cachedInput": 0.5, "cacheWrite": 0, "output": 30 },
+      "longContext": { "input": 10, "cachedInput": 1, "cacheWrite": 0, "output": 45 }
+    },
+    "gpt-5.6-luna": {
+      "longContextThreshold": 200000,
+      "default": { "input": 0.2, "cachedInput": 0.02, "cacheWrite": 0.25, "output": 1.2 },
+      "longContext": { "input": 0.4, "cachedInput": 0.04, "cacheWrite": 0.5, "output": 1.8 }
+    },
+    "gpt-5.6-sol": {
+      "longContextThreshold": 272000,
+      "default": { "input": 4, "cachedInput": 0.4, "cacheWrite": 5, "output": 20 },
+      "longContext": { "input": 8, "cachedInput": 0.8, "cacheWrite": 10, "output": 30 }
+    },
+    "gpt-5.6-terra": {
+      "longContextThreshold": 272000,
+      "default": { "input": 2, "cachedInput": 0.2, "cacheWrite": 2.5, "output": 12 },
+      "longContext": { "input": 4, "cachedInput": 0.4, "cacheWrite": 5, "output": 18 }
+    },
+    "gpt-6-astra": {
+      "longContextThreshold": 272000,
+      "default": { "input": 10, "cachedInput": 1, "cacheWrite": 12.5, "output": 50 },
+      "longContext": { "input": 20, "cachedInput": 2, "cacheWrite": 25, "output": 75 }
+    },
+    "gpt-6-luna": {
+      "longContextThreshold": 272000,
+      "default": { "input": 0.1, "cachedInput": 0.01, "cacheWrite": 0.125, "output": 0.5 },
+      "longContext": { "input": 0.2, "cachedInput": 0.02, "cacheWrite": 0.25, "output": 0.75 }
+    },
+    "gpt-6-sol": {
+      "longContextThreshold": 272000,
+      "default": { "input": 2, "cachedInput": 0.2, "cacheWrite": 2.5, "output": 10 },
+      "longContext": { "input": 4, "cachedInput": 0.4, "cacheWrite": 5, "output": 15 }
+    },
+    "claude-haiku-4.5": {
+      "default": { "input": 1, "cachedInput": 0.1, "cacheWrite": 1.25, "output": 5 }
+    },
+    "claude-sonnet-4": {
+      "default": { "input": 3, "cachedInput": 0.3, "cacheWrite": 3.75, "output": 15 }
+    },
+    "claude-sonnet-4.6": {
+      "default": { "input": 3, "cachedInput": 0.3, "cacheWrite": 3.75, "output": 15 }
+    },
+    "claude-opus-4.7": {
+      "default": { "input": 5, "cachedInput": 0.5, "cacheWrite": 6.25, "output": 25 }
+    },
+    "claude-opus-4.8": {
+      "default": { "input": 5, "cachedInput": 0.5, "cacheWrite": 6.25, "output": 25 }
+    },
+    "claude-opus-5": {
+      "default": { "input": 5, "cachedInput": 0.5, "cacheWrite": 6.25, "output": 25 }
+    },
+    "claude-opus-5.5": {
+      "default": { "input": 4, "cachedInput": 0.2, "cacheWrite": 5, "output": 20 }
+    },
+    "claude-sonnet-5": {
+      "default": { "input": 2, "cachedInput": 0.2, "cacheWrite": 2.5, "output": 10 }
+    },
+    "claude-opus-4.8-fast": {
+      "aliases": ["claude-opus-4.8-fast-mode", "claude-opus-4.8-fast-mode-preview"],
+      "default": { "input": 10, "cachedInput": 1, "cacheWrite": 12.5, "output": 50 }
+    },
+    "claude-fable-5": {
+      "default": { "input": 10, "cachedInput": 1, "cacheWrite": 12.5, "output": 50 }
+    },
+    "claude-fable-5.1": {
+      "default": { "input": 10, "cachedInput": 0.25, "cacheWrite": 12.5, "output": 50 }
+    },
+    "gemini-3.5-flash": {
+      "default": { "input": 1.5, "cachedInput": 0.15, "cacheWrite": 0, "output": 9 }
+    },
+    "gemini-3.6-flash": {
+      "default": { "input": 0.75, "cachedInput": 0.075, "cacheWrite": 0, "output": 3.75 }
+    },
+    "gemini-3.7-flash": {
+      "default": { "input": 0.75, "cachedInput": 0.075, "cacheWrite": 0, "output": 3.75 }
+    },
+    "gemini-3.8-flash": {
+      "default": { "input": 0.75, "cachedInput": 0.075, "cacheWrite": 0, "output": 3.75 }
+    },
+    "mai-code-1.1-flash": {
+      "default": { "input": 0.2, "cachedInput": 0.02, "cacheWrite": 0, "output": 1.2 }
+    },
+    "grok-4.5": {
+      "longContextThreshold": 200000,
+      "default": { "input": 2, "cachedInput": 0.5, "cacheWrite": 0, "output": 6 },
+      "longContext": { "input": 4, "cachedInput": 1, "cacheWrite": 0, "output": 12 }
+    },
+    "grok-4.6": {
+      "longContextThreshold": 200000,
+      "default": { "input": 2, "cachedInput": 0.5, "cacheWrite": 0, "output": 6 },
+      "longContext": { "input": 4, "cachedInput": 1, "cacheWrite": 0, "output": 12 }
+    },
+    "grok-4.7": {
+      "longContextThreshold": 200000,
+      "default": { "input": 2, "cachedInput": 0.5, "cacheWrite": 0, "output": 6 },
+      "longContext": { "input": 4, "cachedInput": 1, "cacheWrite": 0, "output": 12 }
+    },
+    "kimi-k2.7-code": {
+      "default": { "input": 0.95, "cachedInput": 0.19, "cacheWrite": 0, "output": 4 }
+    },
+    "kimi-k3": {
+      "default": { "input": 3, "cachedInput": 0.3, "cacheWrite": 0, "output": 15 }
+    }
+  }
+}

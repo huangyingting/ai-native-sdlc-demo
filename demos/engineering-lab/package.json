@@ -1,0 +1,14 @@
+{
+  "name": "engineering-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Dependency-free synthetic ticket assignment fixture.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "start": "node src/cli.mjs",
+    "test": "node --test tests/domain.test.mjs tests/store.test.mjs tests/runtime.test.mjs"
+  }
+}

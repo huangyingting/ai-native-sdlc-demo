@@ -1,0 +1,104 @@
+{
+  "version": 1,
+  "feature": "ticket-ownership",
+  "project": "demos/it-service-desk",
+  "title": "Clarify ticket ownership",
+  "template": "intent.md",
+  "checklist": "acceptance.md",
+  "baseline": {
+    "description": "Known first-release application with no ownership model, mutation, or filter. Fingerprints deliberately fail closed after application changes.",
+    "files": {
+      "src/lib/ticket.ts": "54c5e3337b18f7180cb4b83ae740604e78420dd053552e97813f2666f01e054d",
+      "src/lib/ticket-store.ts": "9785330b5f2d183b2c4bc180f45c2f9c4025b4a9a200215cedc68ddd782ec18c",
+      "src/app/actions.ts": "9ca93e3e412411f4cf2e1be0cbd98d8885ca50c8f864af3de2e0ca3fe28d3253",
+      "src/app/page.tsx": "7adf2311595655dd12a4831e59ba0fbb1a8437b1321e7700bd2d571a3c7d753c",
+      "src/app/tickets/[id]/page.tsx": "17f1bd30d2307e3c5f3de7163566ef356b421d1f63d784c84ae6b272fe9ceda3",
+      "src/app/ticket-form.tsx": "08faa5317d58ae5b366413e2e863ebc5e5539c8ae8a2850251cdc23c44ff1734"
+    }
+  },
+  "owners": [
+    { "id": "avery-stone", "name": "Avery Stone" },
+    { "id": "jordan-lee", "name": "Jordan Lee" }
+  ],
+  "fixtures": [
+    {
+      "reference": "INC-0001", "title": "Cannot connect to corporate VPN",
+      "description": "The VPN client stops at 80% and reports that the gateway is unavailable.",
+      "category": "Network and connectivity", "status": "open", "priority": "high", "owner": null,
+      "requesterName": "Maya Chen", "requesterEmail": "maya.chen@example.com",
+      "createdAt": "2026-09-25T01:20:00.000Z", "updatedAt": "2026-09-25T01:20:00.000Z"
+    },
+    {
+      "reference": "INC-0002", "title": "Request access to finance reporting",
+      "description": "Please add read-only access to the monthly finance reporting workspace.",
+      "category": "Access and identity", "status": "in_progress", "priority": "medium", "owner": null,
+      "requesterName": "Daniel Foster", "requesterEmail": "daniel.foster@example.com",
+      "createdAt": "2026-09-24T07:45:00.000Z", "updatedAt": "2026-09-25T00:10:00.000Z"
+    },
+    {
+      "reference": "INC-0003", "title": "Teams microphone is not detected",
+      "description": "The built-in microphone works in Windows settings but is unavailable in Teams calls.",
+      "category": "Email and collaboration", "status": "resolved", "priority": "low", "owner": null,
+      "requesterName": "Priya Shah", "requesterEmail": "priya.shah@example.com",
+      "createdAt": "2026-09-23T03:30:00.000Z", "updatedAt": "2026-09-24T09:15:00.000Z"
+    },
+    {
+      "reference": "INC-0004", "title": "Executive laptop will not start",
+      "description": "The laptop shows a blank screen after the latest firmware update.",
+      "category": "Device and hardware", "status": "open", "priority": "critical", "owner": null,
+      "requesterName": "Alex Morgan", "requesterEmail": "alex.morgan@example.com",
+      "createdAt": "2026-09-25T02:05:00.000Z", "updatedAt": "2026-09-25T02:05:00.000Z"
+    }
+  ],
+  "acceptance": [
+    { "id": "AC-1", "criterion": "Migrate the existing four tickets without changing IDs, reference, title, description, requester, category, priority, status, or timestamps. Existing and newly created tickets start unassigned; initial summary stays open=2, inProgress=1, resolved=1, urgent=2." },
+    { "id": "AC-2", "criterion": "On ticket detail, assign INC-0001 to Avery Stone, reassign it to Jordan Lee, then clear it to Unassigned. Each change is persisted and visible on detail and dashboard after reload and container restart with the same volume. Ownership mutation may advance only updatedAt in addition to ownership; use a nondecreasing timestamp." },
+    { "id": "AC-3", "criterion": "Set INC-0001 and INC-0003 to Avery Stone, INC-0002 to Jordan Lee, and leave INC-0004 unassigned. Owner filter All returns 4, Avery Stone returns INC-0001 and INC-0003, Jordan Lee returns INC-0002, Unassigned returns INC-0004. Combine Avery Stone + open + high + query inc-1: only INC-0001. Avery Stone + critical returns none. Clearing the owner filter restores the pre-existing search/status/priority behavior." },
+    { "id": "AC-4", "criterion": "Ownership controls are labeled and keyboard usable. Only the two local roster IDs or the explicit unassigned value are accepted server-side. A forged owner ID not-in-roster or nonexistent ticket ID cannot mutate any ticket; storage tests cover this directly." },
+    { "id": "AC-5", "criterion": "Create a ticket titled Ownership demo request, description Verify a new unassigned ticket., category Other, priority low, requester Demo Requester, email demo.requester@example.com. It starts open and unassigned. Existing create, detail, status update, search, priority ordering, and summary semantics remain unchanged; use a separate fresh dataset from AC-3." }
+  ],
+  "nonGoals": [
+    "Authentication, authorization, directory or GitHub identity integration",
+    "Free-text owners, team ownership, bulk assignment, ownership on the creation form",
+    "Notifications, SLAs, comments, audit history, dashboards beyond an owner column/filter",
+    "Any change to the accepted feature between scenario variants"
+  ],
+  "variants": [
+    {
+      "id": "ownership-standard",
+      "title": "Standard Human-gated delivery",
+      "steps": [
+        "Publish a newly prepared isolated repository; finish automated preflight and all manual checks.",
+        "A Human submits the intent template and fixed acceptance criteria, reviews generated Spec and Plan, and explicitly approves their actual latest versions.",
+        "Review real controlled-Red Tests and Green Implementation evidence; require Human approval and protected merge.",
+        "Run the published immutable digest locally on an isolated volume, execute the acceptance checklist, and submit explicit delivery acceptance with observations.",
+        "Export replay evidence. Only actual Human acceptance plus verified delivery may count as complete."
+      ],
+      "requiredEvidence": ["intent", "spec-approval", "plan-approval", "controlled-red", "green", "merged-implementation", "verified-digest", "human-delivery-acceptance"]
+    },
+    {
+      "id": "ownership-spec-revision",
+      "title": "Spec revision of the same ownership feature",
+      "steps": [
+        "Use a separate newly prepared repository with the same immutable source commit and feature.",
+        "Read the first Spec; do not approve it. Submit /sdlc revise spec followed by the fixed feedback below.",
+        "Feedback: Make AC-1 migration preservation and AC-3 owner filter intersection explicit. Tickets remain unassigned by default; only Avery Stone and Jordan Lee are valid owners. Do not expand scope.",
+        "Verify the new revision exists, the first version remains unapproved, and no previous approval is counted for the new version; approve only the actual revised Spec and its corresponding Plan. This does not demonstrate revocation of an approval that never existed.",
+        "Continue through the identical Red/Green, merged-image, and Human delivery acceptance checklist."
+      ],
+      "requiredEvidence": ["intent", "spec-revision-request", "new-spec-version", "latest-version-only-approval", "spec-approval", "plan-approval", "controlled-red", "green", "verified-digest", "human-delivery-acceptance"]
+    },
+    {
+      "id": "ownership-failure-recovery",
+      "title": "Real failure and recovery without bypassing gates",
+      "steps": [
+        "Use a separate newly prepared isolated repository with the same feature and immutable source commit.",
+        "Observe a real generation or assignment failure. For a planned rehearsal only, the operator may deliberately configure an unusable demo-only automation credential before kickoff; never alter a production credential. Secret-name preflight cannot validate credential scopes or expiry.",
+        "Record the actual failed workflow URL, error, and blocked stage. If no failure occurred, this variant has NOT been demonstrated.",
+        "The operator fixes the underlying configuration separately, reruns read-only preflight, and uses the supported retry/resume command for the blocked stage. Do not fabricate Red tests, approvals, or successful workflow evidence.",
+        "Show the real recovery workflow and unchanged approved scope, then finish the same acceptance checklist."
+      ],
+      "requiredEvidence": ["intent", "failed-workflow", "root-cause", "operator-remediation", "successful-retry", "preserved-gates", "verified-digest", "human-delivery-acceptance"]
+    }
+  ]
+}

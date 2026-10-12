@@ -1,0 +1,72 @@
+name: "Brownfield human-gated delivery: Submit an intent"
+description: Evolve an existing application through reviewed specification, plan, tests, implementation, verified delivery, and Human acceptance.
+title: "[Brownfield delivery] Clarify ticket ownership"
+labels: ["brownfield-human-gated-delivery:intent"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        You write the Intent: what is needed, why it matters, who is affected, and which constraints apply. The prefilled ticket-ownership example is editable; review it before submitting, or replace it with your own intent.
+
+        Leave unresolved decisions in Open questions instead of writing a specification or implementation plan. After repository setup, a new Intent starts AI-written Spec and Plan review here in this Issue, not in document pull requests. Read each published version, discuss it, and submit `/sdlc revise spec` or `/sdlc revise plan` followed by feedback on a new line. Approve only a version you have read with `/sdlc approve spec vN` or `/sdlc approve plan vN`.
+
+        New runs using the configured decisions-v1 profile include a discovery brief and Q-n questions. Unanswered questions block Spec approval. A configured Spec reviewer answers with `/sdlc decide spec vN Q-n` plus Outcome and Rationale fields, or explicitly defers with Rationale, Owner, Follow-up, and Risk fields. Follow the exact examples in the review hub. Each decision generates a new Spec for review; it is not approval. Existing runs retain their original profile.
+
+        Only explicit approval from configured Human reviewers of both documents starts TDD. Tests and Implementation still use reviewed pull requests and required checks. All Issue-based runs, including existing ones after upgrade, remain open after smoke verification until configured Implementation reviewers accept the current verified image digest and record observed results. Only legacy document-PR runs keep their original automatic-close behavior; they are not migrated.
+
+        After testing the exact verified image, submit a new, unedited comment with `/sdlc accept sha256:<64hex>` on its first line and your actual observed results below it; replace the placeholder with the published digest. Use `/sdlc reject sha256:<64hex>` with observations if it is not acceptable. A new verification attempt invalidates prior acceptance; rejection requires another verification before acceptance. Use `/sdlc help` or `/sdlc status` for the run's next action.
+
+        Writers can submit `/sdlc pause`, `/sdlc resume`, or `/sdlc cancel` as new comments. Pause/cancel gate future work and disable auto-merge, but do not stop running jobs or undo merges. Cancellation is terminal and retains evidence; start a new Intent to continue. `/sdlc retry` is only for document generation/handoff, not engineering CI or delivery recovery. Code or scope fixes after merge require a linked new Intent, not changes to sealed documents.
+
+        Only repository owners, members, and collaborators can start the automated lifecycle. The Intent author is not automatically a reviewer; configure the intended approver in the repository's delivery configuration.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      description: What is difficult today, who experiences it, and what observation or evidence supports it? Say when evidence is unknown.
+      value: |
+        The existing IT service desk in demos/it-service-desk lets support agents create, search, and update tickets, but tickets have no assignee.
+        Agents and team leads cannot see who owns a ticket or find the tickets assigned to a particular agent, making handoffs unclear.
+    validations:
+      required: true
+  - type: textarea
+    id: outcome
+    attributes:
+      label: Proposed outcome
+      description: What would a better situation look like, and how could you observe success? Include a baseline or target if known; do not invent measurements. Consider smaller alternatives or doing nothing.
+      value: |
+        Support agents and team leads can understand who is responsible for a ticket, identify work that has no owner, and coordinate handoffs without losing track of existing requests.
+    validations:
+      required: true
+  - type: textarea
+    id: users
+    attributes:
+      label: Affected users and systems
+      description: Who experiences the problem, and which existing systems are involved?
+      value: |
+        Service-desk agents and team leads using the existing IT service desk in demos/it-service-desk.
+        Ticket requesters benefit from clearer responsibility for their incidents and service requests.
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: Constraints and non-goals
+      description: Include compatibility, security, scope, or timing constraints. Write "None known" when appropriate.
+      value: |
+        - Preserve existing ticket data and service-desk workflows.
+        - Keep this a small improvement to the existing application, not a replacement.
+        - External identity integrations, authentication changes, notifications, and SLA policies are out of scope for this demo.
+    validations:
+      required: true
+  - type: textarea
+    id: open_questions
+    attributes:
+      label: Open questions
+      description: Which decisions need discussion during Spec review? Write "None known" when appropriate.
+      value: |
+        - Can a ticket remain unassigned?
+        - Should owners come from a predefined local list or be entered freely?
+        - Is visibility of ownership enough, or should agents also be able to filter tickets by owner?
+    validations:
+      required: true

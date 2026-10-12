@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "kind": "brownfield-demo-export",
+  "source": {
+    "repository": "/home/ythuang/workspace/ai-native-sdlc",
+    "commit": "b30e6bc3a693f674d48f1a9f76952176214eae9e"
+  },
+  "scenario": "ownership-standard",
+  "reviewer": "huangyingting",
+  "singleOwner": true,
+  "baselineVerified": true,
+  "exportedAt": "2026-10-12T03:16:34.467Z",
+  "omittedPaths": []
+}

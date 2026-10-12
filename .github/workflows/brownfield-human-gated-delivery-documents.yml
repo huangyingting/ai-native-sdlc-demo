@@ -1,0 +1,161 @@
+name: Brownfield Delivery · Documents
+
+on:
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Intent Issue to initialize or resume
+        type: number
+        required: true
+
+permissions: {}
+
+# Every surviving run drains the Issue command queue, including commands whose
+# pending workflow run GitHub replaced. Publication uses the same lock.
+concurrency:
+  group: brownfield-delivery-documents-${{ github.event.issue.number || inputs.issue_number }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (
+        !github.event.issue.pull_request &&
+        github.event.comment.user.type == 'User' &&
+        contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+        startsWith(github.event.comment.body, '/sdlc') &&
+        contains(github.event.issue.labels.*.name, 'brownfield-human-gated-delivery:intent')
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+      actions: write
+      statuses: write
+      pull-requests: write
+    outputs:
+      generate: ${{ steps.review.outputs.generate }}
+      request-sha: ${{ steps.review.outputs.request-sha }}
+      source-sha: ${{ steps.review.outputs.source-sha }}
+      trusted-sha: ${{ steps.trusted.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - id: trusted
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+      - name: Process versioned Human commands and prepare generation
+        id: review
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          COPILOT_ASSIGN_TOKEN: ${{ secrets.COPILOT_ASSIGN_TOKEN }}
+          INTENT_ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          DOCUMENT_PROMPT_PATH: ${{ runner.temp }}/document-prompt.txt
+        run: node .github/brownfield-human-gated-delivery/scripts/documents.mjs prepare
+      - uses: actions/upload-artifact@v7
+        if: steps.review.outputs.generate == 'true'
+        with:
+          name: document-request
+          path: ${{ runner.temp }}/document-prompt.txt
+          if-no-files-found: error
+          retention-days: 1
+
+  generate:
+    needs: prepare
+    if: needs.prepare.outputs.generate == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      copilot-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.source-sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - uses: actions/download-artifact@v8
+        with:
+          name: document-request
+          path: ${{ runner.temp }}/document-request
+      - name: Install Copilot CLI
+        run: npm install -g @github/copilot
+      - name: Generate Markdown with read-only tools
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          DOCUMENT_PROMPT_PATH: ${{ runner.temp }}/document-request/document-prompt.txt
+          DOCUMENT_OUTPUT_PATH: ${{ runner.temp }}/document.md
+        run: |
+          set -euo pipefail
+          copilot --silent --no-ask-user \
+            --available-tools='view,glob,rg' --allow-tool='view,glob,rg' \
+            --deny-tool=write --deny-tool=shell \
+            -p "$(cat "$DOCUMENT_PROMPT_PATH")" > "$DOCUMENT_OUTPUT_PATH"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: generated-document
+          path: ${{ runner.temp }}/document.md
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    needs: [prepare, generate]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.trusted-sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - uses: actions/download-artifact@v8
+        with:
+          name: generated-document
+          path: ${{ runner.temp }}/document-result
+      - name: Validate and publish only the requested document
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INTENT_ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+          DOCUMENT_REQUEST_SHA: ${{ needs.prepare.outputs.request-sha }}
+          DOCUMENT_OUTPUT_PATH: ${{ runner.temp }}/document-result/document.md
+        run: node .github/brownfield-human-gated-delivery/scripts/documents.mjs publish
+
+  report-failure:
+    needs: [prepare, generate, publish]
+    if: >-
+      always() && !cancelled() &&
+      (needs.prepare.result == 'failure' || needs.generate.result == 'failure' || needs.publish.result == 'failure')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Report the failure in the Intent
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          INTENT_ISSUE_NUMBER: ${{ github.event.issue.number || inputs.issue_number }}
+        run: node .github/brownfield-human-gated-delivery/scripts/documents.mjs failure

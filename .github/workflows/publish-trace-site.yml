@@ -1,0 +1,63 @@
+name: Publish Copilot Trace Site
+
+on:
+  workflow_run:
+    workflows: ["Copilot CLI Agent Demos"]
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+  pages: write
+
+concurrency:
+  group: copilot-trace-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: >-
+      github.event.workflow_run.conclusion == 'success' &&
+      github.event.workflow_run.head_branch == github.event.repository.default_branch
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out publisher
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          path: source
+      - name: Download trace artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: copilot-trace-viewer
+          path: report
+          github-token: ${{ github.token }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Check out Pages
+        uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+          path: pages
+      - name: Build trace site
+        env:
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          RUN_TITLE: ${{ github.event.workflow_run.display_title }}
+          RUN_CREATED_AT: ${{ github.event.workflow_run.created_at }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: node source/.github/scripts/publish-trace-site.mjs report pages source
+      - name: Push Pages update
+        working-directory: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "Copilot trace site is already current."
+            exit 0
+          fi
+          git commit -m "Publish trace report for run ${{ github.event.workflow_run.id }}"
+          git push origin HEAD:gh-pages
+          gh api --method POST "repos/${{ github.repository }}/pages/builds" >/dev/null

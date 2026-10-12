@@ -1,0 +1,55 @@
+name: Brownfield Reliability Loops
+
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Accepted readiness image: ghcr.io/owner/image@sha256:DIGEST"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  rehearse:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+      - name: Qualify committed readiness tests
+        run: >-
+          node tools/brownfield-demo/cli.mjs qualify
+          --source "$GITHUB_WORKSPACE" --source-ref "$GITHUB_SHA"
+          --dest "$RUNNER_TEMP/readiness-qualification"
+      - name: Sign in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+      - name: Exercise actual verification release and operations loops
+        env:
+          IMAGE: ${{ inputs.image }}
+        run: >-
+          node tools/brownfield-demo/cli.mjs rehearse
+          --image "$IMAGE" --repo "$GITHUB_REPOSITORY" --owner "$GITHUB_ACTOR"
+          --qualification "$RUNNER_TEMP/readiness-qualification/qualification-report.json"
+          --dest "$RUNNER_TEMP/reliability-rehearsal"
+      - name: Preserve sanitized evidence and unapproved maintenance draft
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: reliability-${{ github.run_id }}-attempt-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/readiness-qualification/qualification-report.json
+            ${{ runner.temp }}/reliability-rehearsal/evidence.json
+            ${{ runner.temp }}/reliability-rehearsal/maintenance-intent.md
+          if-no-files-found: error
+          retention-days: 14

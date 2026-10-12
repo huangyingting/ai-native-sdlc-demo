@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "specReadiness": "decisions-v1",
+  "mergeMethod": "squash",
+  "project": {
+    "path": "demos/it-service-desk",
+    "testCommand": "npm test",
+    "lintCommand": "npm run lint",
+    "buildCommand": "npm run build"
+  },
+  "stages": {
+    "spec": {
+      "prompt": ".github/brownfield-human-gated-delivery/prompts/spec.md",
+      "minimumApprovals": 1,
+      "reviewers": {
+        "users": [
+          "huangyingting"
+        ],
+        "teams": []
+      }
+    },
+    "plan": {
+      "prompt": ".github/brownfield-human-gated-delivery/prompts/plan.md",
+      "minimumApprovals": 1,
+      "reviewers": {
+        "users": [
+          "huangyingting"
+        ],
+        "teams": []
+      }
+    },
+    "tests": {
+      "prompt": ".github/brownfield-human-gated-delivery/prompts/tests.md",
+      "minimumApprovals": 1,
+      "reviewers": {
+        "users": [
+          "huangyingting"
+        ],
+        "teams": []
+      }
+    },
+    "implementation": {
+      "prompt": ".github/brownfield-human-gated-delivery/prompts/implementation.md",
+      "minimumApprovals": 1,
+      "reviewers": {
+        "users": [
+          "huangyingting"
+        ],
+        "teams": []
+      }
+    }
+  }
+}
