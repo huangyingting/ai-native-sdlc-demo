@@ -114,28 +114,21 @@
     "body": "### Problem or opportunity\n\nThe existing IT service desk in demos/it-service-desk lets support agents create, search, and update tickets, but tickets have no assignee.\nAgents and team leads cannot see who owns a ticket or find the tickets assigned to a particular agent, making handoffs unclear.\n\n\n### Proposed outcome\n\nSupport agents and team leads can understand who is responsible for a ticket, identify work that has no owner, and coordinate handoffs without losing track of existing requests.\n\n\n### Affected users and systems\n\nService-desk agents and team leads using the existing IT service desk in demos/it-service-desk.\nTicket requesters benefit from clearer responsibility for their incidents and service requests.\n\n\n### Constraints and non-goals\n\n- Preserve existing ticket data and service-desk workflows.\n- Keep this a small improvement to the existing application, not a replacement.\n- External identity integrations, authentication changes, notifications, and SLA policies are out of scope for this change.\n\n\n### Open questions\n\n- Can a ticket remain unassigned?\n- Should owners come from a predefined local list or be entered freely?\n- Is visibility of ownership enough, or should agents also be able to filter tickets by owner?\n"
   },
   "counters": {
-    "spec": 4,
+    "spec": 5,
     "plan": 0
   },
   "documents": {
     "spec": {
-      "version": 4,
-      "hash": "4f702842a61fa30f041ab0584f434a032e140b6707553b22494ffb9459f55d2d",
+      "version": 5,
+      "hash": "685c515461c7e77c4ac13e129f3cc3313d7a8d6ea29d18cda48d290cdce67038",
       "specHash": null,
       "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
       "approvals": [],
-      "contextHash": "927324e583b2b77ddf8308ec216bc05a3e06cac087f7b7d5fb39ad7e307ed91c"
+      "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
     },
     "plan": null
   },
-  "pending": {
-    "stage": "spec",
-    "version": 5,
-    "feedback": "Apply Human decision #6117980837 for Q-4. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.",
-    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
-    "specHash": null,
-    "contextHash": "44207bc8b050da543c2d81c5a58367d60d8d04bb64626a7433612dec7792b59c"
-  },
+  "pending": null,
   "lastCommentId": 6117980837,
   "receipts": [
     {
