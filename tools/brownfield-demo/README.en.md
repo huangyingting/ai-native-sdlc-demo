@@ -91,8 +91,41 @@ Follow-up: Open a separate Intent after this delivery.
 Risk: Owners must inspect the queue until then.
 ```
 
-Use the actual published version and question ID, not these example values.
-Each accepted decision automatically requests a new Spec revision; read that
+To answer multiple questions together, submit one new comment beginning with
+`/sdlc decide spec vN batch`, followed by a fenced `json` array:
+
+````text
+/sdlc decide spec v1 batch
+```json
+[
+  {
+    "action": "decide",
+    "questionId": "Q-1",
+    "fields": {
+      "Outcome": "Use the fixed local owner list.",
+      "Rationale": "External identity is outside this change."
+    }
+  },
+  {
+    "action": "defer",
+    "questionId": "Q-2",
+    "fields": {
+      "Rationale": "Notifications require separate discovery.",
+      "Owner": "YOUR-GITHUB-LOGIN",
+      "Follow-up": "Open a separate Intent after this delivery.",
+      "Risk": "Owners must inspect the queue until then."
+    }
+  }
+]
+```
+````
+
+Use the actual published version and question IDs, not these example values.
+A batch accepts 1 to 20 distinct registered questions, up to 60 KB, with
+complete fields for each `decide` or `defer` answer. Every answer is validated
+before any is recorded; an invalid answer rejects the whole batch. One
+accepted comment requests exactly one Spec revision, whether it contains one
+answer or all answers. It never approves that unseen revision. Read the new
 revision before issuing another command or approving. The latest receipt for
 each question is authoritative, while earlier receipts remain evidence.
 Deferment is an explicit owned risk, not proof that the question was resolved.
@@ -384,7 +417,10 @@ including the current Spec's decision-to-acceptance mapping and Spec/Plan
 context binding. Every retained decision must match an actual unedited Human
 comment, configured individual Spec authority/current policy, exact command,
 recorded timestamp and successful command receipt. Superseded decisions are
-not ignored. Malformed profiles or state fail collection explicitly;
+not ignored. Answers in one batch share a comment and source version; all
+must match that complete command. `decisionCommentIds` lists each verified
+command once, and revision accounting counts batches, not their answer count.
+Malformed profiles or state fail collection explicitly;
 untrusted ledgers, missing comments and incomplete handoffs are reported as
 unverified. Legacy document links without a review record remain links only.
 
@@ -454,7 +490,8 @@ The gate does not accept scenario names or user-supplied success booleans:
   validator. Unsigned counters cannot count.
 - **Normal:** Plan counter is 1, with no explicit Spec revision request or
   recorded failure. Structural Spec counter is 1; a `decisions-v1` Spec can
-  additionally have exactly one published revision per corroborated decision.
+  additionally have exactly one published revision per corroborated decision
+  command; multiple answers in one batch count as one revision.
 - **Revision:** Spec counter is greater than 1 and an actual unedited Human
   `/sdlc revise spec` request has a successful trusted receipt before the
   current approval. A counter alone, automatic decision revision or rejected

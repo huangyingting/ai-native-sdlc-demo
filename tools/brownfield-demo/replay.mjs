@@ -149,7 +149,8 @@ export function documentEvidence(evidence, state, texts, trusted) {
   if (state.version === 2) {
     const policy = config.stages.spec;
     let previousVersion = 0;
-    for (const decision of state.discovery.decisions) {
+    const commands = [...new Map(state.discovery.decisions.map((decision) => [decision.commentId, decision])).values()];
+    for (const decision of commands) {
       const comment = comments.find((item) => item.id === decision.commentId);
       const command = parseDocumentCommand(decision.commentBody);
       const receipt = `Command #${decision.commentId} recorded: ${command.action} spec v${decision.version}.`;
@@ -169,7 +170,7 @@ export function documentEvidence(evidence, state, texts, trusted) {
       previousVersion = decision.version;
     }
     result.discovery.decisionEvidenceVerified = trusted &&
-      result.decisionCommentIds.length === state.discovery.decisions.length;
+      result.decisionCommentIds.length === commands.length;
   }
   if (state.counters?.spec > 1 && !revisions.length &&
       (state.version === 1 || state.counters.spec !== 1 + result.decisionCommentIds.length)) {

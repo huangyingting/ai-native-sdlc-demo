@@ -4,7 +4,7 @@ import {
 } from "../../../.github/brownfield-human-gated-delivery/scripts/document-core.mjs";
 import { commit, config } from "./helpers.mjs";
 
-export function discoveryFixture({ intent = 42, complete = true, revise = false } = {}) {
+export function discoveryFixture({ intent = 42, complete = true, revise = false, batch = false } = {}) {
   const reviewConfig = { ...structuredClone(config), specReadiness: "decisions-v1" };
   const state = initialDocumentState({ number: intent, title: "Ticket ownership", body: "Clarify ownership." }, commit, reviewConfig);
   const questions = [
@@ -66,15 +66,22 @@ ${JSON.stringify(discovery, null, 2)}
   requestDocumentRevision(state, "spec", "Initial proposal.", reviewConfig);
   publishSpec();
   if (complete) {
-    for (const [action, question, fields] of [
+    const answers = [
       ["decide", "Q-1", "Outcome: Use the local owner list.\nRationale: Keep this change bounded."],
       ["defer", "Q-2", "Rationale: Notifications need separate discovery.\nOwner: reviewer\nFollow-up: Revisit in a separate Intent.\nRisk: Owners must inspect the queue."],
       ["decide", "Q-1", "Outcome: Use exactly two local owners.\nRationale: Preserve the fixed scenario."],
-    ]) {
-      const value = comment(`/sdlc ${action} spec v${state.counters.spec} ${question}\n${fields}`);
+    ];
+    const batches = batch ? [answers.slice(0, 2), answers.slice(2)] : answers.map((answer) => [answer]);
+    for (const group of batches) {
+      const decisions = group.map(([action, questionId, fields]) =>
+        parseDocumentCommand(`/sdlc ${action} spec v${state.counters.spec} ${questionId}\n${fields}`));
+      const body = batch
+        ? `/sdlc decide spec v${state.counters.spec} batch\n\`\`\`json\n${JSON.stringify(decisions.map(({ action, questionId, fields }) => ({ action, questionId, fields })))}\n\`\`\``
+        : `/sdlc ${group[0][0]} spec v${state.counters.spec} ${group[0][1]}\n${group[0][2]}`;
+      const value = comment(body);
       const command = parseDocumentCommand(value.body);
       recordDiscoveryDecision(state, command, value, reviewConfig);
-      receipt(value, `${action} spec v${command.version}`);
+      receipt(value, `${command.action} spec v${command.version}`);
       publishSpec();
     }
     if (revise) {

@@ -137,6 +137,132 @@ function discoveryDraft() {
   return state;
 }
 
+const batchAnswer = (version = 1, decisions = [
+  { action: "decide", questionId: "Q-1", fields: parseDocumentCommand(answer()).fields },
+  { action: "defer", questionId: "Q-2", fields: parseDocumentCommand(defer()).fields },
+]) => `/sdlc decide spec v${version} batch\n\`\`\`json\n${JSON.stringify(decisions, null, 2)}\n\`\`\``;
+function batchDraft(count = 6) {
+  const state = initialDocumentState(parent, baseline, discoveryConfig);
+  requestDocumentRevision(state, "spec", "Initial discovery", discoveryConfig);
+  publishDocumentRevision(state, discoverySpec({
+    questions: Array.from({ length: count }, (_, index) => ({
+      ...ownershipQuestion, id: `Q-${index + 1}`, question: `Ownership question ${index + 1}?`,
+    })), decisions: [],
+  }), null, discoveryConfig);
+  return state;
+}
+
+test("batch grammar supports bounded distinct decisions and explicit deferments", () => {
+  const parsed = parseDocumentCommand(batchAnswer());
+  assert.equal(parsed.action, "decide-batch");
+  assert.equal(parsed.version, 1);
+  assert.equal(parsed.decisions.length, 2);
+  assert.equal(parsed.decisions[1].fields.Owner, human.login);
+  assert.deepEqual(parseDocumentCommand(batchAnswer().replaceAll("\n", "\r\n")), parsed);
+  for (const decisions of [[], {}, Array(21).fill(parsed.decisions[0]),
+    [parsed.decisions[0], parsed.decisions[0]],
+    [{ ...parsed.decisions[0], questionId: "Q-0" }],
+    [{ ...parsed.decisions[0], questionId: ["Q-1"] }],
+    [{ ...parsed.decisions[0], action: "approve" }],
+    [{ ...parsed.decisions[0], extra: "unknown" }],
+    [{ ...parsed.decisions[0], fields: { Outcome: "Missing rationale" } }],
+    [{ ...parsed.decisions[0], fields: { ...parsed.decisions[0].fields, Extra: "unknown" } }],
+    [{ ...parsed.decisions[0], fields: { Outcome: null, Rationale: "reason" } }],
+    [{ ...parsed.decisions[0], fields: { Outcome: "x".repeat(4001), Rationale: "reason" } }],
+    [{ ...parsed.decisions[1], fields: { ...parsed.decisions[1].fields, Owner: "@invalid" } }],
+  ]) assert.throws(() => parseDocumentCommand(batchAnswer(1, decisions)));
+  for (const body of [batchAnswer().replace("v1", "v0"), batchAnswer().replace("spec", "plan"),
+    batchAnswer().replace("```json", "```"), batchAnswer().replace('"decide"', '"decide",'),
+    batchAnswer() + "\n/sdlc approve spec v1", batchAnswer().replace("v1", "v9007199254740992")]) {
+    assert.throws(() => parseDocumentCommand(body));
+  }
+  const large = Array.from({ length: 20 }, (_, index) => ({
+    action: "decide", questionId: `Q-${index + 1}`, fields: { Outcome: "x".repeat(3500), Rationale: "reason" },
+  }));
+  assert.throws(() => parseDocumentCommand(batchAnswer(1, large)), /60 KB/);
+  const maximumQuestions = large.map((decision) => ({ ...decision, fields: { Outcome: "x".repeat(4000), Rationale: "reason" } }));
+  assert.equal(parseDocumentCommand(batchAnswer(1, maximumQuestions.slice(0, 1))).decisions[0].fields.Outcome.length, 4000);
+  const twenty = large.map((decision) => ({ ...decision, fields: { Outcome: "selected", Rationale: "reason" } }));
+  assert.equal(parseDocumentCommand(batchAnswer(1, twenty)).decisions.length, 20);
+  const base = batchAnswer(1, twenty);
+  const fence = base.lastIndexOf("\n```");
+  const boundary = base.slice(0, fence) + " ".repeat(60000 - Buffer.byteLength(base)) + base.slice(fence);
+  assert.equal(Buffer.byteLength(boundary), 60000);
+  assert.equal(parseDocumentCommand(boundary).decisions.length, 20);
+  assert.throws(() => parseDocumentCommand(boundary.replace(/\n```$/, " \n```")), /60 KB/);
+});
+
+test("six answers bind one published version and request exactly one unapproved Spec revision", () => {
+  const state = batchDraft();
+  const oldContext = state.documents.spec.contextHash;
+  const decisions = state.discovery.questions.map((question) => ({
+    action: "decide", questionId: question.id, fields: parseDocumentCommand(answer()).fields,
+  }));
+  const body = batchAnswer(1, decisions);
+  recordDiscoveryDecision(state, parseDocumentCommand(body), command(body), discoveryConfig);
+  assert.equal(state.discovery.decisions.length, 6);
+  assert.equal(new Set(state.discovery.decisions.map((decision) => decision.commentId)).size, 1);
+  assert.ok(state.discovery.decisions.every((decision) => decision.version === 1 && decision.contextHash === oldContext));
+  assert.equal(state.pending.version, 2);
+  assert.equal(state.counters.spec, 1);
+  assert.equal(state.pending.contextHash, discoveryContextHash(state.discovery));
+  assert.deepEqual(state.documents.spec.approvals, []);
+  assert.deepEqual(discoveryBlockers(state), []);
+  validateDocumentState(state, 42);
+  assert.throws(() => approveDocument(state, parseDocumentCommand("/sdlc approve spec v1"), command(""), discoveryConfig), /pending/);
+  const revised = discoverySpec(state.discovery);
+  publishDocumentRevision(state, revised, null, discoveryConfig);
+  validateDocumentState(state, 42);
+  assert.throws(() => recordDiscoveryDecision(state, parseDocumentCommand(body), command(body), discoveryConfig), /Stale/);
+  approveDocument(state, parseDocumentCommand("/sdlc approve spec v2"), command("/sdlc approve spec v2", 101), discoveryConfig);
+  assert.ok(hasDocumentApproval(state.documents.spec, discoveryConfig.stages.spec));
+});
+
+test("batch recording rejects every invalid answer or authority without partial mutation", () => {
+  const body = batchAnswer();
+  for (const [change, override, expected] of [
+    [() => {}, { user: { ...human, login: "outsider" } }, /configured/],
+    [() => {}, { user: { ...human, type: "Bot" } }, /configured/],
+    [() => {}, { updated_at: "2026-09-27T00:00:00Z" }, /unedited/],
+    [(state) => { state.pending = { stage: "spec" }; }, {}, /pending/],
+    [(state) => { state.sealed = true; }, {}, /handed off/],
+    [(state) => { state.documents.spec.version = 2; }, {}, /Stale/],
+    [(state) => { state.discovery.questions.pop(); }, {}, /Unknown/],
+    [(state) => { state.documents.spec.policyHash = "0".repeat(64); }, {}, /policy changed/],
+    [(state) => { state.discovery.decisions = Array(99).fill({ commentId: 99 }); }, {}, /history is full/],
+  ]) {
+    const state = batchDraft(2);
+    change(state);
+    const before = structuredClone(state);
+    assert.throws(() => recordDiscoveryDecision(state, parseDocumentCommand(body), { ...command(body), ...override }, discoveryConfig), expected);
+    assert.deepEqual(state, before);
+  }
+});
+
+test("persisted batches require all answers and identical shared receipt bindings", () => {
+  const state = batchDraft(2);
+  const body = batchAnswer();
+  recordDiscoveryDecision(state, parseDocumentCommand(body), command(body), discoveryConfig);
+  publishDocumentRevision(state, discoverySpec(state.discovery), null, discoveryConfig);
+  validateDocumentState(state, 42);
+  for (const mutate of [
+    (copy) => { copy.discovery.decisions.pop(); },
+    (copy) => { copy.discovery.decisions.push(copy.discovery.decisions[0]); },
+    (copy) => { copy.discovery.decisions.reverse(); },
+    (copy) => { copy.discovery.decisions[1].commentId++; },
+    (copy) => { copy.discovery.decisions[1].hash = "0".repeat(64); },
+    (copy) => { copy.discovery.decisions[1].contextHash = "0".repeat(64); },
+    (copy) => { copy.discovery.decisions[1].policyHash = "0".repeat(64); },
+    (copy) => { copy.discovery.decisions[1].user = { ...human, id: 999 }; },
+    (copy) => { copy.discovery.decisions[1].decidedAt = "2026-09-27T00:00:00Z"; },
+    (copy) => { copy.discovery.decisions[1].fields.Risk = "Tampered"; },
+  ]) {
+    const copy = structuredClone(state);
+    mutate(copy);
+    assert.throws(() => validateDocumentState(copy, 42));
+  }
+});
+
 test("new-run discovery enrollment is explicit and persisted without migrating legacy states", () => {
   assert.equal(loadConfig().specReadiness, "decisions-v1");
   const legacy = initialDocumentState(parent, baseline);
@@ -452,6 +578,70 @@ async function publishDiscovery(mock) {
     decisions: pending.state.discovery.decisions,
   }));
 }
+
+test("Issue batch intake publishes once, retries idempotently and preserves separate approval gates", async () => {
+  const mock = repository(discoveryConfig);
+  const pending = await mock.review.process(42);
+  const questions = [ownershipQuestion, { ...ownershipQuestion, id: "Q-2", question: "Notify the owner?" }];
+  let snapshot = await mock.review.publish(42, pending.sha, discoverySpec({ questions, decisions: [] }));
+  assert.match(discoveryPacket(snapshot.state, null), /\/sdlc decide spec v1 batch/);
+  const decision = mock.add(batchAnswer());
+  snapshot = await mock.review.process(42);
+  assert.equal(snapshot.state.pending.version, 2);
+  assert.equal(snapshot.state.discovery.decisions.length, 2);
+  assert.equal(snapshot.state.receipts.filter((item) => item.id === decision.id).length, 1);
+  assert.match(snapshot.state.receipts.at(-1).message, /recorded: decide-batch spec v1/);
+  snapshot = await mock.review.process(42);
+  assert.equal(snapshot.state.discovery.decisions.length, 2);
+  assert.equal(snapshot.state.pending.version, 2);
+  snapshot = await mock.review.publish(42, snapshot.sha, discoverySpec(snapshot.state.discovery));
+  assert.equal(snapshot.state.documents.spec.version, 2);
+  assert.deepEqual(snapshot.state.documents.spec.approvals, []);
+  assert.equal(snapshot.state.documents.plan, null);
+  assert.equal(mock.state.assignments.length, 0);
+  const duplicate = mock.add(batchAnswer());
+  snapshot = await mock.review.process(42);
+  assert.match(snapshot.state.receipts.find((item) => item.id === duplicate.id).message, /rejected: Stale/);
+  assert.equal(snapshot.state.discovery.decisions.length, 2);
+  mock.add("/sdlc approve spec v2");
+  snapshot = await mock.draft("plan");
+  assert.equal(snapshot.state.documents.plan.version, 1);
+  mock.add("/sdlc approve plan v1");
+  snapshot = await mock.review.process(42);
+  assert.equal(snapshot.state.sealed, true);
+  assert.equal(mock.state.assignments.length, 1);
+});
+
+test("unknown final batch answer rejects the entire Issue comment without a revision", async () => {
+  const mock = repository(discoveryConfig);
+  await publishDiscovery(mock);
+  const before = (await mock.review.load(42)).state;
+  mock.add(batchAnswer());
+  const after = (await mock.review.process(42)).state;
+  assert.match(after.receipts.at(-1).message, /rejected: Unknown/);
+  assert.deepEqual(after.discovery, before.discovery);
+  assert.deepEqual(after.documents, before.documents);
+  assert.equal(after.pending, null);
+});
+
+test("batch ledger failures preserve the old ref and retry the whole batch exactly once", async () => {
+  const mock = repository(discoveryConfig);
+  const pending = await mock.review.process(42);
+  const questions = [ownershipQuestion, { ...ownershipQuestion, id: "Q-2", question: "Notify the owner?" }];
+  const original = await mock.review.publish(42, pending.sha, discoverySpec({ questions, decisions: [] }));
+  const decision = mock.add(batchAnswer());
+  mock.state.fail = (call) => call.method === "PATCH" && call.body?.body?.includes("document-ledger");
+  await assert.rejects(() => mock.review.process(42), /503/);
+  assert.equal(mock.refs.get(documentBranch(42)), original.sha);
+  assert.equal((await mock.review.load(42)).state.discovery.decisions.length, 0);
+  mock.state.fail = null;
+  let snapshot = await mock.review.process(42);
+  assert.equal(snapshot.state.discovery.decisions.length, 2);
+  assert.equal(snapshot.state.receipts.filter((item) => item.id === decision.id).length, 1);
+  snapshot = await mock.review.process(42);
+  assert.equal(snapshot.state.discovery.decisions.length, 2);
+  assert.equal(snapshot.state.pending.version, 2);
+});
 
 test("discovery run completes blocked draft -> Human decision -> revised Spec -> approved Plan -> Tests only", async () => {
   const mock = repository(discoveryConfig);
