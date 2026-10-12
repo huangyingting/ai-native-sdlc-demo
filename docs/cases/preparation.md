@@ -65,6 +65,19 @@ and reported the same eight unresolved advisories.
 
 ## Automation credential / 自动化凭据
 
+**Status on 2026-10-12:** the repository secret was configured at
+`04:27:13Z`. Its presence and the automated setup checks were verified without
+reading its value. The first Tests handoff failed with a token-access error.
+After the operator corrected permissions, the [retry succeeded](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38206744511)
+without repeating document approvals. Tests assignment and the later
+[Implementation assignment](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38210668893)
+both succeeded. This verifies those operations, not every future token-dependent action.
+
+**2026-10-12 状态：**仓库 Secret 已于北京时间 12:27:13 配置。
+自动化配置检查确认了 Secret 存在，但首次分配测试任务时仍出现了令牌访问错误。
+调整权限后，重试成功，无需重复批准文档。测试任务和后续实现任务均已成功分配，
+全程未读取令牌值。这些结果验证了已执行的操作，不代表所有后续权限都已验证。
+
 `COPILOT_ASSIGN_TOKEN` must be configured before assigning the reviewed coding
 tasks. Document generation uses the workflow's own GitHub token and does not
 require copying a personal token into a prompt or Issue.
