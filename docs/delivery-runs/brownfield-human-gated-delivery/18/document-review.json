@@ -34,7 +34,28 @@
         "options": "Accept explicitly limited database-read readiness: recommended small increment, with real write operations demonstrated during recovery but no per-probe write guarantee / require ticket-write availability to gate readiness: expands the probe contract and must be reconciled with Q-1 / retain read readiness but use a different endpoint or response vocabulary to avoid implying full traffic admission."
       }
     ],
-    "decisions": []
+    "decisions": [
+      {
+        "questionId": "Q-1",
+        "disposition": "resolved",
+        "fields": {
+          "Outcome": "Each readiness request must perform a fresh, minimal read-only query against the actual ticket schema through the same configured application database used by ticket operations, including an already-initialized shared store. Opening a connection or executing SELECT 1 alone is insufficient. A successfully queried empty, initialized tickets table is ready. Do not write business records, probe a substitute database, or reuse a prior successful result. This establishes database-read capability only; initialization and write limitations are addressed separately in Q-2 and Q-6.",
+          "Rationale": "This is the smallest useful increment that distinguishes a live process from an unreadable ticket dependency and detects a query or schema failure after earlier success without introducing write-probe side effects."
+        },
+        "version": 1,
+        "hash": "f5b68924c0584e69cf6cb8f5c5d5e467fc900a7ef12772f1990e5821aa133c1b",
+        "contextHash": "284abc084f114cb292d2ad48f1903272062886bf1a82f1ebe1f3864537c9dbb8",
+        "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+        "user": {
+          "id": 24954047,
+          "login": "huangyingting",
+          "type": "User"
+        },
+        "commentId": 6124026970,
+        "commentBody": "/sdlc decide spec v1 Q-1\nOutcome: Each readiness request must perform a fresh, minimal read-only query against the actual ticket schema through the same configured application database used by ticket operations, including an already-initialized shared store. Opening a connection or executing SELECT 1 alone is insufficient. A successfully queried empty, initialized tickets table is ready. Do not write business records, probe a substitute database, or reuse a prior successful result. This establishes database-read capability only; initialization and write limitations are addressed separately in Q-2 and Q-6.\nRationale: This is the smallest useful increment that distinguishes a live process from an unreadable ticket dependency and detects a query or schema failure after earlier success without introducing write-probe side effects.",
+        "decidedAt": "2026-10-12T12:12:31Z"
+      }
+    ]
   },
   "intent": 18,
   "baseline": "f52cc87b435d781af0be40a811d33f0cfd84d66b",
@@ -57,12 +78,23 @@
     },
     "plan": null
   },
-  "pending": null,
-  "lastCommentId": 6123798005,
+  "pending": {
+    "stage": "spec",
+    "version": 2,
+    "feedback": "Apply Human decision #6124026970 for Q-1. Preserve every question and map the latest decisions to acceptance IDs or explain why no AC changes.",
+    "policyHash": "45e6e87eb7670d8c20c510d6cc814cb6518f94ae957454d793c3672e39ec7c7a",
+    "specHash": null,
+    "contextHash": "885b129ff67ad72b7c384eade56263cfaceb728d82f3877fafde2a3f5924e42b"
+  },
+  "lastCommentId": 6124026970,
   "receipts": [
     {
       "id": 6123798005,
       "message": "Command #6123798005 recorded: retry."
+    },
+    {
+      "id": 6124026970,
+      "message": "Command #6124026970 recorded: decide spec v1."
     }
   ],
   "sealed": false
