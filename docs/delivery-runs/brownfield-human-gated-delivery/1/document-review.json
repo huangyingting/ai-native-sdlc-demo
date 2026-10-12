@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "reviewProfile": "decisions-v1",
+  "discovery": {
+    "questions": [],
+    "decisions": []
+  },
+  "intent": 1,
+  "baseline": "3709a7f36f1e0d4e34090f803fbe5a3ada30db32",
+  "intentSnapshot": {
+    "title": "Make ticket ownership visible and support handoffs",
+    "body": "### Problem or opportunity\n\nThe existing IT service desk in demos/it-service-desk lets support agents create, search, and update tickets, but tickets have no assignee.\nAgents and team leads cannot see who owns a ticket or find the tickets assigned to a particular agent, making handoffs unclear.\n\n\n### Proposed outcome\n\nSupport agents and team leads can understand who is responsible for a ticket, identify work that has no owner, and coordinate handoffs without losing track of existing requests.\n\n\n### Affected users and systems\n\nService-desk agents and team leads using the existing IT service desk in demos/it-service-desk.\nTicket requesters benefit from clearer responsibility for their incidents and service requests.\n\n\n### Constraints and non-goals\n\n- Preserve existing ticket data and service-desk workflows.\n- Keep this a small improvement to the existing application, not a replacement.\n- External identity integrations, authentication changes, notifications, and SLA policies are out of scope for this change.\n\n\n### Open questions\n\n- Can a ticket remain unassigned?\n- Should owners come from a predefined local list or be entered freely?\n- Is visibility of ownership enough, or should agents also be able to filter tickets by owner?\n"
+  },
+  "counters": {
+    "spec": 0,
+    "plan": 0
+  },
+  "documents": {
+    "spec": null,
+    "plan": null
+  },
+  "pending": null,
+  "lastCommentId": 0,
+  "receipts": [],
+  "sealed": false
+}
