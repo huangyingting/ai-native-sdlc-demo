@@ -1038,6 +1038,36 @@ test("generation prompt carries Human discussion and previous content but reject
   await assert.rejects(() => mock.review.prompt(snapshot), /exceeds 100 KB/);
 });
 
+test("batch generation deduplicates complete command bodies without truncating any decisions", async () => {
+  const mock = repository(discoveryConfig);
+  const initial = await mock.review.process(42);
+  const questions = Array.from({ length: 6 }, (_, index) => ({ ...ownershipQuestion, id: `Q-${index + 1}` }));
+  await mock.review.publish(42, initial.sha, discoverySpec({ questions, decisions: [] }));
+  const decisions = questions.map((question) => ({
+    action: "decide", questionId: question.id,
+    fields: { Outcome: `${question.id}: ${"x".repeat(2400)}`, Rationale: "y".repeat(400) },
+  }));
+  const body = batchAnswer(1, decisions);
+  mock.add(body);
+  const snapshot = await mock.review.process(42);
+  assert.ok(Buffer.byteLength(JSON.stringify({
+    discovery: snapshot.state.discovery, latestDecisions: latestDecisions(snapshot.state.discovery),
+  })) > 110000, "The former repeated-body representation must reproduce the original size failure");
+  const prompt = await mock.review.prompt(snapshot);
+  assert.ok(Buffer.byteLength(prompt) <= 110000);
+  const data = JSON.parse(prompt.slice(prompt.indexOf('{\n  "intent":')));
+  assert.deepEqual(data.decisionCommands, [{ commentId: snapshot.state.discovery.decisions[0].commentId, commentBody: body }]);
+  assert.equal(data.discovery.decisions.length, 6);
+  assert.equal(data.latestDecisions.length, 6);
+  assert.ok(data.discussion.includes(body));
+  for (const [index, original] of snapshot.state.discovery.decisions.entries()) {
+    const { commentBody, ...record } = original;
+    assert.deepEqual(data.discovery.decisions[index], record);
+    assert.deepEqual(data.latestDecisions[index], record);
+    assert.equal(data.decisionCommands[0].commentBody, commentBody);
+  }
+});
+
 test("failed generation and publication can be retried without duplicate revisions or assignments", async () => {
   const mock = repository();
   let snapshot = await mock.review.process(42);

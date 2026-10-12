@@ -340,6 +340,13 @@ export class DocumentReview {
     const template = readFileSync(new URL(`../prompts/${request.stage}-issue.md`, import.meta.url), "utf8");
     const discoveryInstructions = state.version === 2
       ? readFileSync(new URL("../prompts/discovery-spec.md", import.meta.url), "utf8") : "";
+    const discovery = state.version === 2 ? {
+      questions: state.discovery.questions,
+      decisions: state.discovery.decisions.map(({ commentBody, ...decision }) => decision),
+    } : null;
+    const decisionCommands = state.version === 2
+      ? [...new Map(state.discovery.decisions.map((decision) =>
+        [decision.commentId, { commentId: decision.commentId, commentBody: decision.commentBody }])).values()] : [];
     const prompt = [
       renderPrompt(template, { intent: state.intent }),
       ...(state.version === 2 ? [request.stage === "spec" ? discoveryInstructions :
@@ -352,7 +359,7 @@ export class DocumentReview {
         approvedSpec: request.stage === "plan" ? documents.spec : null,
         approvedSpecHash: request.specHash,
         ...(state.version === 2 ? { reviewProfile: state.reviewProfile,
-          discovery: state.discovery, latestDecisions: latestDecisions(state.discovery) } : {}),
+          discovery, decisionCommands, latestDecisions: latestDecisions(discovery) } : {}),
       }, null, 2),
     ].join("\n\n");
     if (Buffer.byteLength(prompt) > 110000) throw new Error("Document request exceeds 110 KB; narrow the Intent rather than silently truncating requirements.");
