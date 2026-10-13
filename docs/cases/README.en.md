@@ -25,7 +25,7 @@ before implementation rather than inferred from a finished example.
 | Tests | [Tests PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) | [Approved after two revision rounds](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486995544); merged into the delivery branch |
 | Implementation | [Implementation PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | Approved and merged; 38 tests Green |
 | Delivery | [Exact image acceptance](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) | Published, run and accepted |
-| Operation | [Database-readiness maintenance delivery](readiness.en.md) | Accepted; subsequent release reliability is pending |
+| Operation | [Database-readiness maintenance delivery](readiness.en.md) · [Reliability rehearsal](reliability.en.md) | Readiness accepted; two recovery rehearsals passed, maintenance review pending |
 
 ### Product decisions
 
@@ -100,13 +100,17 @@ release reliability remains a separate pending exercise.
 <a id="focused-cases"></a>
 ## Remaining focused cases
 
-After the required prerequisites are available:
+| Topic | Actual result | Remaining boundary |
+|---|---|---|
+| [Release reliability](reliability.en.md) | 23 exact qualification assertions, six mutants killed; two fresh-volume admission/fallback/recovery rehearsals passed | Operational observation only; [maintenance review #28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28) pending |
+| [Change impact](change-impact.en.md) | Real proposal and citations reviewed, 15-test control passed | [Exact-hash proposal #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30) awaits operator approval; no implementation or 35-check oracle result |
+| [Failure diagnosis](engineering-judgment.en.md) | Six behaviorally verified repairs; both environment classifications wrong | Classification failures retained, not overwritten by Green tests |
+| [Agent strategy evaluation](engineering-judgment.en.md) | Six cells / nine actual calls, 4/6 full acceptance; usage and time compared | One trial per cell, no general statistical ranking |
 
-- **Release reliability:** readiness is accepted; subsequently verify traffic
-  admission and recovery, then follow up on prevention.
-- **Change impact:** review a proxy-owner proposal before implementing it in the isolated engineering application.
-- **Diagnosis and strategy evaluation:** use fixed faults, independent checks and measured usage to compare repairs and evidence quality.
-- **Agent execution traces:** inspect actual model/tool calls and explain their relationship to verified results.
+The [engineering results record #29](https://github.com/huangyingting/ai-native-sdlc-demo/issues/29)
+preserves every outcome. Each real model call verified zero tools. The earlier
+isolation-rejected proposal call remains a separate compatibility failure;
+private raw prompts, responses and generated candidate source are not published.
 
 Each topic records its inputs, allowed scope, observed outcome and unverified areas separately.
 
