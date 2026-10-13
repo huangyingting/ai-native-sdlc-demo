@@ -10,7 +10,13 @@
 （`2026-10-12T22:38:35Z`）。
 
 这是仓库 ID `1415043318` 中实际完成的交付，不是导入的历史结果，
-也不是生产认证。后续发布可靠性演练仍未完成。
+也不是生产认证。后续[可靠性演练](reliability.md)已有两次通过记录，
+维护审查仍待完成。
+
+**这是交付主线：**实现 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
+作者为 `app/copilot-swe-agent`。Copilot 代码、Actions 验证和用户明确验收分别记录。
+这不同于受限 CLI 附录及其操作者账号摘要；
+角色与来源见[参与者说明](../copilot-roles.md)。
 
 ## 1. 先观察问题，不预先指定答案
 

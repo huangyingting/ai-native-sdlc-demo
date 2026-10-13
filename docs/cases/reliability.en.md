@@ -2,6 +2,12 @@
 
 [中文](reliability.md) · [Case index](README.en.md) · [Readiness prerequisite](readiness.en.md)
 
+**Deterministic engineering appendix, not autonomous AI recovery.** This
+rehearsal adds no Copilot CLI diagnosis or repair call. Fixed scripts perform
+qualification, fault injection, monitoring and fallback against the previously
+delivered image. The assistant publishes the observations using the authorized
+operator account; see [roles and provenance](../copilot-roles.en.md).
+
 ## Result and boundary
 
 Two separately recorded, fresh-volume development-test rehearsals passed.

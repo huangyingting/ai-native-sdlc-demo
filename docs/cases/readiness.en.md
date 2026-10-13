@@ -10,8 +10,14 @@ closed after explicit acceptance at **2026-10-12T22:38:35Z**
 (06:38:35 Beijing time on October 13).
 
 This is an actual delivery in repository ID `1415043318`, not an imported
-historical result or production certification. The broader release-reliability
-exercise is still pending.
+historical result or production certification. The subsequent
+[reliability rehearsal](reliability.en.md) has two passing runs; maintenance review remains pending.
+
+**Delivery mainline:** implementation [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
+is authored by `app/copilot-swe-agent`. Copilot's code, Actions verification
+and explicit user acceptance are separate records. This differs from the
+restricted CLI appendices and their operator-account summaries;
+see [roles and provenance](../copilot-roles.en.md).
 
 ## 1. Observe the gap before prescribing a solution
 

@@ -12,6 +12,10 @@ unchanged by translation.
 
 ## Start here
 
+First read [what Copilot does and why comments use the operator account](copilot-roles.en.md).
+Use the Coding Agent-authored ownership/readiness PRs as the delivery mainline;
+the CLI experiments and deterministic reliability rehearsal are appendices.
+
 1. **Understand the result:** [ticket ownership case study](cases/ownership.en.md).
    Then follow the [database-readiness maintenance delivery](cases/readiness.en.md).
 2. **Present it:** [presentation route](presenter.en.md).
@@ -45,7 +49,7 @@ certification or automatic feature acceptance.
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json): 14 original screenshots with source, time and hashes.
 - [cases/assets/readiness/](cases/assets/readiness/manifest.json): 21 readiness screenshots with distinct baseline and delivered-image identities.
 - [cases/assets/reliability/](cases/assets/reliability/manifest.json): original results screenshot, qualification summary and two independently recorded runtime rehearsals.
-- [cases/assets/engineering/](cases/assets/engineering/manifest.json): original strategy/proposal/result records, sanitized six-cell metrics and verified impact summary; no raw prompts or generated candidate source.
+- [cases/assets/engineering/](cases/assets/engineering/manifest.json): original records, sanitized metrics and [reviewed exact output/difference excerpts](cases/assets/engineering/copilot-excerpts.json); no raw prompts, full responses or complete candidate source.
 - [delivery-runs/](delivery-runs/brownfield-human-gated-delivery/1/spec.md):
   workflow-managed specifications, plans and review artifacts, unchanged by reorganization or translation.
 

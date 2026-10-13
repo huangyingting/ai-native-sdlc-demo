@@ -13,6 +13,11 @@
 和[验收记录](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416)
 都可以直接查看。
 
+**这是交付主线：**实现 [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9)
+作者为 `app/copilot-swe-agent`。分别展示其代码差异、独立 Actions 检查和用户验收。
+其他账号名称可能说明谁发布，不一定说明谁生成内容；
+角色与来源见[参与者说明](../copilot-roles.md)。
+
 ## 1. 先明确问题，不急着写代码
 
 已有服务台可以创建、查询工单，也可以更新状态，但看不出谁正在负责处理。

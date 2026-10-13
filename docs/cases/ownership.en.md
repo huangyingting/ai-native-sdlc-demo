@@ -12,6 +12,11 @@ reassignment and clearing on ticket details, and filters the queue by owner.
 The [Intent](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1)
 was accepted and closed on **2026-10-12**.
 
+**Delivery mainline:** the implementation [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9)
+is authored by `app/copilot-swe-agent`. Show its code diff, independent Actions
+checks and user acceptance as distinct evidence. Other account names can identify
+the publisher rather than the content's producer; see [roles and provenance](../copilot-roles.en.md).
+
 ## 1. Resolve product choices before implementation
 
 The existing application could create, search and update tickets, but did not

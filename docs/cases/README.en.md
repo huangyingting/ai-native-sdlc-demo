@@ -2,6 +2,11 @@
 
 [中文](README.md) · [Repository home](../../README.en.md)
 
+Start with [Copilot roles and authorship](../copilot-roles.en.md).
+The two accepted deliveries below have Coding Agent-authored implementation PRs.
+The engineering appendices instead contain CLI output and independent checks,
+or deterministic runtime observations.
+
 **Completed ownership walkthrough:**
 [Illustrated case](ownership.en.md) · [Screenshot provenance](assets/ownership/manifest.json)
 
@@ -95,10 +100,17 @@ is accepted and closed, with all 47 current tests Green.
 
 See the [readiness case](readiness.en.md) for the full boundaries and illustrated evidence.
 Database readability is not a write guarantee, deadline or production certification;
-release reliability remains a separate pending exercise.
+the separate reliability rehearsal has two passing runs, with maintenance review pending.
 
 <a id="focused-cases"></a>
-## Remaining focused cases
+<a id="remaining-focused-cases"></a>
+## Engineering appendices, not additional product deliveries
+
+Reliability adds no new CLI diagnosis/repair call. The impact and diagnosis
+experiments generate candidate text with zero tools, not GitHub implementation
+PRs. Their user-account comments are assistant-published summaries.
+See the reviewed [impact output](change-impact.en.md#what-copilot-actually-produced)
+and [diagnosis output](engineering-judgment.en.md#what-copilot-actually-said).
 
 | Topic | Actual result | Remaining boundary |
 |---|---|---|
@@ -110,7 +122,8 @@ release reliability remains a separate pending exercise.
 The [engineering results record #29](https://github.com/huangyingting/ai-native-sdlc-demo/issues/29)
 preserves every outcome. Each real model call verified zero tools. The earlier
 isolation-rejected proposal call remains a separate compatibility failure;
-private raw prompts, responses and generated candidate source are not published.
+private raw prompts, full responses and complete candidate source are not published;
+only selected [reviewed output/difference excerpts](assets/engineering/copilot-excerpts.json) are added.
 
 Each topic records its inputs, allowed scope, observed outcome and unverified areas separately.
 

@@ -2,6 +2,10 @@
 
 [English](engineering-judgment.en.md) · [案例索引](README.md) · [代理负责人方案](change-impact.md)
 
+**这是受控 CLI 实验，不是编码 Agent 交付。** CLI 生成诊断和候选文本，
+可信程序应用并验证。Issue 评论是助手通过授权操作者账号发布的摘要。
+角色与评论来源见[参与者说明](../copilot-roles.md)。
+
 ## 结果与边界
 
 真实六组实验完成，**六组行为修复通过，但只有四组完整验收通过**。
@@ -57,6 +61,60 @@
 同一冻结样本 → 诊断 → 有限补丁 → 可见测试与独立检查
                  分类、证据与修改范围分别设关卡
 ```
+
+## Copilot 实际说了什么
+
+固定请求为“诊断并修正观察到的 CI 失败，不改变无关行为”，同时提供行为约定、
+故障源码和实测失败测试。下列是直接策略的实际输出摘录，不是重跑或改写的成功解释。
+模型原句保留英文。
+
+### 产品筛选
+
+输入在约定要求 AND 的地方使用 OR。
+Copilot 返回 `classification: "product"`，理由为：
+
+> The product implementation combines independent owner and status predicates with OR, so a ticket is incorrectly accepted whenever either predicate passes—including when one filter is omitted. Replacing OR with AND implements the documented intersection semantics while preserving individual-filter and no-filter behavior.
+
+```diff
+-  return ownerMatches || statusMatches;
++  return ownerMatches && statusMatches;
+```
+
+独立行为检查和分类关卡均通过。
+
+### 测试框架漂移
+
+Copilot 返回 `classification: "test-harness"`：
+
+> The implementation returns the ticket's existing owner exactly as required by the documented contract. The failing test incorrectly expects 'jordan' for a ticket owned by 'avery', so the assertion must be restored to the contractually correct value without changing product behavior.
+
+```diff
+-  assert.equal(effectiveOwner(ticket), 'jordan');
++  assert.equal(effectiveOwner(ticket), 'avery');
+```
+
+此样本特意允许修复错误的测试框架断言，不允许修改产品行为迎合错误测试。
+两项关卡均通过。
+
+### 运行配置：修复通过，标签失败
+
+Copilot 返回 `classification: "product"`，但预期类别为 `environment`。
+实际理由正确描述了配置问题：
+
+> The checked-in runtime configuration violates the documented contract by pointing SQLite beneath /dev/null, which cannot contain a database file. Both CLI tests therefore fail while domain, API, and store behavior pass. Restoring the required in-memory database path fixes the root cause without changing code, tests, fallback behavior, or unrelated semantics.
+
+```diff
+-  "databasePath": "/dev/null/engineering-lab.db"
++  "databasePath": ":memory:"
+```
+
+这不表示模型没有找到配置原因。修复和说明都指出了原因，
+但**分类字段错误**，所以完整验收失败。先诊断策略也返回了错误类别，
+其结果保留在六组报告中。
+
+[准确摘录记录](assets/engineering/copilot-excerpts.json)包含源码证据和响应哈希，
+与公开实测摘要匹配。这些是选定最终回答字段和单行差异，
+不是完整原始会话或完整候选文件。
 
 ## 六组完整结果
 

@@ -9,6 +9,10 @@
 
 ## 从这里开始
 
+先看[Copilot 的角色以及评论为什么使用操作者账号](copilot-roles.md)。
+交付主线展示编码 Agent 创建的负责人和就绪检查 PR；
+CLI 实验与确定性可靠性演练作为附录。
+
 1. **了解交付结果：**[工单负责人图文案例](cases/ownership.zh-CN.md)。
    后续维护交付见[数据库就绪检查图文案例](cases/readiness.md)。
 2. **准备讲解：**[演示路线](presenter.md)。
@@ -37,7 +41,7 @@
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json)：14 张原始截图及来源、时间和哈希。
 - [cases/assets/readiness/](cases/assets/readiness/manifest.json)：21 张就绪检查截图，区分基线与新发布镜像的来源。
 - [cases/assets/reliability/](cases/assets/reliability/manifest.json)：原始结果截图、资格验证摘要和两次独立运行演练。
-- [cases/assets/engineering/](cases/assets/engineering/manifest.json)：原始策略、方案与结果记录、脱敏六组测量及已验证影响摘要，不包含原始提示词或生成的候选源码。
+- [cases/assets/engineering/](cases/assets/engineering/manifest.json)：原始记录、脱敏测量及[已审查准确输出与差异摘录](cases/assets/engineering/copilot-excerpts.json)，不包含原始提示词、完整回复或完整候选源码。
 - [delivery-runs/](delivery-runs/brownfield-human-gated-delivery/1/spec.md)：
   工作流管理的规格、计划和审查文件，不随文档整理或翻译改写。
 

@@ -8,6 +8,7 @@
 
 ## 从这里开始
 
+- **[Copilot 实际做了什么](docs/copilot-roles.md)**：区分机器人交付 PR、CLI 实验、验证程序与操作者账号评论。
 - **[演示文档](docs/README.md)**：本仓库的案例、演示路线和证据入口。
 - **[演示路线](docs/presenter.md)**：用 30 分钟讲解已经完成的负责人交接案例。
 - **[工单负责人完整案例](docs/cases/ownership.zh-CN.md)**：从需求到验收的图文记录。
@@ -24,14 +25,18 @@
 
 ## 案例
 
-| 案例 | 要解决的问题 | 状态 |
-|---|---|---|
-| 工单负责人 | 谁负责，怎样交接？ | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
-| 数据库就绪检查 | 进程存活时，工单数据库是否可读？ | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
-| [发布可靠性](docs/cases/reliability.md) | 怎样拒绝异常实例、恢复服务并避免问题复发？ | 两次开发测试演练通过，维护审查待完成 |
-| [变更影响](docs/cases/change-impact.md) | 增加代理负责人时，怎样保持原有责任关系？ | 委托操作者审查后，隔离候选通过十五项测试和三十五项检查 |
-| [故障诊断](docs/cases/engineering-judgment.md) | 问题出在产品代码、测试还是配置？ | 六组修复验证通过，两组环境分类被拒绝 |
-| [Agent 策略评估](docs/cases/engineering-judgment.md) | 单独增加诊断步骤，是否值得额外投入？ | 六组九次调用已实测，4/6 完整验收通过，不作普遍排名 |
+| 案例 | 要解决的问题 | Copilot 的角色 | 状态 |
+|---|---|---|---|
+| 工单负责人 | 谁负责，怎样交接？ | 编码 Agent 实现 [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
+| 数据库就绪检查 | 进程存活时，工单数据库是否可读？ | 编码 Agent 实现 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
+| [发布可靠性](docs/cases/reliability.md) | 怎样拒绝异常实例、恢复服务并避免问题复发？ | 对已交付镜像执行确定性演练，无新增 CLI 修复调用 | 两次开发测试演练通过，维护审查待完成 |
+| [变更影响](docs/cases/change-impact.md) | 增加代理负责人时，怎样保持原有责任关系？ | CLI 生成影响方案和隔离候选代码 | 委托操作者审查后，隔离候选通过十五项测试和三十五项检查 |
+| [故障诊断](docs/cases/engineering-judgment.md) | 问题出在产品代码、测试还是配置？ | CLI 生成分类、理由与修复文本 | 六组修复验证通过，两组环境分类被拒绝 |
+| [Agent 策略评估](docs/cases/engineering-judgment.md) | 单独增加诊断步骤，是否值得额外投入？ | 比较一次与两次 CLI 调用策略 | 六组九次调用已实测，4/6 完整验收通过，不作普遍排名 |
+
+前两项构成客户交付主线。其余是工程附录，不是更多编码 Agent 的产品 PR。
+其 Issue 评论由助手通过授权的 `huangyingting` 账号发布；
+这个账号不是模型作者身份或本人亲自审查的证明。
 
 ## 如何推进
 
