@@ -12,6 +12,9 @@
 - **[演示路线](docs/presenter.md)**：用 30 分钟讲解已经完成的负责人交接案例。
 - **[工单负责人完整案例](docs/cases/ownership.zh-CN.md)**：从需求到验收的图文记录。
 - **[数据库就绪检查案例](docs/cases/readiness.md)**：批量决定、受控 Red、只读探测和指定镜像验收。
+- **[发布可靠性](docs/cases/reliability.md)**：两次隔离准入、回退与恢复演练。
+- **[诊断与策略](docs/cases/engineering-judgment.md)**：六组真实实验、保留分类失败并实测成本。
+- **[变更影响方案](docs/cases/change-impact.md)**：代理负责人影响已审查，仍待明确批准。
 - **[运行服务台](demos/it-service-desk/README.md)**：本地安装和应用命令。
 - **[交付命令参考](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md)**：
   文档审查、PR 检查和镜像验收。
@@ -25,10 +28,10 @@
 |---|---|---|
 | 工单负责人 | 谁负责，怎样交接？ | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
 | 数据库就绪检查 | 进程存活时，工单数据库是否可读？ | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
-| 发布可靠性 | 怎样拒绝异常实例、恢复服务并避免问题复发？ | 未开始 |
-| 变更影响 | 增加代理负责人时，怎样保持原有责任关系？ | 未开始 |
-| 故障诊断 | 问题出在产品代码、测试还是配置？ | 未开始 |
-| Agent 策略评估 | 单独增加诊断步骤，是否值得额外投入？ | 未开始 |
+| [发布可靠性](docs/cases/reliability.md) | 怎样拒绝异常实例、恢复服务并避免问题复发？ | 两次开发测试演练通过，维护审查待完成 |
+| [变更影响](docs/cases/change-impact.md) | 增加代理负责人时，怎样保持原有责任关系？ | 方案已审查，待操作者批准和实现 |
+| [故障诊断](docs/cases/engineering-judgment.md) | 问题出在产品代码、测试还是配置？ | 六组修复验证通过，两组环境分类被拒绝 |
+| [Agent 策略评估](docs/cases/engineering-judgment.md) | 单独增加诊断步骤，是否值得额外投入？ | 六组九次调用已实测，4/6 完整验收通过，不作普遍排名 |
 
 ## 如何推进
 
@@ -44,9 +47,10 @@ AI 起草文档和代码，GitHub Actions 执行检查并保存版本记录。
 
 服务台的初始基线不支持工单负责人；目前该功能已完成交付并通过验收。
 后续数据库就绪检查也已验收，当前 47 项测试全部通过；
-发布可靠性演练仍未完成，就绪响应不代表完整应用或生产流量准入保证。
-工程实验应用的代理负责人功能仍未开始。截图和测量结果随实际进度补充，
-未完成的案例会明确保留其当前状态。
+两次有限发布可靠性演练以及诊断和策略实验已有实际证据，
+维护审查与代理负责人实现仍是独立的待完成关卡。
+就绪响应不代表完整应用或生产流量准入保证；
+实测实验或已审查方案不等于已验收的功能交付。
 
 ## 验证
 

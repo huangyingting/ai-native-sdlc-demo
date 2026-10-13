@@ -124,6 +124,7 @@ test("Copilot uses only bounded restricted CLI flags and private artifacts", asy
   assert.deepEqual(args.slice(args.indexOf("--excluded-tools") + 1, args.indexOf("--deny-tool=write")), [
     "bash", "read_bash", "stop_bash", "list_bash", "apply_patch", "view", "web_fetch",
     "fetch_copilot_cli_documentation", "skill", "run_factory", "factories_manage", "sql",
+    "run_dynamic_workflow", "dynamic_workflows_manage",
     "session_store_sql", "read_agent", "list_agents", "write_agent", "rg", "glob", "task",
   ]);
   assert.equal(args.some((arg) => arg.startsWith("--available-tools")), false);
@@ -275,6 +276,9 @@ test("JSONL fails closed on any tool requests, tool execution or unverified avai
     (events) => events.unshift({ type: "model.call_finished", data: { containsBuiltInFileEditRequest: true } }),
     (events) => { events[1].data.promptCacheBreakState[0].models.observed.tool_count = 19; },
     (events) => { events[1].data.promptCacheBreakState[0].models.observed.tools.push({ name: "view" }); },
+    (events) => { events[1].data.promptCacheBreakState[0].models.observed = {
+      tool_count: 2, tools: [{ name: "run_dynamic_workflow" }, { name: "dynamic_workflows_manage" }], tools_truncated: 0,
+    }; },
     (events) => { delete events[1].data.promptCacheBreakState[0].models.observed.tool_count; },
     (events) => { events[1].data.promptCacheBreakState[0].models.observed.tools_truncated = 1; },
     (events) => { events[1].data.promptCacheBreakState[0].models.other = { tool_count: 1, tools: [] }; },

@@ -1,0 +1,579 @@
+{
+  "version": 1,
+  "kind": "diagnosis-strategy-demo-summary",
+  "executionMode": "development-test",
+  "humanAcceptance": false,
+  "toolingCommit": "8dd142820feb952cd439ce398bff1e742f165e25",
+  "fixtureSource": {
+    "commit": "0eb9973b3fb09d648ebeea21b64786a763fc3021",
+    "fixtureHash": "4d25f387db0329a1add68680ebd2f52974ae58e5996ce0adb3e61b12c40f351d"
+  },
+  "image": "node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+  "status": "completed-with-failures",
+  "exitCode": 2,
+  "startedAt": "2026-10-13T00:50:39.650Z",
+  "finishedAt": "2026-10-13T00:53:24.280Z",
+  "budget": {
+    "maxCallsPerCell": 2,
+    "timeoutMsPerCall": 120000,
+    "maxWallMsPerCell": 300000
+  },
+  "control": {
+    "valid": true,
+    "passed": true,
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "timedOut": false,
+    "cleaned": true,
+    "wallMs": 1610,
+    "imageId": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6"
+  },
+  "cells": [
+    {
+      "caseId": "case-1",
+      "strategy": "direct",
+      "inputHash": "7b5a0ae310baaa355d089375ea3c9ed613278d134927130f1cce469f97257aee",
+      "status": "passed",
+      "classification": "product",
+      "expectedClassification": "product",
+      "classificationCorrect": true,
+      "scopeValid": true,
+      "testsPreserved": true,
+      "red": {
+        "tests": 15,
+        "pass": 10,
+        "fail": 5,
+        "cleaned": true
+      },
+      "green": {
+        "valid": true,
+        "passed": true,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cleaned": true
+      },
+      "oracle": {
+        "passed": true,
+        "checks": 20,
+        "expectedChecks": 20,
+        "exitCode": 0,
+        "timedOut": false,
+        "cleaned": true,
+        "wallMs": 980
+      },
+      "oraclePassed": true,
+      "passed": true,
+      "falseCompletion": false,
+      "unacceptedCompletion": false,
+      "calls": [
+        {
+          "number": 1,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 15973,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 8579,
+            "outputTokens": 445,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 8576,
+            "reasoningTokens": 101,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 5179200000,
+            "totalApiDurationMs": 6218,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "1cad706610ff92e449e99211214d9849a1f55a1b22066f9225b76f0bf03b4187"
+        }
+      ]
+    },
+    {
+      "caseId": "case-1",
+      "strategy": "diagnose-first",
+      "inputHash": "7b5a0ae310baaa355d089375ea3c9ed613278d134927130f1cce469f97257aee",
+      "status": "passed",
+      "classification": "product",
+      "expectedClassification": "product",
+      "classificationCorrect": true,
+      "scopeValid": true,
+      "testsPreserved": true,
+      "red": {
+        "tests": 15,
+        "pass": 10,
+        "fail": 5,
+        "cleaned": true
+      },
+      "green": {
+        "valid": true,
+        "passed": true,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cleaned": true
+      },
+      "oracle": {
+        "passed": true,
+        "checks": 20,
+        "expectedChecks": 20,
+        "exitCode": 0,
+        "timedOut": false,
+        "cleaned": true,
+        "wallMs": 930
+      },
+      "oraclePassed": true,
+      "passed": true,
+      "falseCompletion": false,
+      "unacceptedCompletion": false,
+      "calls": [
+        {
+          "number": 1,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 15331,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 8549,
+            "outputTokens": 426,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 8546,
+            "reasoningTokens": 0,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 5126200000,
+            "totalApiDurationMs": 5718,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "52f0354c98878ee485f0b1339ab436150dde3f12e042f62fd0cb13205666e72d"
+        },
+        {
+          "number": 2,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 15132,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 9011,
+            "outputTokens": 544,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 9008,
+            "reasoningTokens": 40,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 5593200000,
+            "totalApiDurationMs": 5974,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "729d4afd747fccff16d4719242179b4ca0bdc1300bcb73fb3229afdd00ff3d42"
+        }
+      ]
+    },
+    {
+      "caseId": "case-2",
+      "strategy": "diagnose-first",
+      "inputHash": "e5cf8277e9b832fe4b265d6ea7ed8bba33b3b1fb601621fa589a37b3f4c8cb29",
+      "status": "passed",
+      "classification": "test-harness",
+      "expectedClassification": "test-harness",
+      "classificationCorrect": true,
+      "scopeValid": true,
+      "testsPreserved": true,
+      "red": {
+        "tests": 15,
+        "pass": 14,
+        "fail": 1,
+        "cleaned": true
+      },
+      "green": {
+        "valid": true,
+        "passed": true,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cleaned": true
+      },
+      "oracle": {
+        "passed": true,
+        "checks": 20,
+        "expectedChecks": 20,
+        "exitCode": 0,
+        "timedOut": false,
+        "cleaned": true,
+        "wallMs": 1199
+      },
+      "oraclePassed": true,
+      "passed": true,
+      "falseCompletion": false,
+      "unacceptedCompletion": false,
+      "calls": [
+        {
+          "number": 1,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 13284,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 7737,
+            "outputTokens": 275,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 7734,
+            "reasoningTokens": 0,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 4418200000,
+            "totalApiDurationMs": 4441,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "f7692ef5e71b6d899704c09d34b44d46e4a4b23f0bbd693f5e746dee9c97bbab"
+        },
+        {
+          "number": 2,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 18564,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 8036,
+            "outputTokens": 705,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 8033,
+            "reasoningTokens": 0,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 5427700000,
+            "totalApiDurationMs": 6645,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "6e8114eda42726c08a5ded6f85ed30ad0cc4a560403f96722b250adc538870ce"
+        }
+      ]
+    },
+    {
+      "caseId": "case-2",
+      "strategy": "direct",
+      "inputHash": "e5cf8277e9b832fe4b265d6ea7ed8bba33b3b1fb601621fa589a37b3f4c8cb29",
+      "status": "passed",
+      "classification": "test-harness",
+      "expectedClassification": "test-harness",
+      "classificationCorrect": true,
+      "scopeValid": true,
+      "testsPreserved": true,
+      "red": {
+        "tests": 15,
+        "pass": 14,
+        "fail": 1,
+        "cleaned": true
+      },
+      "green": {
+        "valid": true,
+        "passed": true,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cleaned": true
+      },
+      "oracle": {
+        "passed": true,
+        "checks": 20,
+        "expectedChecks": 20,
+        "exitCode": 0,
+        "timedOut": false,
+        "cleaned": true,
+        "wallMs": 1697
+      },
+      "oraclePassed": true,
+      "passed": true,
+      "falseCompletion": false,
+      "unacceptedCompletion": false,
+      "calls": [
+        {
+          "number": 1,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 16723,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 7759,
+            "outputTokens": 762,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 7756,
+            "reasoningTokens": 84,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 5403200000,
+            "totalApiDurationMs": 7189,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "4cf0b8a801012bcfa207aed4edbd451f4146be9c04dd39c9e41d713d2d1969e5"
+        }
+      ]
+    },
+    {
+      "caseId": "case-3",
+      "strategy": "direct",
+      "inputHash": "c62b7e8527bc2dac0c4407cd26e098e883ab86c6f9512f679a09f6166183c3c3",
+      "status": "failed",
+      "classification": "product",
+      "expectedClassification": "environment",
+      "classificationCorrect": false,
+      "scopeValid": true,
+      "testsPreserved": true,
+      "red": {
+        "tests": 15,
+        "pass": 13,
+        "fail": 2,
+        "cleaned": true
+      },
+      "green": {
+        "valid": true,
+        "passed": true,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cleaned": true
+      },
+      "oracle": {
+        "passed": true,
+        "checks": 20,
+        "expectedChecks": 20,
+        "exitCode": 0,
+        "timedOut": false,
+        "cleaned": true,
+        "wallMs": 1746
+      },
+      "oraclePassed": true,
+      "passed": false,
+      "falseCompletion": false,
+      "unacceptedCompletion": true,
+      "calls": [
+        {
+          "number": 1,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 14066,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 8482,
+            "outputTokens": 214,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 8479,
+            "reasoningTokens": 0,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 4668700000,
+            "totalApiDurationMs": 3808,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "604699d8efd77d5477faefb75c2a40815db0c57dca77d415c8e36bc795e6c5d1"
+        }
+      ]
+    },
+    {
+      "caseId": "case-3",
+      "strategy": "diagnose-first",
+      "inputHash": "c62b7e8527bc2dac0c4407cd26e098e883ab86c6f9512f679a09f6166183c3c3",
+      "status": "failed",
+      "classification": "product",
+      "expectedClassification": "environment",
+      "classificationCorrect": false,
+      "scopeValid": true,
+      "testsPreserved": true,
+      "red": {
+        "tests": 15,
+        "pass": 13,
+        "fail": 2,
+        "cleaned": true
+      },
+      "green": {
+        "valid": true,
+        "passed": true,
+        "tests": 15,
+        "pass": 15,
+        "fail": 0,
+        "cleaned": true
+      },
+      "oracle": {
+        "passed": true,
+        "checks": 20,
+        "expectedChecks": 20,
+        "exitCode": 0,
+        "timedOut": false,
+        "cleaned": true,
+        "wallMs": 1316
+      },
+      "oraclePassed": true,
+      "passed": false,
+      "falseCompletion": false,
+      "unacceptedCompletion": true,
+      "calls": [
+        {
+          "number": 1,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 17041,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 8454,
+            "outputTokens": 382,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 8451,
+            "reasoningTokens": 84,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 4990700000,
+            "totalApiDurationMs": 6047,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "e3ff464c7280c2f996310925233b9965d8221f50e7827224428851739522f631"
+        },
+        {
+          "number": 2,
+          "status": "completed",
+          "metrics": {
+            "wallMs": 13320,
+            "model": "gpt-5.6-sol",
+            "models": [
+              "gpt-5.6-sol"
+            ],
+            "inputTokens": 8782,
+            "outputTokens": 167,
+            "cachedInputTokens": 0,
+            "cacheReadTokens": 0,
+            "cacheWriteTokens": 8779,
+            "reasoningTokens": 0,
+            "premiumRequestCost": 1,
+            "totalNanoAiu": 4724700000,
+            "totalApiDurationMs": 4326,
+            "totalUserRequests": 1,
+            "aiCredits": null,
+            "dollarCost": null,
+            "usageStatus": "recorded",
+            "noToolsVerified": true
+          },
+          "responseSha256": "0b278210d703132a431fbcc2608c07481862a83d23a9d11e7ce0cb21ccba80e8"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    {
+      "strategy": "direct",
+      "cells": 3,
+      "passed": 2,
+      "repairsVerified": 3,
+      "evidenceAccepted": 3,
+      "evaluated": 3,
+      "infrastructureFailures": 0,
+      "falseCompletionClaims": 0,
+      "unacceptedCompletionClaims": 1,
+      "calls": 3,
+      "wallMs": 61728,
+      "humanInterventions": 0,
+      "dollarCost": null,
+      "usage": {
+        "inputTokens": 24820,
+        "outputTokens": 1421,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 24811,
+        "premiumRequestCost": 3,
+        "totalNanoAiu": 15251100000
+      },
+      "observedModels": [
+        "gpt-5.6-sol"
+      ],
+      "note": "One trial per fixed case; order alternated. Different request counts are an explicit strategy cost, not equal-token budgets."
+    },
+    {
+      "strategy": "diagnose-first",
+      "cells": 3,
+      "passed": 2,
+      "repairsVerified": 3,
+      "evidenceAccepted": 3,
+      "evaluated": 3,
+      "infrastructureFailures": 0,
+      "falseCompletionClaims": 0,
+      "unacceptedCompletionClaims": 1,
+      "calls": 6,
+      "wallMs": 106063,
+      "humanInterventions": 0,
+      "dollarCost": null,
+      "usage": {
+        "inputTokens": 50569,
+        "outputTokens": 2499,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 50551,
+        "premiumRequestCost": 6,
+        "totalNanoAiu": 30280700000
+      },
+      "observedModels": [
+        "gpt-5.6-sol"
+      ],
+      "note": "One trial per fixed case; order alternated. Different request counts are an explicit strategy cost, not equal-token budgets."
+    }
+  ],
+  "limitations": [
+    "Synthetic small-task pilot, not a statistically significant ranking.",
+    "No inferred dollar price; CLI usage units are recorded only when available.",
+    "Candidate text is generated by real Copilot, applied by a constrained adapter, and executed only inside restricted Docker.",
+    "No autonomous repository writes, approvals, production changes or hidden retries."
+  ],
+  "rawPromptsResponsesAndCandidatesPublished": false,
+  "oneTrialPerCell": true,
+  "modelOverride": false,
+  "cellRetries": 0,
+  "humanPatches": 0
+}

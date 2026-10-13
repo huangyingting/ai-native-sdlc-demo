@@ -1,0 +1,1092 @@
+{
+  "version": 1,
+  "kind": "independent-bounded-reliability-replication",
+  "executionMode": "development-test",
+  "humanAcceptance": false,
+  "runs": [
+    {
+      "run": 1,
+      "startedAt": "2026-10-13T00:56:56.895Z",
+      "finishedAt": "2026-10-13T00:57:18.365Z",
+      "operationsEvidenceId": "sha256:ce556852d5305f466fd2a61b2fa833552a89b7335ee7481aa6d773a422a89cc1",
+      "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+      "imageRevision": "06e9fe31d5c00bb75a2438e49af00ea4fac8b134",
+      "admission": {
+        "unhealthyRejected": true,
+        "stableStillServing": true,
+        "badCandidateHadVolume": false
+      },
+      "operations": {
+        "id": "sha256:ce556852d5305f466fd2a61b2fa833552a89b7335ee7481aa6d773a422a89cc1",
+        "version": 1,
+        "kind": "brownfield-operations-monitor",
+        "executionMode": "development-test",
+        "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "target": {
+          "host": "127.0.0.1",
+          "port": 44825
+        },
+        "policy": {
+          "samples": 10,
+          "intervalMs": 200,
+          "failureThreshold": 2,
+          "recoveryThreshold": 3
+        },
+        "startedAt": "2026-10-13T00:57:05.487Z",
+        "completedAt": "2026-10-13T00:57:15.882Z",
+        "windowMs": 10395,
+        "complete": true,
+        "monitorError": null,
+        "status": "recovered",
+        "allHealthy": false,
+        "accepted": false,
+        "humanAcceptance": false,
+        "preventiveActionCompleted": false,
+        "availability": {
+          "scope": "short-window-observation-not-slo",
+          "healthySamples": 8,
+          "failedSamples": 2,
+          "totalSamples": 10,
+          "ratio": 0.8
+        },
+        "samples": [
+          {
+            "sequence": 1,
+            "startedAt": "2026-10-13T00:57:05.487Z",
+            "completedAt": "2026-10-13T00:57:05.532Z",
+            "at": "2026-10-13T00:57:05.532Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 29
+            }
+          },
+          {
+            "sequence": 2,
+            "startedAt": "2026-10-13T00:57:05.732Z",
+            "completedAt": "2026-10-13T00:57:05.782Z",
+            "at": "2026-10-13T00:57:05.782Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 34
+            }
+          },
+          {
+            "sequence": 3,
+            "startedAt": "2026-10-13T00:57:05.983Z",
+            "completedAt": "2026-10-13T00:57:10.173Z",
+            "at": "2026-10-13T00:57:10.173Z",
+            "ok": false,
+            "health": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2005,
+              "failure": "health-contract"
+            },
+            "readiness": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2004,
+              "failure": "readiness-contract"
+            },
+            "journey": {
+              "ok": false,
+              "status": null,
+              "latencyMs": 0,
+              "failure": "not-ready"
+            }
+          },
+          {
+            "sequence": 4,
+            "startedAt": "2026-10-13T00:57:10.376Z",
+            "completedAt": "2026-10-13T00:57:14.385Z",
+            "at": "2026-10-13T00:57:14.385Z",
+            "ok": false,
+            "health": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2003,
+              "failure": "health-contract"
+            },
+            "readiness": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2006,
+              "failure": "readiness-contract"
+            },
+            "journey": {
+              "ok": false,
+              "status": null,
+              "latencyMs": 0,
+              "failure": "not-ready"
+            }
+          },
+          {
+            "sequence": 5,
+            "startedAt": "2026-10-13T00:57:14.635Z",
+            "completedAt": "2026-10-13T00:57:14.675Z",
+            "at": "2026-10-13T00:57:14.675Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 26
+            }
+          },
+          {
+            "sequence": 6,
+            "startedAt": "2026-10-13T00:57:14.876Z",
+            "completedAt": "2026-10-13T00:57:14.919Z",
+            "at": "2026-10-13T00:57:14.919Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 28
+            }
+          },
+          {
+            "sequence": 7,
+            "startedAt": "2026-10-13T00:57:15.119Z",
+            "completedAt": "2026-10-13T00:57:15.158Z",
+            "at": "2026-10-13T00:57:15.158Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 25
+            }
+          },
+          {
+            "sequence": 8,
+            "startedAt": "2026-10-13T00:57:15.363Z",
+            "completedAt": "2026-10-13T00:57:15.400Z",
+            "at": "2026-10-13T00:57:15.400Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 5
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 25
+            }
+          },
+          {
+            "sequence": 9,
+            "startedAt": "2026-10-13T00:57:15.601Z",
+            "completedAt": "2026-10-13T00:57:15.638Z",
+            "at": "2026-10-13T00:57:15.638Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 23
+            }
+          },
+          {
+            "sequence": 10,
+            "startedAt": "2026-10-13T00:57:15.843Z",
+            "completedAt": "2026-10-13T00:57:15.882Z",
+            "at": "2026-10-13T00:57:15.882Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 26
+            }
+          }
+        ],
+        "incidents": [
+          {
+            "id": "incident-c00e648cea0b9fcc2d0ac2fb",
+            "status": "resolved",
+            "firstFailureAt": "2026-10-13T00:57:10.173Z",
+            "openedAt": "2026-10-13T00:57:14.385Z",
+            "lastFailureAt": "2026-10-13T00:57:14.385Z",
+            "resolvedAt": "2026-10-13T00:57:15.158Z",
+            "recoveryStartedAt": "2026-10-13T00:57:14.675Z",
+            "detectionMs": 4212,
+            "recoveryMs": 773,
+            "observedImpactMs": 4985,
+            "failedSamples": 2,
+            "symptoms": [
+              {
+                "check": "health",
+                "status": 502,
+                "failure": "health-contract",
+                "samples": 2
+              },
+              {
+                "check": "readiness",
+                "status": 502,
+                "failure": "readiness-contract",
+                "samples": 2
+              },
+              {
+                "check": "journey",
+                "status": null,
+                "failure": "not-ready",
+                "samples": 2
+              }
+            ]
+          }
+        ],
+        "note": "Development-test, not Human acceptance. Availability is a short-window sample ratio, not an SLO. Recovery is operational observation, not code repair or preventive action completion."
+      },
+      "recoveryWindow": {
+        "id": "sha256:3e31df7764483d1c39d792c0c9bd403d0b06d268802fbaf6c57e9c1f24d14add",
+        "version": 1,
+        "kind": "brownfield-operations-monitor",
+        "executionMode": "development-test",
+        "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "target": {
+          "host": "127.0.0.1",
+          "port": 44825
+        },
+        "policy": {
+          "samples": 5,
+          "intervalMs": 200,
+          "failureThreshold": 2,
+          "recoveryThreshold": 3
+        },
+        "startedAt": "2026-10-13T00:57:16.335Z",
+        "completedAt": "2026-10-13T00:57:17.339Z",
+        "windowMs": 1004,
+        "complete": true,
+        "monitorError": null,
+        "status": "healthy",
+        "allHealthy": true,
+        "accepted": false,
+        "humanAcceptance": false,
+        "preventiveActionCompleted": false,
+        "availability": {
+          "scope": "short-window-observation-not-slo",
+          "healthySamples": 5,
+          "failedSamples": 0,
+          "totalSamples": 5,
+          "ratio": 1
+        },
+        "samples": [
+          {
+            "sequence": 1,
+            "startedAt": "2026-10-13T00:57:16.335Z",
+            "completedAt": "2026-10-13T00:57:16.376Z",
+            "at": "2026-10-13T00:57:16.376Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 28
+            }
+          },
+          {
+            "sequence": 2,
+            "startedAt": "2026-10-13T00:57:16.579Z",
+            "completedAt": "2026-10-13T00:57:16.617Z",
+            "at": "2026-10-13T00:57:16.617Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 25
+            }
+          },
+          {
+            "sequence": 3,
+            "startedAt": "2026-10-13T00:57:16.817Z",
+            "completedAt": "2026-10-13T00:57:16.859Z",
+            "at": "2026-10-13T00:57:16.859Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 28
+            }
+          },
+          {
+            "sequence": 4,
+            "startedAt": "2026-10-13T00:57:17.062Z",
+            "completedAt": "2026-10-13T00:57:17.098Z",
+            "at": "2026-10-13T00:57:17.098Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 22
+            }
+          },
+          {
+            "sequence": 5,
+            "startedAt": "2026-10-13T00:57:17.298Z",
+            "completedAt": "2026-10-13T00:57:17.339Z",
+            "at": "2026-10-13T00:57:17.339Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 5
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 27
+            }
+          }
+        ],
+        "incidents": [],
+        "note": "Development-test, not Human acceptance. Availability is a short-window sample ratio, not an SLO. Recovery is operational observation, not code repair or preventive action completion."
+      },
+      "recovery": {
+        "version": 1,
+        "kind": "brownfield-operations-recovery",
+        "executionMode": "development-test",
+        "recovered": true,
+        "status": "observed-recovery",
+        "beforeEvidenceId": "sha256:ce556852d5305f466fd2a61b2fa833552a89b7335ee7481aa6d773a422a89cc1",
+        "afterEvidenceId": "sha256:3e31df7764483d1c39d792c0c9bd403d0b06d268802fbaf6c57e9c1f24d14add",
+        "incidentId": "incident-c00e648cea0b9fcc2d0ac2fb",
+        "beforeImage": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "imageChanged": false,
+        "startedAt": "2026-10-13T00:57:16.335Z",
+        "completedAt": "2026-10-13T00:57:17.339Z",
+        "windowMs": 1004,
+        "samples": 5,
+        "requiredSamples": 3,
+        "requiredWindowMs": 400,
+        "reasons": [],
+        "scope": "operations-only-observed-recovery",
+        "codeRepairVerified": false,
+        "preventiveActionCompleted": false,
+        "accepted": false,
+        "humanAcceptance": false,
+        "note": "Development-test, not Human acceptance. Availability is a short-window sample ratio, not an SLO. Recovery is operational observation, not code repair or preventive action completion."
+      },
+      "dataBefore": {
+        "sha256": "96da249340516a3cdcb9a0de49560643544854ba8a519844d2760a923766f2a2",
+        "count": 4
+      },
+      "dataAfterCandidateWrite": {
+        "sha256": "680faf6b5277633e5ee03829f5ccbe358778d3827b429d953f6689730d2a36b9",
+        "count": 4
+      },
+      "dataAfterRollback": {
+        "sha256": "680faf6b5277633e5ee03829f5ccbe358778d3827b429d953f6689730d2a36b9",
+        "count": 4
+      },
+      "gateway": {
+        "events": [
+          {
+            "at": "2026-10-13T00:57:03.085Z",
+            "action": "promote",
+            "release": "stable"
+          },
+          {
+            "at": "2026-10-13T00:57:03.168Z",
+            "action": "rejected",
+            "release": "bad-config"
+          },
+          {
+            "at": "2026-10-13T00:57:05.002Z",
+            "action": "promote",
+            "release": "candidate"
+          },
+          {
+            "at": "2026-10-13T00:57:14.434Z",
+            "action": "rollback",
+            "release": "stable"
+          },
+          {
+            "at": "2026-10-13T00:57:17.348Z",
+            "action": "rejected",
+            "release": "bad-config"
+          }
+        ],
+        "rollbackCount": 1,
+        "activeRelease": "stable"
+      },
+      "preventiveCheck": {
+        "repeatedBadAdmissionRejected": true
+      },
+      "cleanup": {
+        "passed": true,
+        "containers": 3,
+        "freshVolumes": 1
+      },
+      "maintenanceDraftApproved": false
+    },
+    {
+      "run": 2,
+      "startedAt": "2026-10-13T01:24:14.011Z",
+      "finishedAt": "2026-10-13T01:24:36.379Z",
+      "operationsEvidenceId": "sha256:d36d9738919984da87ddd6895d2b49e0a25afb6db8469242e6bb3c6cf4853d58",
+      "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+      "imageRevision": "06e9fe31d5c00bb75a2438e49af00ea4fac8b134",
+      "admission": {
+        "unhealthyRejected": true,
+        "stableStillServing": true,
+        "badCandidateHadVolume": false
+      },
+      "operations": {
+        "id": "sha256:d36d9738919984da87ddd6895d2b49e0a25afb6db8469242e6bb3c6cf4853d58",
+        "version": 1,
+        "kind": "brownfield-operations-monitor",
+        "executionMode": "development-test",
+        "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "target": {
+          "host": "127.0.0.1",
+          "port": 35083
+        },
+        "policy": {
+          "samples": 10,
+          "intervalMs": 200,
+          "failureThreshold": 2,
+          "recoveryThreshold": 3
+        },
+        "startedAt": "2026-10-13T01:24:22.897Z",
+        "completedAt": "2026-10-13T01:24:33.383Z",
+        "windowMs": 10486,
+        "complete": true,
+        "monitorError": null,
+        "status": "recovered",
+        "allHealthy": false,
+        "accepted": false,
+        "humanAcceptance": false,
+        "preventiveActionCompleted": false,
+        "availability": {
+          "scope": "short-window-observation-not-slo",
+          "healthySamples": 8,
+          "failedSamples": 2,
+          "totalSamples": 10,
+          "ratio": 0.8
+        },
+        "samples": [
+          {
+            "sequence": 1,
+            "startedAt": "2026-10-13T01:24:22.897Z",
+            "completedAt": "2026-10-13T01:24:22.962Z",
+            "at": "2026-10-13T01:24:22.962Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 9
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 10
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 46
+            }
+          },
+          {
+            "sequence": 2,
+            "startedAt": "2026-10-13T01:24:23.163Z",
+            "completedAt": "2026-10-13T01:24:23.214Z",
+            "at": "2026-10-13T01:24:23.214Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 11
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 32
+            }
+          },
+          {
+            "sequence": 3,
+            "startedAt": "2026-10-13T01:24:23.414Z",
+            "completedAt": "2026-10-13T01:24:27.642Z",
+            "at": "2026-10-13T01:24:27.642Z",
+            "ok": false,
+            "health": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2004,
+              "failure": "health-contract"
+            },
+            "readiness": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2004,
+              "failure": "readiness-contract"
+            },
+            "journey": {
+              "ok": false,
+              "status": null,
+              "latencyMs": 0,
+              "failure": "not-ready"
+            }
+          },
+          {
+            "sequence": 4,
+            "startedAt": "2026-10-13T01:24:27.844Z",
+            "completedAt": "2026-10-13T01:24:31.852Z",
+            "at": "2026-10-13T01:24:31.852Z",
+            "ok": false,
+            "health": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2004,
+              "failure": "health-contract"
+            },
+            "readiness": {
+              "ok": false,
+              "status": 502,
+              "latencyMs": 2004,
+              "failure": "readiness-contract"
+            },
+            "journey": {
+              "ok": false,
+              "status": null,
+              "latencyMs": 0,
+              "failure": "not-ready"
+            }
+          },
+          {
+            "sequence": 5,
+            "startedAt": "2026-10-13T01:24:32.106Z",
+            "completedAt": "2026-10-13T01:24:32.154Z",
+            "at": "2026-10-13T01:24:32.154Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 9
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 32
+            }
+          },
+          {
+            "sequence": 6,
+            "startedAt": "2026-10-13T01:24:32.354Z",
+            "completedAt": "2026-10-13T01:24:32.402Z",
+            "at": "2026-10-13T01:24:32.402Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 35
+            }
+          },
+          {
+            "sequence": 7,
+            "startedAt": "2026-10-13T01:24:32.603Z",
+            "completedAt": "2026-10-13T01:24:32.645Z",
+            "at": "2026-10-13T01:24:32.645Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 29
+            }
+          },
+          {
+            "sequence": 8,
+            "startedAt": "2026-10-13T01:24:32.845Z",
+            "completedAt": "2026-10-13T01:24:32.888Z",
+            "at": "2026-10-13T01:24:32.888Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 29
+            }
+          },
+          {
+            "sequence": 9,
+            "startedAt": "2026-10-13T01:24:33.090Z",
+            "completedAt": "2026-10-13T01:24:33.138Z",
+            "at": "2026-10-13T01:24:33.138Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 10
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 9
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 30
+            }
+          },
+          {
+            "sequence": 10,
+            "startedAt": "2026-10-13T01:24:33.339Z",
+            "completedAt": "2026-10-13T01:24:33.383Z",
+            "at": "2026-10-13T01:24:33.383Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 31
+            }
+          }
+        ],
+        "incidents": [
+          {
+            "id": "incident-8dacbafda4d07a8164fc193b",
+            "status": "resolved",
+            "firstFailureAt": "2026-10-13T01:24:27.642Z",
+            "openedAt": "2026-10-13T01:24:31.852Z",
+            "lastFailureAt": "2026-10-13T01:24:31.852Z",
+            "resolvedAt": "2026-10-13T01:24:32.645Z",
+            "recoveryStartedAt": "2026-10-13T01:24:32.154Z",
+            "detectionMs": 4210,
+            "recoveryMs": 793,
+            "observedImpactMs": 5003,
+            "failedSamples": 2,
+            "symptoms": [
+              {
+                "check": "health",
+                "status": 502,
+                "failure": "health-contract",
+                "samples": 2
+              },
+              {
+                "check": "readiness",
+                "status": 502,
+                "failure": "readiness-contract",
+                "samples": 2
+              },
+              {
+                "check": "journey",
+                "status": null,
+                "failure": "not-ready",
+                "samples": 2
+              }
+            ]
+          }
+        ],
+        "note": "Development-test, not Human acceptance. Availability is a short-window sample ratio, not an SLO. Recovery is operational observation, not code repair or preventive action completion."
+      },
+      "recoveryWindow": {
+        "id": "sha256:177662dd86f012dc40449c1dde39879c7490092df1d9eedc48651c651b057d90",
+        "version": 1,
+        "kind": "brownfield-operations-monitor",
+        "executionMode": "development-test",
+        "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "target": {
+          "host": "127.0.0.1",
+          "port": 35083
+        },
+        "policy": {
+          "samples": 5,
+          "intervalMs": 200,
+          "failureThreshold": 2,
+          "recoveryThreshold": 3
+        },
+        "startedAt": "2026-10-13T01:24:33.918Z",
+        "completedAt": "2026-10-13T01:24:34.943Z",
+        "windowMs": 1025,
+        "complete": true,
+        "monitorError": null,
+        "status": "healthy",
+        "allHealthy": true,
+        "accepted": false,
+        "humanAcceptance": false,
+        "preventiveActionCompleted": false,
+        "availability": {
+          "scope": "short-window-observation-not-slo",
+          "healthySamples": 5,
+          "failedSamples": 0,
+          "totalSamples": 5,
+          "ratio": 1
+        },
+        "samples": [
+          {
+            "sequence": 1,
+            "startedAt": "2026-10-13T01:24:33.918Z",
+            "completedAt": "2026-10-13T01:24:33.961Z",
+            "at": "2026-10-13T01:24:33.960Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 28
+            }
+          },
+          {
+            "sequence": 2,
+            "startedAt": "2026-10-13T01:24:34.161Z",
+            "completedAt": "2026-10-13T01:24:34.208Z",
+            "at": "2026-10-13T01:24:34.208Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 32
+            }
+          },
+          {
+            "sequence": 3,
+            "startedAt": "2026-10-13T01:24:34.408Z",
+            "completedAt": "2026-10-13T01:24:34.457Z",
+            "at": "2026-10-13T01:24:34.457Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 8
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 34
+            }
+          },
+          {
+            "sequence": 4,
+            "startedAt": "2026-10-13T01:24:34.658Z",
+            "completedAt": "2026-10-13T01:24:34.697Z",
+            "at": "2026-10-13T01:24:34.697Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 6
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 27
+            }
+          },
+          {
+            "sequence": 5,
+            "startedAt": "2026-10-13T01:24:34.897Z",
+            "completedAt": "2026-10-13T01:24:34.943Z",
+            "at": "2026-10-13T01:24:34.943Z",
+            "ok": true,
+            "health": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 7
+            },
+            "readiness": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 11
+            },
+            "journey": {
+              "ok": true,
+              "status": 200,
+              "latencyMs": 28
+            }
+          }
+        ],
+        "incidents": [],
+        "note": "Development-test, not Human acceptance. Availability is a short-window sample ratio, not an SLO. Recovery is operational observation, not code repair or preventive action completion."
+      },
+      "recovery": {
+        "version": 1,
+        "kind": "brownfield-operations-recovery",
+        "executionMode": "development-test",
+        "recovered": true,
+        "status": "observed-recovery",
+        "beforeEvidenceId": "sha256:d36d9738919984da87ddd6895d2b49e0a25afb6db8469242e6bb3c6cf4853d58",
+        "afterEvidenceId": "sha256:177662dd86f012dc40449c1dde39879c7490092df1d9eedc48651c651b057d90",
+        "incidentId": "incident-8dacbafda4d07a8164fc193b",
+        "beforeImage": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "image": "ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "digest": "sha256:84bff5d0817cafec6569b394b99eb92cc8b60e98b450bea9484992bcf11bc0d4",
+        "imageChanged": false,
+        "startedAt": "2026-10-13T01:24:33.918Z",
+        "completedAt": "2026-10-13T01:24:34.943Z",
+        "windowMs": 1025,
+        "samples": 5,
+        "requiredSamples": 3,
+        "requiredWindowMs": 400,
+        "reasons": [],
+        "scope": "operations-only-observed-recovery",
+        "codeRepairVerified": false,
+        "preventiveActionCompleted": false,
+        "accepted": false,
+        "humanAcceptance": false,
+        "note": "Development-test, not Human acceptance. Availability is a short-window sample ratio, not an SLO. Recovery is operational observation, not code repair or preventive action completion."
+      },
+      "dataBefore": {
+        "sha256": "96da249340516a3cdcb9a0de49560643544854ba8a519844d2760a923766f2a2",
+        "count": 4
+      },
+      "dataAfterCandidateWrite": {
+        "sha256": "680faf6b5277633e5ee03829f5ccbe358778d3827b429d953f6689730d2a36b9",
+        "count": 4
+      },
+      "dataAfterRollback": {
+        "sha256": "680faf6b5277633e5ee03829f5ccbe358778d3827b429d953f6689730d2a36b9",
+        "count": 4
+      },
+      "gateway": {
+        "events": [
+          {
+            "at": "2026-10-13T01:24:21.110Z",
+            "action": "promote",
+            "release": "stable"
+          },
+          {
+            "at": "2026-10-13T01:24:21.241Z",
+            "action": "rejected",
+            "release": "bad-config"
+          },
+          {
+            "at": "2026-10-13T01:24:22.304Z",
+            "action": "promote",
+            "release": "candidate"
+          },
+          {
+            "at": "2026-10-13T01:24:31.904Z",
+            "action": "rollback",
+            "release": "stable"
+          },
+          {
+            "at": "2026-10-13T01:24:34.957Z",
+            "action": "rejected",
+            "release": "bad-config"
+          }
+        ],
+        "rollbackCount": 1,
+        "activeRelease": "stable"
+      },
+      "preventiveCheck": {
+        "repeatedBadAdmissionRejected": true
+      },
+      "cleanup": {
+        "passed": true,
+        "containers": 3,
+        "freshVolumes": 1
+      },
+      "maintenanceDraftApproved": false
+    }
+  ],
+  "independentFreshVolumes": true,
+  "notRetries": true,
+  "noProductionOrSloClaim": true,
+  "preventiveMaintenanceReviewPending": true
+}

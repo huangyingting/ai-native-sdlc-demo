@@ -2,6 +2,7 @@ import { strict as assert } from "node:assert";
 import { test } from "node:test";
 import { bindQualification, validateQualification } from "../reliability.mjs";
 import { parseOptions } from "../cli.mjs";
+import { readinessQualificationContract } from "../qualify.mjs";
 
 function qualification() {
   const control = { status: "passed", total: 13, passed: 13, failed: 0, exitCode: 0 };
@@ -47,6 +48,29 @@ test("binding compares application trees rather than unrelated documentation com
   assert.throws(() => bindQualification(value, Buffer.from("{}"), imageRevision, {
     run: (_command, args) => args.at(-1).startsWith(imageRevision) ? "d".repeat(40) : tree,
   }), /differs/);
+});
+
+test("ticket-schema rehearsal requires its exact 23-test controls and six profile-bound mutants", () => {
+  const contract = readinessQualificationContract("ticket-schema-readiness-v1");
+  const value = qualification();
+  value.profile = contract.profile;
+  value.baseline.total = value.baseline.passed = contract.total;
+  value.final.total = value.final.passed = contract.total;
+  value.mutants = contract.mutantIds.map(id => ({ id, status: "killed" }));
+  validateQualification(value);
+  assert.equal(contract.total, 23);
+  assert.deepEqual(contract.owners, ["alex-chen", "sam-rivera"]);
+  assert.deepEqual(readinessQualificationContract("readiness-v1").owners, ["avery-stone", "jordan-lee"]);
+  for (const mutate of [
+    (copy) => { copy.baseline.total = copy.baseline.passed = 13; },
+    (copy) => { copy.mutants[0].id = "skip-summary-read"; },
+    (copy) => { copy.mutants.at(-1).id = "mutate-frozen-error"; },
+    (copy) => { copy.profile = "unknown"; },
+  ]) {
+    const copy = structuredClone(value);
+    mutate(copy);
+    assert.throws(() => validateQualification(copy));
+  }
 });
 
 test("CLI requires explicit qualification, identities and output paths", () => {

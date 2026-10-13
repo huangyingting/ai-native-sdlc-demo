@@ -34,3 +34,17 @@ recorded localhost addresses are not public deployments.
 For deeper method questions, use the
 [AI-native SDLC guide](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/ai-native-sdlc/README.en.md).
 Do not edit approved specifications or resubmit acceptance commands during a presentation.
+
+## Optional engineering extension: 15 minutes
+
+Keep the ownership walkthrough unchanged; add these topics only when the audience
+wants operational and engineering judgment. All pages are read-only records.
+
+| Time | Show | Explain |
+|---|---|---|
+| 0–5 min | [Reliability observations](cases/reliability.en.md) | Two fresh-volume runs, six mutation kills, one fallback per incident, and a preserved candidate write. Recovery is not maintenance approval or an SLO. |
+| 5–11 min | [Diagnosis and strategy table](cases/engineering-judgment.en.md) | Six repairs, four full passes: both strategies misclassify configuration. Compare nine actual calls and measured usage without a general ranking. |
+| 11–15 min | [Exact-hash proxy proposal](cases/change-impact.en.md) | Accountable versus effective owner affects domain, storage, API and contract. Stop at the explicit pending approval; do not imply implementation. |
+
+No new model request, fault injection or approval is needed to present the
+recorded scenarios. Maintenance review and proxy implementation remain separate gates.

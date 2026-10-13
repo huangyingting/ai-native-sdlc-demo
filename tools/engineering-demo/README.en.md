@@ -32,6 +32,10 @@ change the configured model; results record the observed CLI model and units.
   structured telemetry reporting zero available tools and zero tool requests.
   An empty `--available-tools=` argument is **not** sufficient for the tested
   CLI. Missing or changed telemetry is an error, not presumed isolation.
+  Both factory and dynamic-workflow aliases are explicitly excluded; a changed
+  tool set must be requalified even when the displayed CLI version is unchanged.
+  Preserve rejected calls and restart only as a new disclosed attempt, not a
+  hidden retry inside a benchmark cell.
 - Responses are extracted losslessly from structured CLI events. Plain terminal
   rendering can wrap JSON strings; the adapter never guesses how to repair it.
 - Generated code is run only inside a non-root, read-only, network-disabled,

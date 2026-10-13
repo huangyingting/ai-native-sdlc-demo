@@ -14,6 +14,8 @@ const project = "demos/it-service-desk";
 const route = `${project}/src/app/api/ready/route.ts`;
 const routeTests = `${project}/src/app/api/ready/route.test.ts`;
 const boundaryTests = `${project}/src/app/api/ready/error-boundary.test.ts`;
+const storeTests = `${project}/src/lib/ticket-store.test.ts`;
+const healthTests = `${project}/src/app/api/health/route.test.ts`;
 const reporter = fileURLToPath(new URL(
   "../../.github/brownfield-human-gated-delivery/scripts/vitest-errors-reporter.mjs", import.meta.url,
 ));
@@ -75,6 +77,102 @@ const mutants = [
     kills: requiredTests.get(boundaryTests),
   },
 ];
+
+const ticketRouteNames = [
+  "Readiness route GET returns the exact current ready contract",
+  "Readiness route initialization failures return unavailable and one sanitized event per request",
+  "Readiness route warm shared-store queries transition from ready to unavailable to ready",
+  "Readiness route HEAD checks the current dependency without a response body",
+  "Readiness route GET ignores caller database and SQL inputs",
+  "Readiness route unsupported methods reject requests without initializing the store",
+];
+const ticketStoreNames = [
+  "TicketStore creates and retrieves a ticket",
+  "TicketStore filters tickets by status, priority, and query",
+  ...["INC-0001", "inc-0001", "  Inc-0001  ", "0001", "1", "inc-1"].map((value) =>
+    `TicketStore finds a ticket by normalized reference or ID: "${value}"`),
+  "TicketStore matches displayed references beyond four digits",
+  "TicketStore updates summary counts when ticket status changes",
+  "TicketStore supports assigning, handing off, and clearing ownership in every status",
+  "TicketStore filters assigned and unassigned tickets together with existing filters and ordering",
+  "TicketStore migrates populated and empty legacy databases without reseeding and preserves owner updates across reopen",
+  "TicketStore surfaces a real SQLite owner-write failure without changing the ticket",
+  "TicketStore readiness reads the actual ticket schema on every invocation",
+  "TicketStore readiness accepts an initialized empty table without changing records",
+];
+const ticketRequiredTests = new Map([
+  [routeTests, ticketRouteNames],
+  [storeTests, ticketStoreNames],
+  [healthTests, ["Liveness route remains available without accessing the database"]],
+]);
+const ticketMutants = [
+  {
+    id: "skip-ticket-schema-read",
+    before: "    getTicketStore().checkReadiness();",
+    after: "    getTicketStore();",
+    kills: [ticketRouteNames[2], ticketRouteNames[3]],
+  },
+  {
+    id: "failure-returns-200",
+    before: '      status: ready ? 200 : 503,\n      headers: { "Cache-Control": "no-store" },',
+    after: '      status: 200,\n      headers: { "Cache-Control": "no-store" },',
+    kills: [ticketRouteNames[1], ticketRouteNames[2]],
+  },
+  {
+    id: "ready-missing-no-store",
+    before: '      headers: { "Cache-Control": "no-store" },',
+    after: '      headers: ready ? {} : { "Cache-Control": "no-store" },',
+    kills: [ticketRouteNames[0]],
+  },
+  {
+    id: "failure-missing-no-store",
+    before: '      headers: { "Cache-Control": "no-store" },',
+    after: '      headers: ready ? { "Cache-Control": "no-store" } : {},',
+    kills: [ticketRouteNames[1], ticketRouteNames[2]],
+  },
+  {
+    id: "raw-error-logging",
+    before: "  } catch {\n    console.error(readinessFailureEvent);",
+    after: "  } catch (error) {\n    console.error(error);",
+    kills: [ticketRouteNames[1], ticketRouteNames[2], ticketRouteNames[3]],
+  },
+  {
+    id: "cache-success-result",
+    before: "function checkReadiness() {\n  try {\n    getTicketStore().checkReadiness();\n    return true;",
+    after: "let cachedReady = false;\nfunction checkReadiness() {\n  if (cachedReady) return true;\n  try {\n    getTicketStore().checkReadiness();\n    cachedReady = true;\n    return true;",
+    kills: [ticketRouteNames[2], ticketRouteNames[3]],
+  },
+];
+const profiles = {
+  "readiness-v1": { requiredTests, mutants, owners: ["avery-stone", "jordan-lee"] },
+  "ticket-schema-readiness-v1": {
+    requiredTests: ticketRequiredTests, mutants: ticketMutants, owners: ["alex-chen", "sam-rivera"],
+  },
+};
+
+export function readinessQualificationContract(profile) {
+  if (!Object.hasOwn(profiles, profile)) throw new Error("Unsupported readiness qualification profile.");
+  const selected = profiles[profile];
+  return {
+    profile,
+    requiredTests: Object.fromEntries([...selected.requiredTests].map(([path, tests]) => [path, [...tests]])),
+    total: [...selected.requiredTests.values()].flat().length,
+    mutantIds: selected.mutants.map((mutant) => mutant.id),
+    owners: [...selected.owners],
+  };
+}
+
+function selectProfile(files, original) {
+  const summary = original.includes("getTicketStore().summary();");
+  const ticket = original.includes("getTicketStore().checkReadiness();");
+  if (summary === ticket) throw new Error("Unsupported or ambiguous committed readiness implementation; requires one exact, unambiguous anchor.");
+  const profile = summary ? "readiness-v1" : "ticket-schema-readiness-v1";
+  const selected = profiles[profile];
+  for (const path of selected.requiredTests.keys()) {
+    if (!files.has(path)) throw new Error(`Required committed readiness qualification file missing: ${path}`);
+  }
+  return { profile, ...selected };
+}
 
 function replaceOnce(original, mutant) {
   const index = original.indexOf(mutant.before);
@@ -147,7 +245,9 @@ function exportFiles(source, commit, run) {
   return { files, tracked };
 }
 
-function classify(report, lifecycle, exitCode, destination, mutant) {
+function classify(report, lifecycle, exitCode, destination, mutant, selected) {
+  const requiredTests = selected.requiredTests;
+  const names = [...requiredTests.values()].flat();
   validateVitestRunErrors(lifecycle);
   if (!Array.isArray(report.testResults) || report.testResults.length !== requiredTests.size) {
     throw new Error("Required readiness suites were not executed exactly once.");
@@ -219,7 +319,7 @@ function classify(report, lifecycle, exitCode, destination, mutant) {
 }
 
 /**
- * Qualify only the committed readiness-v1 profile (11 route + 2 frozen-error tests).
+ * Qualify supported committed readiness profiles without changing their tests.
  * Usage: qualifyReadiness({ source: "/repo", sourceRef: "<40-hex commit>", dest: "/new-scratch" }).
  * Invalid/unsafe input throws before export. After export, failures return exitCode: 1
  * and persist qualification-report.json; callers MUST propagate exitCode.
@@ -239,10 +339,12 @@ export function qualifyReadiness(options, { run = execute, now = () => new Date(
   const source = realpathSync(options.source);
   const destination = newDestination(options.dest, source);
   const { files, tracked } = exportFiles(source, options.sourceRef, run);
-  for (const path of [route, routeTests, boundaryTests, `${project}/package.json`, `${project}/package-lock.json`]) {
+  for (const path of [route, `${project}/package.json`, `${project}/package-lock.json`]) {
     if (!files.has(path)) throw new Error(`Required committed readiness qualification file missing: ${path}`);
   }
   const original = files.get(route).data;
+  const selected = selectProfile(files, original.toString("utf8"));
+  const { requiredTests, mutants } = selected;
   const variants = mutants.map((mutant) => ({ ...mutant, data: Buffer.from(replaceOnce(original.toString("utf8"), mutant)) }));
   const manifest = JSON.parse(files.get(`${project}/package.json`).data.toString("utf8"));
   if (!manifest.dependencies?.next || !manifest.devDependencies?.vitest) {
@@ -252,7 +354,7 @@ export function qualifyReadiness(options, { run = execute, now = () => new Date(
   const evidence = join(destination, "qualification-evidence");
   const reportPath = join(destination, "qualification-report.json");
   const summary = {
-    version: 1, kind: "readiness-test-qualification", profile: "readiness-v1",
+    version: 1, kind: "readiness-test-qualification", profile: selected.profile,
     executionMode: "development-test", humanAcceptance: false,
     source: { repository: source, commit: options.sourceRef }, destination, reportPath,
     startedAt: now().toISOString(), status: "failed", qualified: false, exitCode: 1,
@@ -333,7 +435,7 @@ export function qualifyReadiness(options, { run = execute, now = () => new Date(
       errorKind = "test-evidence";
       const json = JSON.parse(readFileSync(regularPath(destination, relative(destination, jsonPath)), "utf8"));
       const lifecycle = JSON.parse(readFileSync(regularPath(destination, relative(destination, errorsPath)), "utf8"));
-      Object.assign(result, classify(json, lifecycle, result.exitCode, destination, mutant));
+      Object.assign(result, classify(json, lifecycle, result.exitCode, destination, mutant, selected));
     } catch (error) {
       result.error = errorAt(id, error, errorKind);
     }

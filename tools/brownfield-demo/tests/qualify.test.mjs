@@ -5,7 +5,7 @@ import {
   existsSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync,
 } from "node:fs";
 import { basename, dirname, join } from "node:path";
-import { qualifyReadiness } from "../qualify.mjs";
+import { qualifyReadiness, readinessQualificationContract } from "../qualify.mjs";
 import { sha256 } from "../common.mjs";
 import { artifacts, commit, tar } from "./helpers.mjs";
 
@@ -33,6 +33,50 @@ export function GET() {
   }
 }
 `;
+const ticketOriginal = `import { getTicketStore } from "@/lib/ticket-store";
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+const readinessFailureEvent = "Service desk readiness check failed";
+function checkReadiness() {
+  try {
+    getTicketStore().checkReadiness();
+    return true;
+  } catch {
+    console.error(readinessFailureEvent);
+    return false;
+  }
+}
+export function GET() {
+  const ready = checkReadiness();
+  return Response.json(
+    { status: ready ? "ready" : "unavailable" },
+    {
+      status: ready ? 200 : 503,
+      headers: { "Cache-Control": "no-store" },
+    },
+  );
+}
+export function HEAD() {
+  const ready = checkReadiness();
+  return new Response(null, {
+    status: ready ? 200 : 503,
+    headers: {
+      "Cache-Control": "no-store",
+      "Content-Type": "application/json",
+    },
+  });
+}
+`;
+const ticketContract = readinessQualificationContract("ticket-schema-readiness-v1");
+const ticketRouteNames = ticketContract.requiredTests[routeTests];
+const ticketKills = {
+  "skip-ticket-schema-read": [ticketRouteNames[2], ticketRouteNames[3]],
+  "failure-returns-200": [ticketRouteNames[1], ticketRouteNames[2]],
+  "ready-missing-no-store": [ticketRouteNames[0]],
+  "failure-missing-no-store": [ticketRouteNames[1], ticketRouteNames[2]],
+  "raw-error-logging": [ticketRouteNames[1], ticketRouteNames[2], ticketRouteNames[3]],
+  "cache-success-result": [ticketRouteNames[2], ticketRouteNames[3]],
+};
 const routeNames = [
   "reports exact readiness after an application ticket summary read",
   "reports exact unavailability when the store cannot initialize",
@@ -78,10 +122,13 @@ function totals(report) {
   return report;
 }
 
-function evidence(destination, id, failures = kills[id] ?? []) {
+function evidence(destination, id, failures, profile = "readiness-v1") {
+  const suites = profile === "readiness-v1"
+    ? [[routeTests, routeNames], [boundaryTests, boundaryNames]] : Object.entries(ticketContract.requiredTests);
+  failures ??= (profile === "readiness-v1" ? kills : ticketKills)[id] ?? [];
   const report = totals({
     snapshot: { failure: false },
-    testResults: [[routeTests, routeNames], [boundaryTests, boundaryNames]].map(([path, names]) => ({
+    testResults: suites.map(([path, names]) => ({
       name: join(destination, path), message: "", status: "passed",
       assertionResults: names.map((name) => ({
         fullName: ` ${name}`, status: failures.includes(name) ? "failed" : "passed",
@@ -100,7 +147,7 @@ function evidence(destination, id, failures = kills[id] ?? []) {
   };
 }
 
-function fixture(t, { onRun = () => {}, onInstall = () => {} } = {}) {
+function fixture(t, { onRun = () => {}, onInstall = () => {}, profile = "readiness-v1" } = {}) {
   const directory = artifacts(t);
   const source = join(directory, "source");
   const destination = join(directory, "qualification");
@@ -116,6 +163,13 @@ function fixture(t, { onRun = () => {}, onInstall = () => {} } = {}) {
     [`${project}/package-lock.json`, '{"lockfileVersion":3}\n'],
     [`${project}/vitest.config.mts`, "export default {};\n"],
   ].map(([path, data]) => [path, { data: Buffer.from(data), mode: 0o644 }]));
+  if (profile === "ticket-schema-readiness-v1") {
+    files.set(route, { data: Buffer.from(ticketOriginal), mode: 0o644 });
+    files.delete(boundaryTests);
+    for (const path of Object.keys(ticketContract.requiredTests)) {
+      files.set(path, { data: Buffer.from("// approved ticket-schema readiness tests\n"), mode: 0o644 });
+    }
+  }
   for (const [path, entry] of files) {
     mkdirSync(dirname(join(source, path)), { recursive: true });
     writeFileSync(join(source, path), entry.data);
@@ -162,12 +216,15 @@ function fixture(t, { onRun = () => {}, onInstall = () => {} } = {}) {
       return "";
     }
     assert.equal(command, process.execPath);
-    assert.deepEqual(args.slice(1, 4), ["run", "src/app/api/ready/route.test.ts", "src/app/api/ready/error-boundary.test.ts"]);
+    const selectors = profile === "readiness-v1"
+      ? ["src/app/api/ready/route.test.ts", "src/app/api/ready/error-boundary.test.ts"]
+      : Object.keys(ticketContract.requiredTests).map((path) => path.slice(project.length + 1));
+    assert.deepEqual(args.slice(1, selectors.length + 2), ["run", ...selectors]);
     assert.ok(args.includes("--no-allowOnly"));
     assert.ok(args.includes("--no-passWithNoTests"));
     const jsonPath = args.find((arg) => arg.startsWith("--outputFile=")).slice("--outputFile=".length);
     const id = basename(dirname(jsonPath));
-    const value = evidence(destination, id);
+    const value = evidence(destination, id, undefined, profile);
     onRun({ ...fixture, id, value, options, args });
     if (value.throw) throw value.throw;
     if (!value.omitJson) writeFileSync(jsonPath, value.invalidJson ? "{" : JSON.stringify(value.report));
@@ -242,6 +299,67 @@ test("qualifies only two green controls and six contract-killed mutants; persist
   assert.deepEqual(JSON.parse(readFileSync(result.reportPath, "utf8")), result);
   assert.equal(f.calls.filter(({ command }) => command === "npm").length, 1);
   assert.equal(f.calls.filter(({ command }) => command === process.execPath).length, 8);
+});
+
+test("ticket-schema profile qualifies all 23 exact assertions and restores every six-mutant attempt", (t) => {
+  const observed = [];
+  const f = fixture(t, { profile: "ticket-schema-readiness-v1", onRun({ destination, id }) {
+    const text = readFileSync(join(destination, route), "utf8");
+    observed.push({ id, text });
+    if (["baseline", "final"].includes(id)) assert.equal(text, ticketOriginal);
+    else assert.notEqual(text, ticketOriginal);
+  } });
+  const result = run(f);
+  assert.equal(result.profile, "ticket-schema-readiness-v1");
+  assert.equal(result.qualified, true);
+  assert.equal(result.baseline.total, 23);
+  assert.equal(result.final.passed, 23);
+  assert.equal(result.testBlobsUnchanged, true);
+  assert.deepEqual(result.requiredTests, ticketContract.requiredTests);
+  assert.deepEqual(observed.map(({ id }) => id), ["baseline", ...ticketContract.mutantIds, "final"]);
+  assert(result.mutants.every(mutant => mutant.status === "killed" && mutant.detectionKind === "assertion"));
+  assert(result.mutants.every(mutant => mutant.expectedApplicationErrors.length === 0));
+  assert.equal(readFileSync(join(f.destination, route), "utf8"), ticketOriginal);
+});
+
+test("ticket-schema profile rejects cached success that survives its required warm assertions", (t) => {
+  const f = fixture(t, { profile: "ticket-schema-readiness-v1", onRun({ id, value, destination }) {
+    if (id === "cache-success-result") Object.assign(value, evidence(destination, id, [], "ticket-schema-readiness-v1"));
+  } });
+  const result = run(f);
+  assertFailed(result);
+  assert.equal(result.mutants.at(-1).status, "survived");
+  assert.equal(result.final.status, "passed");
+});
+
+test("ticket-schema profile rejects missing suites, skipped assertions and unexpected assertion names", (t) => {
+  for (const mutate of [
+    (report) => { report.testResults.pop(); },
+    (report) => { report.testResults[0].assertionResults[0].status = "skipped"; },
+    (report) => { report.testResults[0].assertionResults[0].fullName = "Untrusted replacement name"; },
+  ]) {
+    const f = fixture(t, { profile: "ticket-schema-readiness-v1", onRun({ id, value }) {
+      if (id === "baseline") mutate(value.report);
+    } });
+    const result = run(f);
+    assertFailed(result);
+    assert.equal(result.baseline.status, "error");
+  }
+});
+
+test("committed profile selection rejects mixed implementations and missing modern prerequisites before export", (t) => {
+  for (const mutate of [
+    (files) => { files.get(route).data = Buffer.from(ticketOriginal + "\ngetTicketStore().summary();\n"); },
+    (files) => { files.delete(`${project}/src/app/api/health/route.test.ts`); },
+    (files) => { files.delete(`${project}/src/lib/ticket-store.test.ts`); },
+  ]) {
+    const f = fixture(t, { profile: "ticket-schema-readiness-v1" });
+    mutate(f.files);
+    assert.throws(() => run(f), /Unsupported or ambiguous|Required committed/);
+    assert.equal(existsSync(f.destination), false);
+    assert.equal(f.calls.some(call => call.command === "npm"), false);
+  }
+  assert.throws(() => readinessQualificationContract("unknown"), /Unsupported/);
 });
 
 test("a survived mutant is not qualification, even with green baseline/final; other mutants still run", (t) => {

@@ -24,7 +24,7 @@
 | 测试 | [测试 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) | [经两轮修改后批准](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8#pullrequestreview-5486995544)，已合并到交付分支 |
 | 实现 | [实现 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | 已批准并合并，38 项测试全部通过 |
 | 交付 | [指定镜像的验收记录](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) | 已发布、运行并验收 |
-| 运行 | [数据库就绪维护交付](readiness.md) | 已验收；后续发布可靠性演练待开始 |
+| 运行 | [数据库就绪维护交付](readiness.md) · [可靠性演练](reliability.md) | 就绪检查已验收，两次恢复演练通过，维护审查待完成 |
 
 ### 产品决策
 
@@ -93,12 +93,17 @@
 <a id="专题案例"></a>
 ## 后续专题
 
-具备所需前置条件后，将分别开展：
+| 专题 | 实际结果 | 尚存边界 |
+|---|---|---|
+| [发布可靠性](reliability.md) | 23 项精确资格断言、六个变异被杀死；两次全新数据卷准入、回退与恢复演练通过 | 仅为运行观察，[维护审查 #28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28)待完成 |
+| [变更影响](change-impact.md) | 真实方案和引用已审查，十五项对照测试通过 | [准确哈希方案 #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)待操作者批准；无实现或三十五项独立检查结果 |
+| [故障诊断](engineering-judgment.md) | 六组行为修复通过，两组环境分类错误 | 保留分类失败，不以测试绿灯覆盖 |
+| [Agent 策略评估](engineering-judgment.md) | 六组九次真实调用，4/6 完整验收通过，比较用量与耗时 | 每组一次试验，不作普遍统计排名 |
 
-- **发布可靠性：** 就绪检查已验收；后续验证流量准入与恢复，并跟进预防措施。
-- **变更影响：** 先审查代理负责人方案，再在独立工程实验应用中实现。
-- **故障诊断与策略评估：** 使用固定故障、独立检查和实测用量，比较修复效果与证据质量。
-- **Agent 执行追踪：** 查阅实际模型和工具调用，解释它们与验证结果的关系。
+[工程结果记录 #29](https://github.com/huangyingting/ai-native-sdlc-demo/issues/29)
+保留所有结果。每次真实模型调用都验证工具数为零。
+更早被隔离检查拒绝的方案调用仍单独保留为兼容性失败；
+不公开原始私有提示词、回复和生成的候选源码。
 
 各专题独立记录输入、修改范围、实际结果和未验证项。
 
