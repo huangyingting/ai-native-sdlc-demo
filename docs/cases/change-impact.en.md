@@ -2,6 +2,11 @@
 
 [中文](change-impact.md) · [Case index](README.en.md) · [Diagnosis and strategy](engineering-judgment.en.md)
 
+**Engineering appendix, not a Coding Agent product PR.** Copilot CLI generated
+the proposal and candidate text; the trusted harness executed verification.
+The assistant published the Issue summaries through the authorized user account.
+See [roles and comment provenance](../copilot-roles.en.md).
+
 <a id="current-gate"></a>
 ## Result and review boundary
 
@@ -32,6 +37,35 @@ delegated review and actual Green result are recorded separately:
 
 See [screenshot provenance](assets/engineering/manifest.json) and the
 [sanitized implementation summary](assets/engineering/impact-summary.json).
+
+## What Copilot actually produced
+
+The fixed input began with this exact request excerpt:
+
+> Add temporary proxy assignment to the ticket application, preserving all existing behavior and approved tests.
+
+The CLI received committed synthetic source and the fixed contract, not the
+independent acceptance oracle. A selected proposal decision was:
+
+> Create new tables with nullable proxy_owner TEXT and, after opening, inspect the existing tickets schema and issue ALTER TABLE tickets ADD COLUMN proxy_owner TEXT only when the column is absent.
+
+The implementation's actual rationale was:
+
+> Implements temporary proxy ownership while preserving accountable ownership and legacy behavior. The store adds an idempotent additive proxy_owner migration, exposes proxyOwner on persisted tickets, validates and persists proxy assignment/clearing, and the API serializes both proxyOwner and effectiveOwner. Documentation covers ownership semantics, filtering, errors, persistence, and migration compatibility.
+
+A selected difference in `src/domain.mjs` shows the model's proposal, rather
+than only an operator's description:
+
+```diff
+-  return ticket.owner ?? null;
++  return ticket.proxyOwner ?? ticket.owner ?? null;
+```
+
+The trusted adapter applied allowlisted candidate text; Docker and the independent
+oracle then established 15/15 and 35/35. The model did not run those checks itself.
+[Reviewed exact excerpts](assets/engineering/copilot-excerpts.json) bind the
+proposal and implementation selections to the response hashes in the measured
+summary. Only selected text/differences are published, not complete raw payloads.
 
 ## Proposed business behavior
 
@@ -130,7 +164,8 @@ isolation rejection, one proposal, nine benchmark calls and one implementation.
 The benchmark's two classification failures remain unchanged.
 
 Generated code ran only inside restricted Docker, never on the host; private
-prompts, responses and candidate source are not published. This completes the
+prompts, full raw responses and complete candidate source are not published.
+Selected reviewed excerpts above explain the actual contribution. This completes the
 bounded change-impact experiment, not independent human acceptance or
 production authorization. Use the [reusable impact workflow](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.en.md)
 for operator commands.

@@ -2,6 +2,11 @@
 
 [中文](engineering-judgment.md) · [Case index](README.en.md) · [Proxy proposal](change-impact.en.md)
 
+**Controlled CLI experiment, not a Coding Agent delivery.** The CLI generated
+diagnoses and candidate text; the trusted harness applied and verified it.
+Issue comments are assistant-published summaries using the authorized operator
+account. See [roles and comment provenance](../copilot-roles.en.md).
+
 ## Result and boundary
 
 A real six-cell experiment completed with **six verified behavioral repairs
@@ -62,6 +67,63 @@ Same frozen case → direct diagnosis + patch → visible tests + independent or
 Same frozen case → diagnosis → bounded patch → visible tests + independent oracle
                      classification + evidence + scope are separate gates
 ```
+
+## What Copilot actually said
+
+The fixed request was “Diagnose and correct observed CI failure without changing
+unrelated behavior”, with the contract, faulty source and measured failing
+tests supplied. These are actual direct-strategy excerpts, not a rerun or
+rewritten successful explanation. Original model wording is preserved.
+
+### Product filter
+
+The input used OR where the contract required AND. Copilot returned
+`classification: "product"` and this rationale:
+
+> The product implementation combines independent owner and status predicates with OR, so a ticket is incorrectly accepted whenever either predicate passes—including when one filter is omitted. Replacing OR with AND implements the documented intersection semantics while preserving individual-filter and no-filter behavior.
+
+```diff
+-  return ownerMatches || statusMatches;
++  return ownerMatches && statusMatches;
+```
+
+The independent behavioral checks and classification gate both passed.
+
+### Test-harness drift
+
+Copilot returned `classification: "test-harness"`:
+
+> The implementation returns the ticket's existing owner exactly as required by the documented contract. The failing test incorrectly expects 'jordan' for a ticket owned by 'avery', so the assertion must be restored to the contractually correct value without changing product behavior.
+
+```diff
+-  assert.equal(effectiveOwner(ticket), 'jordan');
++  assert.equal(effectiveOwner(ticket), 'avery');
+```
+
+This case deliberately allows repairing the faulty harness assertion, not
+changing product behavior to satisfy a wrong test. Both gates passed.
+
+### Runtime configuration: repair passes, label fails
+
+Copilot returned `classification: "product"` even though the expected class
+was `environment`. Its actual rationale correctly described the configuration:
+
+> The checked-in runtime configuration violates the documented contract by pointing SQLite beneath /dev/null, which cannot contain a database file. Both CLI tests therefore fail while domain, API, and store behavior pass. Restoring the required in-memory database path fixes the root cause without changing code, tests, fallback behavior, or unrelated semantics.
+
+```diff
+-  "databasePath": "/dev/null/engineering-lab.db"
++  "databasePath": ":memory:"
+```
+
+This is not evidence that the model failed to locate the configuration cause.
+The repair and explanation identify it, but the **classification field is
+wrong**, so full acceptance fails. Diagnosis-first also returned the wrong
+class; its result is retained in the six-cell report.
+
+[Reviewed exact excerpts](assets/engineering/copilot-excerpts.json) contain
+the source evidence and response hashes, matching the public measured
+summary. These are selected final-answer fields and one-line differences,
+not full raw sessions or complete candidate files.
 
 ## All six outcomes
 

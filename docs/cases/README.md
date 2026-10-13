@@ -2,6 +2,10 @@
 
 [English](README.en.md) · [仓库首页](../../README.md)
 
+先读[Copilot 的角色与作者身份](../copilot-roles.md)。
+下方两项已验收交付都有编码 Agent 创建的实现 PR。
+工程附录则展示 CLI 输出和独立检查，或确定性运行观察。
+
 **已完成的工单负责人案例：**[图文讲解](ownership.zh-CN.md) ·
 [截图来源与校验记录](assets/ownership/manifest.json)
 
@@ -91,7 +95,14 @@
 数据库可读信号不代表写入保证、响应期限或生产认证，发布可靠性演练仍待开展。
 
 <a id="专题案例"></a>
-## 后续专题
+<a id="后续专题"></a>
+## 工程附录，不是新的产品交付
+
+可靠性演练没有新增 CLI 诊断或修复调用。
+影响与诊断实验在零工具条件下生成候选文本，不创建 GitHub 实现 PR。
+用户账号下的评论是助手发布的摘要。
+参照已审查的[影响输出](change-impact.md#copilot-实际生成了什么)和
+[诊断输出](engineering-judgment.md#copilot-实际说了什么)。
 
 | 专题 | 实际结果 | 尚存边界 |
 |---|---|---|
@@ -103,7 +114,8 @@
 [工程结果记录 #29](https://github.com/huangyingting/ai-native-sdlc-demo/issues/29)
 保留所有结果。每次真实模型调用都验证工具数为零。
 更早被隔离检查拒绝的方案调用仍单独保留为兼容性失败；
-不公开原始私有提示词、回复和生成的候选源码。
+不公开原始私有提示词、完整回复和完整候选源码；
+只增加选定的[已审查输出与差异摘录](assets/engineering/copilot-excerpts.json)。
 
 各专题独立记录输入、修改范围、实际结果和未验证项。
 

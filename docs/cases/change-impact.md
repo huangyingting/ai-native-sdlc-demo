@@ -2,6 +2,10 @@
 
 [English](change-impact.en.md) · [案例索引](README.md) · [诊断与策略](engineering-judgment.md)
 
+**这是工程附录，不是编码 Agent 的产品 PR。** Copilot CLI 生成方案和候选文本，
+可信验证程序执行检查。助手通过用户授权账号发布 Issue 摘要。
+角色与评论来源见[参与者说明](../copilot-roles.md)。
+
 <a id="当前关卡"></a>
 ## 结果与审查边界
 
@@ -28,6 +32,33 @@
 
 来源见[截图记录](assets/engineering/manifest.json)及
 [脱敏实现摘要](assets/engineering/impact-summary.json)。
+
+## Copilot 实际生成了什么
+
+固定输入以这段准确请求摘录开始：
+
+> Add temporary proxy assignment to the ticket application, preserving all existing behavior and approved tests.
+
+CLI 获得已提交的模拟源码和固定行为约定，没有获得独立验收检查器。
+方案中的一项实际决定是：
+
+> Create new tables with nullable proxy_owner TEXT and, after opening, inspect the existing tickets schema and issue ALTER TABLE tickets ADD COLUMN proxy_owner TEXT only when the column is absent.
+
+实现的实际理由为：
+
+> Implements temporary proxy ownership while preserving accountable ownership and legacy behavior. The store adds an idempotent additive proxy_owner migration, exposes proxyOwner on persisted tickets, validates and persists proxy assignment/clearing, and the API serializes both proxyOwner and effectiveOwner. Documentation covers ownership semantics, filtering, errors, persistence, and migration compatibility.
+
+`src/domain.mjs` 中的选定差异直接展示模型提出的修改，不只依靠操作者转述：
+
+```diff
+-  return ticket.owner ?? null;
++  return ticket.proxyOwner ?? ticket.owner ?? null;
+```
+
+可信适配器应用白名单候选文本，再由 Docker 和独立检查确认 15/15 与 35/35。
+不是模型自己运行并宣称检查通过。
+[准确摘录记录](assets/engineering/copilot-excerpts.json)将方案和实现选段
+绑定到实测摘要中的响应哈希。只发布选定文本和差异，不发布完整原始载荷。
 
 ## 拟议业务规则
 
@@ -120,6 +151,7 @@ effectiveOwner(ticket) = ticket.proxyOwner ?? ticket.owner ?? null
 九次对比实验和一次实现。实验中的两次分类失败保持不变。
 
 生成代码只在受限 Docker 中运行，从未在宿主机执行；
-私有提示词、回复和候选源码不公开。这完成了有限变更影响实验，
+私有提示词、完整原始回复和完整候选源码不公开；上面的已审查选段说明实际贡献。
+这完成了有限变更影响实验，
 不是独立人类验收或生产授权。操作命令统一参照
 [可复用影响分析流程](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.md)。
