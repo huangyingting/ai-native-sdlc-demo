@@ -116,9 +116,11 @@ The tooling added those observed aliases to explicit exclusions, kept the
 fail-closed telemetry checks and verified zero tools on fresh calls.
 
 That rejected request is not one of the nine benchmark calls. Together with
-the later proxy proposal, there have been **eleven actual calls** so far:
-one rejected compatibility attempt, one reviewed proposal and nine benchmark
-requests. No proxy implementation call has occurred.
+the later proxy proposal and implementation, there have been **twelve actual
+calls**: one rejected compatibility attempt, one proposal, nine benchmark
+requests and one bounded implementation. The [proxy experiment](change-impact.en.md)
+passed 15 unchanged tests and 35 independent checks after delegated local
+operator review; it does not change any of these six benchmark outcomes.
 
 ## Present or repeat it
 

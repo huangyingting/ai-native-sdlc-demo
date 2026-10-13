@@ -18,7 +18,7 @@ unchanged by translation.
 3. **Check scope and progress:** [case index](cases/README.en.md).
    For the new topics, use [release reliability](cases/reliability.en.md),
    [diagnosis and strategy](cases/engineering-judgment.en.md), and the
-   [pending change-impact proposal](cases/change-impact.en.md).
+   [verified change-impact experiment](cases/change-impact.en.md).
 4. **Inspect original records:**
    [Intent](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) ·
    [Tests PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) ·
@@ -34,8 +34,9 @@ recovery and real business-journey checks. Release reliability now has two
 passing isolated rehearsals, with maintenance review pending. Diagnosis and
 strategy evaluation completed six real cells: six repairs verified, four
 fully accepted, with both wrong environment classifications preserved.
-The change-impact proposal is reviewed but awaits explicit operator approval;
-no proxy implementation has occurred. These experiments are not production
+The change-impact candidate passed 15 unchanged tests and 35 independent
+checks after delegated local operator review. The repository baseline remains
+unchanged for repeatable comparisons. These experiments are not production
 certification or automatic feature acceptance.
 
 ## Files and evidence
@@ -44,7 +45,7 @@ certification or automatic feature acceptance.
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json): 14 original screenshots with source, time and hashes.
 - [cases/assets/readiness/](cases/assets/readiness/manifest.json): 21 readiness screenshots with distinct baseline and delivered-image identities.
 - [cases/assets/reliability/](cases/assets/reliability/manifest.json): original results screenshot, qualification summary and two independently recorded runtime rehearsals.
-- [cases/assets/engineering/](cases/assets/engineering/manifest.json): original strategy/proposal records and sanitized six-cell metrics; no raw prompts or generated candidate source.
+- [cases/assets/engineering/](cases/assets/engineering/manifest.json): original strategy/proposal/result records, sanitized six-cell metrics and verified impact summary; no raw prompts or generated candidate source.
 - [delivery-runs/](delivery-runs/brownfield-human-gated-delivery/1/spec.md):
   workflow-managed specifications, plans and review artifacts, unchanged by reorganization or translation.
 

@@ -14,7 +14,7 @@ operation. Each case links to the work actually performed in this repository.
 - **[Database readiness](docs/cases/readiness.en.md)**: batch decisions, controlled Red, a read probe and exact-image acceptance.
 - **[Release reliability](docs/cases/reliability.en.md)**: two isolated admission, fallback and recovery rehearsals.
 - **[Diagnosis and strategy](docs/cases/engineering-judgment.en.md)**: six real cells, preserved classification failures and measured cost.
-- **[Change-impact proposal](docs/cases/change-impact.en.md)**: reviewed proxy-owner impact, awaiting explicit approval.
+- **[Change impact](docs/cases/change-impact.en.md)**: reviewed proxy-owner proposal, isolated implementation, 15 unchanged tests and 35 independent checks.
 - **[Application](demos/it-service-desk/README.en.md)**: local installation and application commands.
 - **[Delivery commands](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.en.md)**:
   document review, pull-request checks and image acceptance.
@@ -30,7 +30,7 @@ not duplicate guide copies.
 | Ticket ownership | Who is responsible, and how do we hand over a ticket? | [Accepted](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
 | Database readiness | Can we distinguish a live process from an unreadable ticket database? | [Accepted](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
 | [Release reliability](docs/cases/reliability.en.md) | Can we detect a bad candidate, recover service and prevent recurrence? | Two development-test rehearsals passed; maintenance review pending |
-| [Change impact](docs/cases/change-impact.en.md) | How can we add a proxy owner without changing the accountable owner? | Proposal reviewed; operator approval and implementation pending |
+| [Change impact](docs/cases/change-impact.en.md) | How can we add a proxy owner without changing the accountable owner? | Delegated operator review; isolated candidate passes 15 tests + 35 checks |
 | [Failure diagnosis](docs/cases/engineering-judgment.en.md) | Is a failure caused by product code, a test or configuration? | Six repairs verified; two environment classifications rejected |
 | [Agent strategy evaluation](docs/cases/engineering-judgment.en.md) | Does a separate diagnosis step improve results enough to justify its cost? | Six cells / nine calls measured; 4/6 full acceptance, no general ranking |
 
@@ -51,8 +51,9 @@ The initial service-desk baseline had no ticket ownership; the first delivery
 now includes it and has been accepted. The engineering application still has
 no proxy ownership. Database readiness is also accepted, with all 47 current
 tests Green. Two bounded release-reliability rehearsals and the diagnosis/strategy
-experiment now have actual evidence; maintenance review and proxy implementation
-remain separate pending gates. A ready response does not guarantee full
+experiment now have actual evidence. The proxy impact experiment also passed
+after delegated local review; its isolated candidate does not change the
+repository baseline. Maintenance review remains pending. A ready response does not guarantee full
 application availability or production traffic admission. A measured experiment
 or reviewed proposal is not an accepted feature delivery.
 

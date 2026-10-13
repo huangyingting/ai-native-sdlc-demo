@@ -103,7 +103,7 @@ release reliability remains a separate pending exercise.
 | Topic | Actual result | Remaining boundary |
 |---|---|---|
 | [Release reliability](reliability.en.md) | 23 exact qualification assertions, six mutants killed; two fresh-volume admission/fallback/recovery rehearsals passed | Operational observation only; [maintenance review #28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28) pending |
-| [Change impact](change-impact.en.md) | Real proposal and citations reviewed, 15-test control passed | [Exact-hash proposal #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30) awaits operator approval; no implementation or 35-check oracle result |
+| [Change impact](change-impact.en.md) | Reviewed exact-hash proposal; one isolated implementation passes 15 unchanged tests + 35 independent checks | [Record #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30) preserves delegated local review, not independent Human acceptance; repository baseline unchanged |
 | [Failure diagnosis](engineering-judgment.en.md) | Six behaviorally verified repairs; both environment classifications wrong | Classification failures retained, not overwritten by Green tests |
 | [Agent strategy evaluation](engineering-judgment.en.md) | Six cells / nine actual calls, 4/6 full acceptance; usage and time compared | One trial per cell, no general statistical ranking |
 

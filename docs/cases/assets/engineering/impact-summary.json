@@ -1,0 +1,139 @@
+{
+  "version": 1,
+  "kind": "proxy-impact-demo-result",
+  "executionMode": "development-test",
+  "humanAcceptance": false,
+  "productionChanges": false,
+  "repositoryFixtureChanged": false,
+  "source": {
+    "commit": "0eb9973b3fb09d648ebeea21b64786a763fc3021",
+    "fixtureHash": "4d25f387db0329a1add68680ebd2f52974ae58e5996ce0adb3e61b12c40f351d"
+  },
+  "image": "node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+  "proposalHash": "2da119edb9b422f51024d85af9e9278aed748a958c1fa4891714cf1af869f02a",
+  "candidateHash": "a88beb04eeca099d17ed3f4a79ef35ba646845d3c6bfadcfadff88714db518e0",
+  "status": "passed",
+  "exitCode": 0,
+  "finishedAt": "2026-10-13T01:47:53.810Z",
+  "approval": {
+    "version": 1,
+    "proposalHash": "2da119edb9b422f51024d85af9e9278aed748a958c1fa4891714cf1af869f02a",
+    "source": {
+      "commit": "0eb9973b3fb09d648ebeea21b64786a763fc3021",
+      "fixtureHash": "4d25f387db0329a1add68680ebd2f52974ae58e5996ce0adb3e61b12c40f351d"
+    },
+    "image": "node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+    "reviewer": "copilot-operator",
+    "reviewedAt": "2026-10-13T01:47:19.050Z",
+    "executionMode": "development-test",
+    "independentHumanReview": false,
+    "operatorDecisionBasis": "Delegated local operator review under subsequent autonomous-execution instruction",
+    "authenticatedGitHubReviewer": false
+  },
+  "control": {
+    "valid": true,
+    "passed": true,
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "timedOut": false,
+    "cleaned": true,
+    "wallMs": 1517,
+    "imageId": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6"
+  },
+  "green": {
+    "valid": true,
+    "passed": true,
+    "tests": 15,
+    "pass": 15,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0,
+    "exitCode": 0,
+    "timedOut": false,
+    "cleaned": true,
+    "wallMs": 1271,
+    "imageId": "sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6"
+  },
+  "oracle": {
+    "passed": true,
+    "checks": 35,
+    "expectedChecks": 35,
+    "exitCode": 0,
+    "timedOut": false,
+    "cleaned": true,
+    "wallMs": 944
+  },
+  "changedPaths": [
+    "contract.md",
+    "src/api.mjs",
+    "src/domain.mjs",
+    "src/store.mjs"
+  ],
+  "approvedTestBlobsUnchanged": true,
+  "documentationUpdated": true,
+  "falseCompletion": false,
+  "calls": [
+    {
+      "number": 1,
+      "status": "completed",
+      "metrics": {
+        "wallMs": 50733,
+        "model": "gpt-5.6-sol",
+        "models": [
+          "gpt-5.6-sol"
+        ],
+        "inputTokens": 7209,
+        "outputTokens": 3445,
+        "cachedInputTokens": 0,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 7206,
+        "reasoningTokens": 509,
+        "premiumRequestCost": 1,
+        "totalNanoAiu": 10494200000,
+        "totalApiDurationMs": 41029,
+        "totalUserRequests": 1,
+        "aiCredits": null,
+        "dollarCost": null,
+        "usageStatus": "recorded",
+        "noToolsVerified": true
+      },
+      "responseSha256": "06350afd0e33261dfe5bf79a8100c3754314c268f109772856cea910420465f4"
+    },
+    {
+      "number": 2,
+      "status": "completed",
+      "metrics": {
+        "wallMs": 33480,
+        "model": "gpt-5.6-sol",
+        "models": [
+          "gpt-5.6-sol"
+        ],
+        "inputTokens": 10090,
+        "outputTokens": 2414,
+        "cachedInputTokens": 0,
+        "cacheReadTokens": 0,
+        "cacheWriteTokens": 10087,
+        "reasoningTokens": 312,
+        "premiumRequestCost": 1,
+        "totalNanoAiu": 9872700000,
+        "totalApiDurationMs": 22896,
+        "totalUserRequests": 1,
+        "aiCredits": null,
+        "dollarCost": null,
+        "usageStatus": "recorded",
+        "noToolsVerified": true
+      },
+      "responseSha256": "4bf4f3db6816677afb1007062174cc090ed50732cea9e17e69222523dfbbb5a3"
+    }
+  ],
+  "implementationRetries": 0,
+  "humanCandidatePatches": 0,
+  "totalActualCallsAcrossScenarios": 12,
+  "rawPromptsResponsesAndCandidateSourcePublished": false
+}
