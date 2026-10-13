@@ -2,7 +2,7 @@
 
 [English](engineering-judgment.en.md) · [案例索引](README.md) · [代理负责人影响分析](change-impact.md)
 
-**工程实践声明：**本专题属于受控 CLI 实验，而非由 Coding Agent 交付的正式生产 PR。在严格沙箱中，由 Copilot CLI 生成故障归因、推导理由与候选补丁文本，再由高可信的独立验证程序应用并复核。（详见[演示目标与 Copilot 角色规范](../copilot-roles.md)）。
+**工程实践声明**：本专题属于受控 CLI 实验，而非由 Coding Agent 交付的正式生产 PR。在严格沙箱中，由 Copilot CLI 生成故障归因、推导理由与候选补丁文本，再由高可信的独立验证程序应用并复核。（详见[演示目标与 Copilot 角色规范](../copilot-roles.md)）。
 
 ## 实验结论与严谨边界
 

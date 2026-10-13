@@ -3,13 +3,13 @@
 [English](readiness.en.md) · [案例索引](README.md) ·
 [截图清单与校验记录](assets/readiness/manifest.json)
 
-**最终交付验收结果：**IT 服务台现已具备精准区分进程存活状态（Liveness）与底层数据库读写就绪状态（Readiness）的能力，同时完全保证了前期已交付的工单业务功能不受任何影响。
+**最终交付验收结果**：IT 服务台现已具备精准区分进程存活状态（Liveness）与底层数据库读写就绪状态（Readiness）的能力，同时完全保证了前期已交付的工单业务功能不受任何影响。
 [需求 Issue #18](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18)
 在人工完成确切镜像的端到端验收后正式关闭，时间为**北京时间 2026 年 10 月 13 日 06:38:35**（`2026-10-12T22:38:35Z`）。
 
 这是在演示仓库中真实完成的全流程交付，绝非虚构的历史数据，亦非全方位的生产安全认证。随后的[发布可靠性演练](reliability.md)已记录了 2 次通过的恢复测试，运维维护审查待后续开展。
 
-**交付主线关键标识：**实现代码 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
+**交付主线关键标识**：实现代码 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
 由 Coding Agent（`app/copilot-swe-agent`）自主提交。Copilot 生成的代码、Actions 自动化检查与人类最终的明确验收均独立建档留痕，严格区别于受限 CLI 附录中的离线实验（参见[演示目标与 Copilot 角色规范](../copilot-roles.md)）。
 
 ## 1. 真实故障现场观察，避免预设先入为主
@@ -177,4 +177,4 @@ ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafe
 
 ![显式验收及记录的关闭结果](assets/readiness/accepted-receipt.png)
 
-**严谨的技术边界：**就绪探测正常仅证明当前底层数据库可读，并不代表数据库具备写入能力、不代表复杂业务全链路绝对健康、不代表生产级延迟 SLA 保障，更不等于已完成全面的生产环境准入审计。存量基线中的依赖隐患、高并发数据库锁竞争评测与后续预防性维护仍待开展。本演练不作任何关于改善生产故障率或投资回报率（ROI）的主观宣称。
+**严谨的技术边界**：就绪探测正常仅证明当前底层数据库可读，并不代表数据库具备写入能力、不代表复杂业务全链路绝对健康、不代表生产级延迟 SLA 保障，更不等于已完成全面的生产环境准入审计。存量基线中的依赖隐患、高并发数据库锁竞争评测与后续预防性维护仍待开展。本演练不作任何关于改善生产故障率或投资回报率（ROI）的主观宣称。

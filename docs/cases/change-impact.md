@@ -2,7 +2,7 @@
 
 [English](change-impact.en.md) · [案例索引](README.md) · [故障诊断与策略评估](engineering-judgment.md)
 
-**工程实践声明：**本专题属于受控工程实验，而非由 Coding Agent 交付的生产功能 PR。在严格受限的沙箱中，由 Copilot CLI 生成分析方案与候选代码文本，再由高可信的独立测试程序在受限 Docker 容器中执行严密验证。（详见[演示目标与 Copilot 角色规范](../copilot-roles.md)）。
+**工程实践声明**：本专题属于受控工程实验，而非由 Coding Agent 交付的生产功能 PR。在严格受限的沙箱中，由 Copilot CLI 生成分析方案与候选代码文本，再由高可信的独立测试程序在受限 Docker 容器中执行严密验证。（详见[演示目标与 Copilot 角色规范](../copilot-roles.md)）。
 
 <a id="当前关卡"></a>
 ## 实验结论与审查边界

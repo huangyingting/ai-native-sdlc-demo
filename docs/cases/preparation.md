@@ -6,15 +6,15 @@
 
 ## 演示起点与环境上下文
 
-- **上游源仓库：** `huangyingting/ai-native-sdlc`
-- **源基线提交：** `b30e6bc3a693f674d48f1a9f76952176214eae9e`
-- **演示目标仓库：** `huangyingting/ai-native-sdlc-demo`
-- **GitHub 仓库 ID：** `1415043318`，创建于 `2026-10-12T04:14:53Z`
-- **初始基线提交：** `b8128949afaf3f078b70c057d8eea5ead0ecdcf1`
-- **指定审批人：** `huangyingting`，负责把关架构决策并签署各阶段审批
-- **工作流策略：** `decisions-v1`，采用单人主审策略
-- **被测业务应用：** IT 服务台初始版本（尚未实现工单负责人与就绪健康检查功能）
-- **工程实验应用：** 独立实验工程（包含基础责任人模型，尚未实现代理负责人功能）
+- **上游源仓库**：`huangyingting/ai-native-sdlc`
+- **源基线提交**：`b30e6bc3a693f674d48f1a9f76952176214eae9e`
+- **演示目标仓库**：`huangyingting/ai-native-sdlc-demo`
+- **GitHub 仓库 ID**：`1415043318`，创建于 `2026-10-12T04:14:53Z`
+- **初始基线提交**：`b8128949afaf3f078b70c057d8eea5ead0ecdcf1`
+- **指定审批人**：`huangyingting`，负责把关架构决策并签署各阶段审批
+- **工作流策略**：`decisions-v1`，采用单人主审策略
+- **被测业务应用**：IT 服务台初始版本（尚未实现工单负责人与就绪健康检查功能）
+- **工程实验应用**：独立实验工程（包含基础责任人模型，尚未实现代理负责人功能）
 
 ## 本地应用基线验证
 
@@ -36,7 +36,7 @@
 
 ## 自动化流水线凭据配置
 
-**2026-10-12 配置记录：** 仓库 Actions Secret 已于 `04:27:13Z`（北京时间 12:27:13）配置完成。
+**2026-10-12 配置记录**：仓库 Actions Secret 已于 `04:27:13Z`（北京时间 12:27:13）配置完成。
 虽然前置配置检查已确认 Secret 变量存在，但在首次尝试下发测试任务时，仍偶发了细粒度令牌访问鉴权异常。经操作人员调整授权范围后，[重试操作顺利通过](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38206744511)，无需重复走文档审批流程。测试任务及随后的[实现任务](https://github.com/huangyingting/ai-native-sdlc-demo/actions/runs/38210668893)均成功下发给自动化 Agent，全程严格防范令牌明文泄漏。
 
 在流转至代码开发阶段前，必须在仓库中预置 `COPILOT_ASSIGN_TOKEN`。而前期的需求规格文档生成完全依赖 GitHub Actions 内置的系统令牌，严禁将个人访问令牌（PAT）硬编码至提示词或 Issue 中。
