@@ -44,7 +44,8 @@ wants operational and engineering judgment. All pages are read-only records.
 |---|---|---|
 | 0–5 min | [Reliability observations](cases/reliability.en.md) | Two fresh-volume runs, six mutation kills, one fallback per incident, and a preserved candidate write. Recovery is not maintenance approval or an SLO. |
 | 5–11 min | [Diagnosis and strategy table](cases/engineering-judgment.en.md) | Six repairs, four full passes: both strategies misclassify configuration. Compare nine actual calls and measured usage without a general ranking. |
-| 11–15 min | [Exact-hash proxy proposal](cases/change-impact.en.md) | Accountable versus effective owner affects domain, storage, API and contract. Stop at the explicit pending approval; do not imply implementation. |
+| 11–15 min | [Reviewed proxy implementation](cases/change-impact.en.md) | Accountable versus effective owner affects four surfaces. Delegated local review precedes one isolated call; 15 unchanged tests and 35 checks pass. This is not independent Human acceptance. |
 
 No new model request, fault injection or approval is needed to present the
-recorded scenarios. Maintenance review and proxy implementation remain separate gates.
+recorded scenarios. Maintenance review remains pending; the verified proxy
+candidate is not a deployed feature or production authorization.

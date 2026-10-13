@@ -1,21 +1,33 @@
-# 变更影响：先审查代理负责人方案，再实现
+# 变更影响：从审查方案到兼容实现
 
 [English](change-impact.en.md) · [案例索引](README.md) · [诊断与策略](engineering-judgment.md)
 
-## 当前关卡
+<a id="当前关卡"></a>
+## 结果与审查边界
 
 一次真实 Copilot 调用生成了完整影响方案，其引用和语义已审查，
 隔离基线 **15/15** 通过。
-**仍待操作者明确批准。尚无实现调用、批准回执、应用修改或 35 项影响检查结果。**
+用户随后要求自主作出决定并完成演示，助手据此执行**委托的本地操作者审查**，
+批准未改变的方案，进行一次有限调用。
+实现通过 **15/15 不变测试和 35/35 独立检查**。
 
-[方案审查](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)
-是持久的英文记录。创建该 Issue 不会批准方案。
+[方案审查](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)和
+[完成结果](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30#issuecomment-6136318336)
+是持久的英文记录。回执标签 `copilot-operator` 不是经过 GitHub 身份认证的审查者，
+`independentHumanReview` 为 false。更早未回答的提问没有被追认为批准。
+
 基线[工程实验应用](../../demos/engineering-lab/README.md)仍无代理负责人功能，
-IT 服务台也未修改。
+为可重复比较而特意保持不变。代理实现存在于隔离候选代码中，
+不是已部署的服务台功能或已验收的生产交付。
 
 ![原始准确哈希方案审查](assets/engineering/impact-review.png)
 
-来源见[截图记录](assets/engineering/manifest.json)。
+原来的待审查截图保持不变。随后委托审查和实际 Green 结果单独记录：
+
+![委托操作者审查与已验证代理实现](assets/engineering/impact-result.png)
+
+来源见[截图记录](assets/engineering/manifest.json)及
+[脱敏实现摘要](assets/engineering/impact-summary.json)。
 
 ## 拟议业务规则
 
@@ -43,7 +55,8 @@ effectiveOwner(ticket) = ticket.proxyOwner ?? ticket.owner ?? null
 缺失、非正数、非整数或非数字标识必须抛出 `RangeError`，
 不能插入或修改工单。两位受支持负责人和 null 都是有效赋值。
 十五项已批准可见测试必须保持不变，实现还必须通过 **35 项独立影响检查**。
-这些是后续验收条件，不是已经取得的结果。
+候选实现满足了这些条件，所有获批测试文件内容不变，
+只有允许的四个文件与基线不同。
 
 ## 准确方案绑定
 
@@ -59,7 +72,8 @@ effectiveOwner(ticket) = ticket.proxyOwner ?? ticket.owner ?? null
 修改方案后需要新哈希和新审查。本地操作者回执只是开发测试关卡，
 不是经过 GitHub 身份认证的人类验收，也不是另一个交付阶段的批准。
 
-## 真实方案用量与隔离
+<a id="真实方案用量与隔离"></a>
+## 真实调用用量与隔离
 
 合格方案使用实测默认模型 `gpt-5.6-sol`：
 一次调用，耗时 **50,733 毫秒**，**7,209 输入／3,445 输出 token**，
@@ -68,21 +82,44 @@ effectiveOwner(ticket) = ticket.proxyOwner ?? ticket.owner ?? null
 未推算美元价格。工具数和工具请求数均验证为零，
 十五项对照测试的沙箱已清理。
 
+单次实现调用使用同一实测模型：**33,480 毫秒**、
+**10,090 输入／2,414 输出 token**、缓存读取为零，
+10,087 缓存写入 token 已包含在输入中，一个高级请求单位，
+**9,872,700,000 nano-AIU**。再次验证工具数为零；
+可见测试和独立检查沙箱均已清理。未重试实现，也未人工修改候选代码。
+
 更早的隔离拒绝单独保留：45,871 毫秒，
 8,294 输入／3,182 输出 token，一个高级请求单位，
 10,510,700,000 nano-AIU。两个可用工具别名导致拒绝，即使实际请求数为零。
 未复用或执行其输出。这是明确披露的兼容性失败，不是隐藏的成功方案重试。
 
-## 下一步授权动作
+<a id="下一步授权动作"></a>
+## 已验证实现结果
 
 ```text
-审查准确方案 → 操作者明确批准 → 验证全部绑定
+审查准确方案 → 委托本地批准 → 验证全部绑定
     → 一次有限实现调用 → 不变的十五项测试与三十五项影响检查
     → 报告实际结果，包括失败 → 清理沙箱
 ```
 
-尚未开始实现。明确批准后，适配器只可修改允许的四个文件，
-生成源码只能在受限 Docker 中执行。应保留结果，不能静默修改或重试。
-操作命令统一参照
-[可复用影响分析流程](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.md)；
-本页记录的是实际当前关卡。
+| 已验证范围 | 独立检查 |
+|---|---|
+| 负责人 | 责任负责人不变；代理分配、转交、清空及有效负责人和 null 组合 |
+| 迁移 | 增加可为空 TEXT 列，保留原表根页、索引、元数据和原工单字段 |
+| 持久化 | 代理在关闭重开后保留，多次初始化无破坏 |
+| 筛选与 API | 负责人和状态 AND 组合，保留原字段与代理、有效负责人显式 null |
+| 无效输入 | 要求的 TypeError/RangeError，不插入或修改数据 |
+| 修改范围 | 仅四个允许文件改变，十五项获批测试不变，行为约定已更新 |
+
+候选哈希：
+`a88beb04eeca099d17ed3f4a79ef35ba646845d3c6bfadcfadff88714db518e0`。
+可见验证 15/15，没有跳过、取消或待办测试；独立检查 35/35，退出码 0。
+两个沙箱都成功清理。
+
+当前全部场景共记录十二次真实调用：一次保留的隔离拒绝、一次方案、
+九次对比实验和一次实现。实验中的两次分类失败保持不变。
+
+生成代码只在受限 Docker 中运行，从未在宿主机执行；
+私有提示词、回复和候选源码不公开。这完成了有限变更影响实验，
+不是独立人类验收或生产授权。操作命令统一参照
+[可复用影响分析流程](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.md)。

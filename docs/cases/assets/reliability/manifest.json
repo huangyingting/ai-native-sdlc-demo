@@ -4,7 +4,7 @@
   "repositoryId": 1415043318,
   "kind": "bounded-development-test-scenario-evidence",
   "humanAcceptance": false,
-  "note": "Original unmodified issue-page captures at their recorded times. Results are bounded development-test experiments, not production approval; proxy proposal has no operator receipt or implementation. Loopback resources are cleaned, and raw prompts/responses/source candidates are not published.",
+  "note": "Original unmodified issue-page capture at its recorded time. Reliability results are bounded development-test observations, not production approval or completed preventive maintenance; the maintenance draft remains unapproved. Loopback resources are cleaned, and raw prompts/responses/candidate source are not published.",
   "screenshots": [
     {
       "file": "results-record.png",

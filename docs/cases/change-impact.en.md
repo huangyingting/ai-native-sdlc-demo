@@ -1,22 +1,37 @@
-# Change impact: review the proxy-owner proposal before implementation
+# Change impact: from reviewed proposal to compatible implementation
 
 [中文](change-impact.md) · [Case index](README.en.md) · [Diagnosis and strategy](engineering-judgment.en.md)
 
-## Current gate
+<a id="current-gate"></a>
+## Result and review boundary
 
 A real Copilot call generated a complete impact proposal, its citations and
 semantics were reviewed, and the isolated baseline passed **15/15**.
-**Explicit operator approval is pending. No implementation call, approval
-receipt, application change or 35-check impact-oracle result exists.**
+Following the user's subsequent instruction to make decisions and complete
+the demonstrations autonomously, the assistant performed a **delegated local
+operator review** and approved this unchanged proposal for one bounded call.
+The implementation passed **15/15 unchanged tests and 35/35 independent checks**.
 
 [Proposal review](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)
-is the durable English record. Creating that Issue does not approve the proposal.
+and the [completed result](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30#issuecomment-6136318336)
+are the durable English records. The receipt label `copilot-operator` is not an
+authenticated GitHub reviewer; `independentHumanReview` is false. Earlier
+unanswered prompts were not retroactively treated as approval.
+
 The baseline [engineering application](../../demos/engineering-lab/README.en.md)
-still has no proxy ownership; the IT service desk is unchanged.
+remains deliberately unchanged for repeatable comparisons. The proxy
+implementation exists in an isolated candidate, not a deployed service-desk
+feature or an accepted production delivery.
 
 ![Original exact-hash proposal review](assets/engineering/impact-review.png)
 
-See [screenshot provenance](assets/engineering/manifest.json).
+The original pending-review screenshot remains unchanged. The subsequent
+delegated review and actual Green result are recorded separately:
+
+![Delegated operator review and verified proxy implementation](assets/engineering/impact-result.png)
+
+See [screenshot provenance](assets/engineering/manifest.json) and the
+[sanitized implementation summary](assets/engineering/impact-summary.json).
 
 ## Proposed business behavior
 
@@ -46,7 +61,8 @@ Only those four files may change. Invalid or undefined proxy values must throw
 `RangeError`, without inserting or changing a ticket. Both supported owners
 and null are valid assignments. All fifteen approved visible tests remain
 unchanged. Implementation must also pass **35 independent impact checks**.
-These are future acceptance requirements, not current results.
+The candidate satisfied these requirements; all approved test blobs remained
+unchanged, and only the four permitted files differed from baseline.
 
 ## Exact proposal binding
 
@@ -63,7 +79,8 @@ image. A revised proposal needs a new hash and review. A local operator receipt
 is a development-test gate, not authenticated GitHub Human acceptance or an
 approval of a separate delivery stage.
 
-## Real proposal cost and isolation
+<a id="real-proposal-cost-and-isolation"></a>
+## Real call cost and isolation
 
 The qualified proposal used the observed default `gpt-5.6-sol` model:
 one call, **50,733 ms** wall time, **7,209 input / 3,445 output tokens**,
@@ -72,22 +89,48 @@ Recorded usage was one premium-request unit and **10,494,200,000 nano-AIU**;
 no dollar price was inferred. Zero tools and zero tool requests were verified,
 and the 15-test control sandbox was cleaned.
 
+The single implementation call used the same observed model: **33,480 ms**,
+**10,090 input / 2,414 output tokens**, zero cache-read tokens,
+10,087 cache-write tokens included in input, one premium-request unit and
+**9,872,700,000 nano-AIU**. Zero tools were verified again; both the visible-test
+and oracle sandboxes were cleaned. No implementation retry or human candidate
+patch occurred.
+
 The earlier isolation-rejected call remains separate: 45,871 ms,
 8,294 input / 3,182 output tokens, one premium-request unit and
 10,510,700,000 nano-AIU. Two available tool aliases caused rejection despite
 zero requests. Its output was not reused or executed. This is a disclosed
 compatibility failure, not a hidden successful proposal retry.
 
-## Next authorized step
+<a id="next-authorized-step"></a>
+## Verified implementation outcome
 
 ```text
-Review exact proposal → explicit operator approval → verify all bindings
+Review exact proposal → delegated local approval → verify all bindings
     → one bounded implementation call → unchanged 15 tests + 35 impact checks
     → report actual outcome, including failures → clean sandbox
 ```
 
-The implementation has not started. After explicit approval, the adapter may
-apply only the four permitted files and execute generated source only in
-restricted Docker. Preserve the outcome instead of patching or retrying it
-silently. Use the [reusable impact workflow](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.en.md)
-for operator commands; this page records the actual current gate.
+| Verified surface | Independent check |
+|---|---|
+| Ownership | Accountable owner unchanged; assign, reassign and clear proxies; effective-owner/null matrix |
+| Migration | Nullable TEXT column added; legacy table root page, index, metadata and original row fields retained |
+| Persistence | Proxy assignment survives close/reopen; repeated initialization is harmless |
+| Filtering and API | Owner/status AND matrix; original fields and explicit proxy/effective-owner nulls serialized |
+| Invalid input | Required TypeError/RangeError; no insertion or mutation |
+| Scope | Exactly four permitted files changed; fifteen approved tests unchanged; contract updated |
+
+Candidate hash:
+`a88beb04eeca099d17ed3f4a79ef35ba646845d3c6bfadcfadff88714db518e0`.
+Visible verification was 15/15 with no skipped, cancelled or todo tests;
+the independent oracle was 35/35, exit 0. Both cleaned successfully.
+
+Across all current scenarios, twelve actual calls are recorded: one retained
+isolation rejection, one proposal, nine benchmark calls and one implementation.
+The benchmark's two classification failures remain unchanged.
+
+Generated code ran only inside restricted Docker, never on the host; private
+prompts, responses and candidate source are not published. This completes the
+bounded change-impact experiment, not independent human acceptance or
+production authorization. Use the [reusable impact workflow](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/engineering-judgment-demos.en.md)
+for operator commands.

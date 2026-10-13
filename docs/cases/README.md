@@ -96,7 +96,7 @@
 | 专题 | 实际结果 | 尚存边界 |
 |---|---|---|
 | [发布可靠性](reliability.md) | 23 项精确资格断言、六个变异被杀死；两次全新数据卷准入、回退与恢复演练通过 | 仅为运行观察，[维护审查 #28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28)待完成 |
-| [变更影响](change-impact.md) | 真实方案和引用已审查，十五项对照测试通过 | [准确哈希方案 #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)待操作者批准；无实现或三十五项独立检查结果 |
+| [变更影响](change-impact.md) | 准确哈希方案已审查，一次隔离实现通过十五项不变测试和三十五项独立检查 | [记录 #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)保留委托本地审查，不是独立人类验收；仓库基线不变 |
 | [故障诊断](engineering-judgment.md) | 六组行为修复通过，两组环境分类错误 | 保留分类失败，不以测试绿灯覆盖 |
 | [Agent 策略评估](engineering-judgment.md) | 六组九次真实调用，4/6 完整验收通过，比较用量与耗时 | 每组一次试验，不作普遍统计排名 |
 
