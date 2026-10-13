@@ -6,10 +6,10 @@
 下述两项核心业务交付均由 Coding Agent 自动创建实现 PR，并通过了独立验证与人工现场验收。
 工程实践附录则展示了在受限环境下由 CLI 生成分析方案与补丁候选，并通过独立测试套件客观评估的实测数据。
 
-**已验收的工单负责人案例：**[图文实录](ownership.zh-CN.md) ·
+**已验收的工单负责人案例**：[图文实录](ownership.zh-CN.md) ·
 [截图清单与校验记录](assets/ownership/manifest.json)
 
-**已验收的数据库就绪检查案例：**[图文实录](readiness.md) ·
+**已验收的数据库就绪检查案例**：[图文实录](readiness.md) ·
 [截图清单与校验记录](assets/readiness/manifest.json)
 
 <a id="交付主线"></a>
