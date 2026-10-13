@@ -1,40 +1,28 @@
 <a id="repeatable-brownfield-demo-toolkit"></a>
-# 可重复的存量项目演示工具包
+# 可重复的存量系统交付演示工具包
 
 [English](README.en.md)
 
-这是一个无依赖的 **Node.js 24+** CLI，服务于 IT 服务台的固定负责人工能。
-它准备隔离源码树、执行只读就绪检查、在本地运行精确交付镜像，
-并导出真实 GitHub 证据。
-它绝不创建远程仓库、触发工作流、修改 GitHub、批准工作、重置源码或提交/推送。
+这是一个无外部依赖的 **Node.js 24+** CLI 工具，服务于 IT 服务台的工单负责人交付全流程演示。
+它支持准备隔离的源码树、执行只读就绪检查、在本地运行确切交付镜像，并导出真实的 GitHub 审计凭证。
+本工具坚决不擅自创建远程仓库、不随意触发工作流、不篡改 GitHub 线上状态、不代人工签署审批、不重置本地代码，亦不自动提交或推送代码。
 
-**第一次运行演示？**请按
-[演练指南的准备顺序](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery-walkthrough.md#1-prepare-the-repository)，
-依次完成导出、检查、Git 初始化、远程发布、设置和预检。
-本 README 用作命令参考。
+**初次运行演示？** 请遵循
+[分步演练指南的操作步骤](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery-walkthrough.md#1-prepare-the-repository)，
+依次完成代码导出、检查、Git 初始化、远程发布、权限配置与前置预检。本 README 作为命令速查参考。
 
-架构、截图及已完成开发测试运行的真实证据，见
-[图解交付案例](../../docs/cases/ownership.zh-CN.md)。
-本 README 仍是命令与安全参考。
+完整架构设计、现场截图与已完成的端到端真实凭证，请参阅
+[工单负责人交付案例实录](../../docs/cases/ownership.zh-CN.md)。
 
-**构建/验证/部署/运维后续工作：**
-`qualify`、`verify-image` 和 `rehearse` 的使用方法见
-[三个可靠性闭环演练指南](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-reliability-loops.md)。
-这些新增命令在临时导出中验证就绪测试资格，
-并演练真实不可变容器、只读本地流量、隔离故障，以及有明确负责人的维护草案。
-它们不会改变不含负责人功能的基线、发布 GitHub 决策或证明生产就绪。
-临时运行资源会清理；证据保留在仓库之外。
+**构建/验证/部署/运维后续演练：**
+关于 `qualify`、`verify-image` 与 `rehearse` 指令的深入说明，请参阅
+[可靠性闭环演练指南](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-reliability-loops.md)。
+这些指令允许在临时导出目录中快速验证就绪测试的断言有效性，并在本地演练不可变容器运行、只读本地流量分配、隔离故障注入以及生成责任明确的维护复盘草案。它们绝不会修改上游未实现负责人的基线代码，亦不擅自发布 GitHub 审批或宣称生产达标。所有临时运行资源均会在演练结束后自动清理，审计凭据保留在仓库外部。
 
-资格验证识别已提交的旧版 `readiness-v1` 配置（13 项精确断言），
-以及当前 `ticket-schema-readiness-v1` 配置
-（存储、GET/HEAD 和存活套件中的 23 项精确断言）。
-两者都要求捕获六项变异且不修改测试；
-当前配置还通过先成功再注入故障的热存储转换，拒绝缓存成功结果。
-受控写入使用与资格配置绑定的负责人，不会套用其他演示的名单。
-镜像与源码的应用 Git 树必须精确一致。
+前置资格验证能够自动识别已归档的旧版 `readiness-v1` 规则集（13 项精确断言）以及当前的 `ticket-schema-readiness-v1` 规则集（存储层、GET/HEAD 路由与存活套件中的 23 项精确断言）。两者均严格要求测试能精准捕杀 6 处变异故障且严禁篡改测试用例；当前规则集还通过“先成功、再注入故障”的热存储状态切换，严格拒绝错误缓存成功结果的实现。受控写入使用与资格规范绑定的测试负责人，杜绝生搬硬套其他演示中的成员名单。容器镜像与源码的 Git 代码树必须保持严格一致。
 
-这是可复用工具，不是 npm workspace 或应用依赖。
-在仓库根目录运行：
+本工具属于独立的工程实用工具，非 npm workspace 亦非演示应用的运行依赖。
+在仓库根目录下运行：
 
 ```sh
 node tools/brownfield-demo/cli.mjs --help
@@ -43,26 +31,22 @@ node tools/brownfield-demo/cli.mjs scenario show ownership-standard
 node --test tools/brownfield-demo/tests/*.test.mjs
 ```
 
-工具包单元测试注入合成基线文件和匹配的测试专用清单，
-因此导出的演示实现负责人工能后，它们仍可运行。
-生产指纹保持不变：合成或修改后的应用文件仍无法通过真实基线检查。
-单元测试通过，不是当前应用仍为无负责人工能基线的证据。
+工具包自带的单元测试通过注入合成的基线文件与测试清单运行；因此即使导出的演示目录已经交付了负责人功能，测试依然能稳定通过。真实的基线指纹校验保持严格：任何合成或被篡改的业务文件均无法通过真实的基线校验。单元测试通过不代表当前应用仍处于无负责人功能的原始基线状态。
 
 <a id="1-choose-one-fixed-scenario"></a>
-## 1. 选择一个固定场景
+## 1. 选择一个固定的演练场景
 
-数据、人工 Intent 模板和未填写的验收清单位于
-[`demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/`](../../demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios)。
+演练数据、人工 Intent 模板与待填写的验收清单收录在
+[`demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/`](../../demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios) 目录下。
 
-| ID | 差别在流程，而非功能 |
+| 场景标识 (ID) | 差异在于流程机制，而非业务功能 |
 | --- | --- |
-| `ownership-standard` | 正常的版本化人工评审、Red/Green、合并、镜像验证与人工验收 |
-| `ownership-spec-revision` | 真实 Spec 反馈与修订；在相同交付前，只批准修订版本 |
-| `ownership-failure-recovery` | 真实失败、原因诊断、操作员修复及真正重试，不绕过门禁 |
+| `ownership-standard` | 标准生命周期：版本化人工评审、受控 Red/Green、代码合并、镜像验证与人工最终验收 |
+| `ownership-spec-revision` | 真实需求修订：呈现对 Spec 的人工反馈与修订流转；在同一交付中仅批准最终修订版本 |
+| `ownership-failure-recovery` | 真实故障处置：呈现构建与鉴权失败、根因定位、运维人员修复及真实重试，绝不绕过安全门禁 |
 
-所有变体都使用恰好两位本地负责人（Avery Stone 和 Jordan Lee）、
-默认未分配的工单、详情页分配/重新分配/清除，
-以及与现有过滤条件取交集的负责人过滤器。
+所有场景变体均使用两位固定的本地成员（Avery Stone 与 Jordan Lee）、
+默认未分配工单、详情页指派/转交/清空逻辑，以及与既有条件按 AND 取交集的筛选器。
 AC-1 到 AC-5 规定记录、引用集合、非法输入、迁移保留与持久化。
 不隐式包含认证、SLA、通知、外部身份或其他功能。
 数据清单**不是** Spec、实现、批准、已填充数据库或完成运行声明。
