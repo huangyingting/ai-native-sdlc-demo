@@ -26,6 +26,14 @@ They do not change the ownership-free baseline, publish GitHub decisions, or
 establish production readiness. Temporary runtime resources are cleaned;
 evidence is retained outside the repository.
 
+Qualification recognizes the committed legacy `readiness-v1` profile
+(13 exact assertions) and the current `ticket-schema-readiness-v1` profile
+(23 exact assertions across store, GET/HEAD and liveness suites). Both require
+six detected mutants and unchanged tests; the current profile additionally
+rejects cached success through a prior-success warm-store transition. Controlled
+fixture owners are bound to that qualified profile, not guessed from a different
+demo's roster. Image/source application trees must match exactly.
+
 This is a reusable utility, not an npm workspace or application dependency.
 Run from the repository root:
 

@@ -8,6 +8,7 @@ import { createLab, immutableImage } from "./lab.mjs";
 import { createGateway } from "./gateway.mjs";
 import { probeService, requireHealthy, requireUnavailable } from "./probes.mjs";
 import { monitorService, buildMaintenanceIntent, verifyRecovery } from "./operations.mjs";
+import { readinessQualificationContract } from "./qualify.mjs";
 
 const sourceRoot = fileURLToPath(new URL("../../", import.meta.url));
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -109,14 +110,18 @@ function snapshot(lab, container) {
   return { sha256: sha256(JSON.stringify(value)), count: value.rows.length };
 }
 
-function fixtureWrite(lab, container, id) {
+function fixtureWrite(lab, container, id, owners) {
   if (![1, 2].includes(id)) throw new Error("Only known fresh lab fixture IDs may be updated.");
+  if (!Array.isArray(owners) || owners.length !== 2 ||
+      owners.some((owner) => typeof owner !== "string" || !/^[a-z][a-z0-9-]+$/.test(owner))) {
+    throw new Error("A qualified two-owner fixture contract is required.");
+  }
   lab.exec(container, `
 import { DatabaseSync } from "node:sqlite";
 const db = new DatabaseSync("/app/data/service-desk.db");
 try {
   const result = db.prepare("UPDATE tickets SET owner = ? WHERE id = ?").run(
-    ${JSON.stringify(id === 1 ? "avery-stone" : "jordan-lee")}, ${id});
+    ${JSON.stringify(owners[id - 1])}, ${id});
   if (result.changes !== 1) throw new Error("Fixture write must update exactly one row");
 } finally { db.close(); }
 `);
@@ -138,13 +143,14 @@ export async function rehearseReliability(options) {
   const qualificationBytes = readFileSync(options.qualification);
   const qualification = JSON.parse(qualificationBytes);
   validateQualification(qualification);
+  const owners = readinessQualificationContract(qualification.profile).owners;
   return withLab(options, async (lab, report, destination, save) => {
     report.loop = "verification-release-operations";
     report.repo = repo;
     report.qualification = bindQualification(qualification, qualificationBytes, lab.revision);
     report.scope = "Same-image configuration/process recovery, read-only loopback traffic, new isolated fixture data. No cross-version migration or production canary.";
     const { stable, fault } = await verifyControls(lab, report, true);
-    fixtureWrite(lab, stable, 1);
+    fixtureWrite(lab, stable, 1, owners);
     report.dataBefore = snapshot(lab, stable);
     const gateway = await createGateway();
     try {
@@ -162,7 +168,7 @@ export async function rehearseReliability(options) {
       await waitForProbe(candidate.url);
       await gateway.promote({ ...candidate, image: options.image, release: "candidate" });
       await requireRouted(gateway, "candidate");
-      fixtureWrite(lab, candidate, 2);
+      fixtureWrite(lab, candidate, 2, owners);
       report.dataAfterCandidateWrite = snapshot(lab, candidate);
       if (report.dataBefore.sha256 === report.dataAfterCandidateWrite.sha256) throw new Error("Controlled candidate write was not observed.");
       let index = 0;
@@ -219,15 +225,12 @@ export async function rehearseReliability(options) {
 
 export function validateQualification(qualification) {
   const controls = [qualification?.baseline, qualification?.final];
-  const mutantIds = [
-    "skip-summary-read", "failure-returns-200", "ready-missing-no-store",
-    "failure-missing-no-store", "raw-error-logging", "mutate-frozen-error",
-  ];
-  if (qualification?.kind !== "readiness-test-qualification" || qualification.profile !== "readiness-v1" ||
+  const { total, mutantIds } = readinessQualificationContract(qualification?.profile);
+  if (qualification?.kind !== "readiness-test-qualification" ||
       qualification.qualified !== true || qualification.exitCode !== 0 ||
-      controls.some((control) => control?.status !== "passed" || control.total !== 13 ||
-        control.passed !== 13 || control.failed !== 0 || control.exitCode !== 0) || qualification.restored !== true ||
-      qualification.testBlobsUnchanged !== true || qualification.mutants?.length !== 6 ||
+      controls.some((control) => control?.status !== "passed" || control.total !== total ||
+        control.passed !== total || control.failed !== 0 || control.exitCode !== 0) || qualification.restored !== true ||
+      qualification.testBlobsUnchanged !== true || qualification.mutants?.length !== mutantIds.length ||
       mutantIds.some((id) => qualification.mutants.filter((mutant) => mutant.id === id && mutant.status === "killed").length !== 1) ||
       !fullSha(qualification.source?.commit) || typeof qualification.source?.repository !== "string") {
     throw new Error("A complete passing readiness-v1 qualification report is required before rehearsal.");

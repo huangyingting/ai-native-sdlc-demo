@@ -7,12 +7,13 @@ import { redact } from "../trace-viewer/trace-model.mjs";
 
 const sourceRoot = fileURLToPath(new URL("../../", import.meta.url));
 const outputLimit = 1024 * 1024;
-// Verified on CLI 1.0.89-3: an empty available-tools restores defaults, and a
+// Verified on CLI 1.0.89: an empty available-tools restores defaults, and a
 // nonempty allowlist overrides exclusions. Exclude these observed tools only;
 // structured zero-tool telemetry is still mandatory for every accepted call.
 const excludedTools = [
   "bash", "read_bash", "stop_bash", "list_bash", "apply_patch", "view", "web_fetch",
   "fetch_copilot_cli_documentation", "skill", "run_factory", "factories_manage", "sql",
+  "run_dynamic_workflow", "dynamic_workflows_manage",
   "session_store_sql", "read_agent", "list_agents", "write_agent", "rg", "glob", "task",
 ];
 const object = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
