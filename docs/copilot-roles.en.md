@@ -1,55 +1,35 @@
-# What Copilot does in these demonstrations
+# Demo goals, Copilot's role and results
 
 [中文](copilot-roles.md) · [Documentation](README.en.md) · [Presentation route](presenter.en.md)
 
-## Start with two different kinds of evidence
+## What each demonstration establishes
 
-The customer-facing delivery mainline and the controlled engineering experiments
-are **not the same workflow**. A results comment under the operator's name is
-not a Copilot-authored implementation PR.
-
-| Demonstration | Purpose | Copilot's actual contribution | Best evidence |
+| Demonstration | Purpose | Copilot's contribution | Result |
 |---|---|---|---|
-| [Ticket ownership](cases/ownership.en.md) | Deliver responsibility and handoffs without breaking existing work | Coding Agent writes implementation and opens a PR | [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9), author `app/copilot-swe-agent`, diff, CI and image acceptance |
-| [Database readiness](cases/readiness.en.md) | Turn an observed database gap into a reviewed, accepted change | Coding Agent implements the approved readiness contract | [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26), same bot author, frozen tests and exact-image verification |
-| [Release reliability](cases/reliability.en.md) | Verify admission, failure detection, fallback and data preservation | Uses the previously delivered image; **no new CLI diagnosis or repair call** in this rehearsal | Deterministic qualification and two runtime observations, not an autonomous AI repair |
-| [Proxy-owner impact](cases/change-impact.en.md) | Identify compatibility surfaces, then implement a bounded candidate | CLI generates the impact proposal and candidate source in two calls | Reviewed output excerpts, selected code difference and independent 15+35 checks |
-| [Diagnosis and strategy](cases/engineering-judgment.en.md) | Compare fault classification, repair and the cost of an extra diagnosis step | CLI generates diagnoses and repair candidates in nine calls | Actual rationale/classification excerpts, selected patches and all six cell outcomes |
+| [Ticket ownership](cases/ownership.en.md) | Make responsibility and handoffs visible without breaking existing work | Coding Agent implements [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | Accepted; 38 tests Green |
+| [Database readiness](cases/readiness.en.md) | Distinguish a live process from a readable ticket database | Coding Agent implements [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | Accepted; 47 tests Green; failed database probes return 503 |
+| [Release reliability](cases/reliability.en.md) | Verify admission, failure detection, fallback and data preservation | Rehearse the previously delivered image with deterministic scripts; no new CLI repair call | Two isolated runs passed; one fallback per incident and candidate writes preserved |
+| [Proxy-owner impact](cases/change-impact.en.md) | Add temporary assignment while preserving accountable ownership and compatibility | CLI generates an impact proposal and isolated candidate in two calls | 15 unchanged tests and 35 independent checks passed; not deployed into the service desk |
+| [Failure diagnosis](cases/engineering-judgment.en.md) | Distinguish product, test-harness and configuration faults | CLI generates classifications, rationales and repair candidates | Six behavioral repairs; four full passes; two incorrect configuration labels |
+| [Agent strategy comparison](cases/engineering-judgment.en.md) | Measure whether diagnosis-first improves results enough to justify its cost | Compare direct and diagnosis-first CLI strategies | Both pass 2/3; diagnosis-first uses six calls versus three; no general ranking |
 
-Lead a customer presentation with the first two rows. Use the remaining rows
-as engineering appendices, not more examples of a bot opening product PRs.
+## Three demonstration types
 
-## Who does what?
+- **Delivery mainline:** ownership and readiness cover requirement decisions,
+  approved documents, Coding Agent implementation, CI, image verification and acceptance.
+- **Operational rehearsal:** reliability tests fixed admission and recovery policies.
+- **Controlled engineering experiments:** proxy impact, diagnosis and strategy
+  comparison evaluate generated proposals and candidates against independent checks.
 
-| Actor | Responsibility | Do not confuse it with |
-|---|---|---|
-| GitHub Copilot Coding Agent | Authors implementation PRs under `app/copilot-swe-agent` | A user-authored documentation PR |
-| Copilot CLI | Produces structured proposal, rationale, classification and candidate text | An autonomous GitHub contributor in these restricted experiments |
-| AI assistant using Copilot SDK in VS Code | Orchestrates the experiment, reviews outputs, records delegated local decisions and publishes reviewed summaries using the authorized account | An independent human reviewer or a separate bot identity |
-| GitHub Actions / trusted verification harness | Executes checks, applies allowlisted candidates, runs restricted Docker and records outcomes | Copilot grading its own proposed repair |
-| User / configured reviewer | Authorizes decisions and records explicit delivery approvals and acceptance | Every comment displaying the user's login |
+## Copilot and verification responsibilities
 
-The local receipt label `copilot-operator` is a label, **not an authenticated
-GitHub Copilot account**. Its recorded `independentHumanReview: false` remains
-false; it must not be presented as independent Human acceptance.
-
-## Why do Issues show huangyingting comments?
-
-The comments in ordinary experiment records
-[#28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28),
-[#29](https://github.com/huangyingting/ai-native-sdlc-demo/issues/29) and
-[#30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)
-were published by the assistant using the user's authorized GitHub credentials.
-The visible login identifies the publishing account, not necessarily the
-person or model that produced the content.
-
-These CLI calls deliberately verified zero available tools and zero tool
-requests. The CLI could not edit the repository, comment on GitHub, open a PR
-or approve itself. The operator's summaries are not Coding Agent comments.
-Likewise, [PR #31](https://github.com/huangyingting/ai-native-sdlc-demo/pull/31)
-and [PR #32](https://github.com/huangyingting/ai-native-sdlc-demo/pull/32) publish
-documentation and evidence under `huangyingting`; they are not the model's
-implementation PRs.
+- **Coding Agent:** implements the reviewed feature and submits the code PR.
+- **Copilot CLI:** generates structured analysis and candidate text. These
+  experiments require zero available tools and zero tool requests.
+- **Actions and the verification harness:** execute checks, apply allowlisted
+  candidates and run restricted Docker; the model does not grade its own repair.
+- **Delivery review:** approves specifications, plans, tests and implementation
+  separately from final artifact acceptance.
 
 ## The two actual execution chains
 
@@ -61,18 +41,18 @@ Delivery mainline:
 Restricted experiment:
   fixed synthetic input → Copilot CLI proposal / diagnosis / candidate text
     → trusted allowlisted adapter → Docker tests + independent checks
-    → assistant-reviewed summary published through the operator account
+    → measured result and code-difference evidence
 ```
 
 The engineering baseline is deliberately unchanged. A verified isolated proxy
 candidate does not mean proxy ownership was deployed into the service desk.
 
-## Show the work, not just the usage totals
+## Evidence to inspect
 
 For a CLI experiment, show these four items in order:
 
 1. **Input:** the fixed request and relevant supplied faulty or baseline code.
-2. **Model output:** an actual rationale or classification, not a retelling.
+2. **Model output:** the actual rationale and classification.
 3. **Candidate difference:** a reviewed excerpt of the code it proposed.
 4. **Independent outcome:** scope, test preservation, behavioral checks and classification gate.
 
@@ -84,17 +64,14 @@ response hashes already present in the measured summaries. The
 explain those excerpts. Original model quotes remain English on both language
 pages; the surrounding explanation is translated.
 
-These selections were reviewed by the assistant, not independently authenticated
-by a human. They are **not full raw transcripts or complete candidate files**.
-Private/system prompts, credentials, raw sessions and full candidate payloads
-remain unpublished. Preparing this documentation added no experiment calls
-and did not alter or rerun a failed cell.
+Only selected final-answer text and code differences are published, not full
+raw transcripts or complete candidate files. Private prompts, credentials and
+raw sessions remain unpublished.
 
-## What the presenter must not claim
+## Conclusion boundaries
 
 - Reliability scripts following a fixed policy are not Copilot autonomously choosing rollback.
 - The model naming a configuration cause does not fix a wrong `classification` field.
 - Green behavior is not complete experimental acceptance; two classification failures remain.
-- CLI usage totals and hashes alone do not explain the model's reasoning.
-- An operator-account comment is not proof of Copilot authorship or personal human review.
-- No bot identity, independent approval, deployment or production certification is invented.
+- One trial per small synthetic case does not establish statistical strategy superiority.
+- Functional acceptance and isolated experiment results are not production certification.

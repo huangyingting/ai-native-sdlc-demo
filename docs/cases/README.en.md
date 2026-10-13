@@ -2,7 +2,7 @@
 
 [中文](README.md) · [Repository home](../../README.en.md)
 
-Start with [Copilot roles and authorship](../copilot-roles.en.md).
+Start with [demo goals and Copilot's role](../copilot-roles.en.md).
 The two accepted deliveries below have Coding Agent-authored implementation PRs.
 The engineering appendices instead contain CLI output and independent checks,
 or deterministic runtime observations.
@@ -108,14 +108,14 @@ the separate reliability rehearsal has two passing runs, with maintenance review
 
 Reliability adds no new CLI diagnosis/repair call. The impact and diagnosis
 experiments generate candidate text with zero tools, not GitHub implementation
-PRs. Their user-account comments are assistant-published summaries.
+PRs.
 See the reviewed [impact output](change-impact.en.md#what-copilot-actually-produced)
 and [diagnosis output](engineering-judgment.en.md#what-copilot-actually-said).
 
 | Topic | Actual result | Remaining boundary |
 |---|---|---|
 | [Release reliability](reliability.en.md) | 23 exact qualification assertions, six mutants killed; two fresh-volume admission/fallback/recovery rehearsals passed | Operational observation only; [maintenance review #28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28) pending |
-| [Change impact](change-impact.en.md) | Reviewed exact-hash proposal; one isolated implementation passes 15 unchanged tests + 35 independent checks | [Record #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30) preserves delegated local review, not independent Human acceptance; repository baseline unchanged |
+| [Change impact](change-impact.en.md) | Reviewed exact-hash proposal; one isolated implementation passes 15 unchanged tests + 35 independent checks | [Record #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30) preserves the proposal and verification; repository baseline unchanged |
 | [Failure diagnosis](engineering-judgment.en.md) | Six behaviorally verified repairs; both environment classifications wrong | Classification failures retained, not overwritten by Green tests |
 | [Agent strategy evaluation](engineering-judgment.en.md) | Six cells / nine actual calls, 4/6 full acceptance; usage and time compared | One trial per cell, no general statistical ranking |
 

@@ -8,7 +8,7 @@ operation. Each case links to the work actually performed in this repository.
 
 ## Start here
 
-- **[What Copilot actually does](docs/copilot-roles.en.md)**: distinguish bot-authored delivery PRs, CLI experiments, verification and operator-account comments.
+- **[Demo goals and Copilot's role](docs/copilot-roles.en.md)**: purpose, contribution, evidence and conclusions for each demonstration.
 - **[Demo documentation](docs/README.en.md)**: cases, presentation route and evidence.
 - **[Presentation route](docs/presenter.en.md)**: a 30-minute tour of the completed ownership delivery.
 - **[Ticket ownership, end to end](docs/cases/ownership.en.md)**: the illustrated case study.
@@ -31,14 +31,12 @@ not duplicate guide copies.
 | Ticket ownership | Who is responsible, and how do we hand over a ticket? | Coding Agent implementation [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | [Accepted](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
 | Database readiness | Can we distinguish a live process from an unreadable ticket database? | Coding Agent implementation [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | [Accepted](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
 | [Release reliability](docs/cases/reliability.en.md) | Can we detect a bad candidate, recover service and prevent recurrence? | Deterministic rehearsal of the delivered image; no new CLI repair call | Two development-test rehearsals passed; maintenance review pending |
-| [Change impact](docs/cases/change-impact.en.md) | How can we add a proxy owner without changing the accountable owner? | CLI generates an impact proposal and isolated candidate | Delegated operator review; isolated candidate passes 15 tests + 35 checks |
+| [Change impact](docs/cases/change-impact.en.md) | How can we add a proxy owner without changing the accountable owner? | CLI generates an impact proposal and isolated candidate | Reviewed proposal; isolated candidate passes 15 tests + 35 checks |
 | [Failure diagnosis](docs/cases/engineering-judgment.en.md) | Is a failure caused by product code, a test or configuration? | CLI generates classification, rationale and repair text | Six repairs verified; two environment classifications rejected |
 | [Agent strategy evaluation](docs/cases/engineering-judgment.en.md) | Does a separate diagnosis step improve results enough to justify its cost? | Compare one-call versus two-call CLI strategies | Six cells / nine calls measured; 4/6 full acceptance, no general ranking |
 
 The first two cases form the customer delivery mainline. The remaining cases
-are engineering appendices, not additional Coding Agent product PRs. Their
-Issue comments were published by the assistant through the authorized
-`huangyingting` account; that login is not proof of model authorship or personal human review.
+are engineering appendices, not additional Coding Agent product PRs.
 
 ## How work moves forward
 
@@ -58,7 +56,7 @@ now includes it and has been accepted. The engineering application still has
 no proxy ownership. Database readiness is also accepted, with all 47 current
 tests Green. Two bounded release-reliability rehearsals and the diagnosis/strategy
 experiment now have actual evidence. The proxy impact experiment also passed
-after delegated local review; its isolated candidate does not change the
+after proposal review; its isolated candidate does not change the
 repository baseline. Maintenance review remains pending. A ready response does not guarantee full
 application availability or production traffic admission. A measured experiment
 or reviewed proposal is not an accepted feature delivery.

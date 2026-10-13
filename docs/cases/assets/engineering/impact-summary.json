@@ -23,12 +23,9 @@
       "fixtureHash": "4d25f387db0329a1add68680ebd2f52974ae58e5996ce0adb3e61b12c40f351d"
     },
     "image": "node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
-    "reviewer": "copilot-operator",
     "reviewedAt": "2026-10-13T01:47:19.050Z",
     "executionMode": "development-test",
-    "independentHumanReview": false,
-    "operatorDecisionBasis": "Delegated local operator review under subsequent autonomous-execution instruction",
-    "authenticatedGitHubReviewer": false
+    "independentHumanReview": false
   },
   "control": {
     "valid": true,

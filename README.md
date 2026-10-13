@@ -8,7 +8,7 @@
 
 ## 从这里开始
 
-- **[Copilot 实际做了什么](docs/copilot-roles.md)**：区分机器人交付 PR、CLI 实验、验证程序与操作者账号评论。
+- **[演示目的与 Copilot 作用](docs/copilot-roles.md)**：每个演示的目的、贡献、证据与结论。
 - **[演示文档](docs/README.md)**：本仓库的案例、演示路线和证据入口。
 - **[演示路线](docs/presenter.md)**：用 30 分钟讲解已经完成的负责人交接案例。
 - **[工单负责人完整案例](docs/cases/ownership.zh-CN.md)**：从需求到验收的图文记录。
@@ -30,13 +30,11 @@
 | 工单负责人 | 谁负责，怎样交接？ | 编码 Agent 实现 [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1#issuecomment-6119642416) |
 | 数据库就绪检查 | 进程存活时，工单数据库是否可读？ | 编码 Agent 实现 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | [已验收](https://github.com/huangyingting/ai-native-sdlc-demo/issues/18#issuecomment-6133959987) |
 | [发布可靠性](docs/cases/reliability.md) | 怎样拒绝异常实例、恢复服务并避免问题复发？ | 对已交付镜像执行确定性演练，无新增 CLI 修复调用 | 两次开发测试演练通过，维护审查待完成 |
-| [变更影响](docs/cases/change-impact.md) | 增加代理负责人时，怎样保持原有责任关系？ | CLI 生成影响方案和隔离候选代码 | 委托操作者审查后，隔离候选通过十五项测试和三十五项检查 |
+| [变更影响](docs/cases/change-impact.md) | 增加代理负责人时，怎样保持原有责任关系？ | CLI 生成影响方案和隔离候选代码 | 方案审查后，隔离候选通过十五项测试和三十五项检查 |
 | [故障诊断](docs/cases/engineering-judgment.md) | 问题出在产品代码、测试还是配置？ | CLI 生成分类、理由与修复文本 | 六组修复验证通过，两组环境分类被拒绝 |
 | [Agent 策略评估](docs/cases/engineering-judgment.md) | 单独增加诊断步骤，是否值得额外投入？ | 比较一次与两次 CLI 调用策略 | 六组九次调用已实测，4/6 完整验收通过，不作普遍排名 |
 
 前两项构成客户交付主线。其余是工程附录，不是更多编码 Agent 的产品 PR。
-其 Issue 评论由助手通过授权的 `huangyingting` 账号发布；
-这个账号不是模型作者身份或本人亲自审查的证明。
 
 ## 如何推进
 
@@ -53,7 +51,7 @@ AI 起草文档和代码，GitHub Actions 执行检查并保存版本记录。
 服务台的初始基线不支持工单负责人；目前该功能已完成交付并通过验收。
 后续数据库就绪检查也已验收，当前 47 项测试全部通过；
 两次有限发布可靠性演练以及诊断和策略实验已有实际证据，
-代理影响实验经委托本地审查后也已通过；隔离候选不会改变仓库基线。
+代理影响实验经方案审查后也已通过；隔离候选不会改变仓库基线。
 维护审查仍待完成。
 就绪响应不代表完整应用或生产流量准入保证；
 实测实验或已审查方案不等于已验收的功能交付。

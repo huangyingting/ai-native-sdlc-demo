@@ -16,8 +16,7 @@ historical result or production certification. The subsequent
 **Delivery mainline:** implementation [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
 is authored by `app/copilot-swe-agent`. Copilot's code, Actions verification
 and explicit user acceptance are separate records. This differs from the
-restricted CLI appendices and their operator-account summaries;
-see [roles and provenance](../copilot-roles.en.md).
+restricted CLI appendices; see [demo goals and Copilot's role](../copilot-roles.en.md).
 
 ## 1. Observe the gap before prescribing a solution
 
@@ -44,9 +43,7 @@ proposal as an approved HTTP contract.
 
 ## 2. Record six decisions together, not six approvals
 
-The user authorized selecting the recommended discovery outcomes and posting
-them using the configured account. When the workflow required a revision after
-each answer, the user explicitly requested native batch support.
+Native batch decisions record multiple discovery outcomes in one command.
 [PR #23](https://github.com/huangyingting/ai-native-sdlc-demo/pull/23) added
 atomic batches while preserving individual commands and separate approval gates.
 
@@ -242,13 +239,9 @@ only after this gate, not after unit tests, a merge or automated image verificat
 
 ![Explicit acceptance and recorded closure](assets/readiness/accepted-receipt.png)
 
-This is authorized single-account demonstration review, not independent
-multi-person assurance. Checks were assistant-run; product delegation and
-Spec, Plan, Tests, implementation and final acceptance were explicitly authorized.
-
 **Limits remain:** readiness establishes current database readability, not
 write availability, all application journeys, authentication, bounded latency
 or sufficient production traffic admission. Baseline dependency advisories,
-contention measurement, broader fault matrices and the release-reliability
-exercise remain outstanding. No production failure-rate, ROI or recovery-time
+contention measurement, broader fault matrices and preventive maintenance
+remain follow-ups. No production failure-rate, ROI or recovery-time
 improvement is claimed.

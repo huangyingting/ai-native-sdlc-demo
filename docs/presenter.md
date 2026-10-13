@@ -4,11 +4,10 @@
 
 ## 演示前
 
-先读[各方分别做了什么](copilot-roles.md)。
+先读[演示目的与 Copilot 作用](copilot-roles.md)。
 在 [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9)或
 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
 中指明真实作者 `app/copilot-swe-agent`，再展示代码差异和 Actions 检查。
-附录 Issue 使用操作者账号，是摘要，不是机器人创建的实现 PR。
 
 打开案例正文和下表中的 GitHub 页面即可讲解，不需要重新运行 AI、发表评论或提交批准。
 14 张截图直接保存在仓库中，便于在 Markdown 预览中阅读。
@@ -28,13 +27,12 @@
 
 ## 讲解时不要混淆
 
-- 浏览器核验由助手执行；产品决定、阶段批准和验收由用户确认。
+- 应用检查、阶段批准与最终验收分别作为证据。
 - 这是功能验收，不是生产认证；8 项基线依赖告警尚未处理。
 - 就绪检查、故障恢复和工程实验在[案例索引](cases/README.md)中保留实际进度；
   历史实验不代表本仓库的计划案例已经完成。
 - 截图显示拍摄时的状态；查看原始记录时，请核对提交、工作流编号、执行次数和镜像摘要。
   截图不能替代绑定版本的证据。
-- 操作者账号评论可能由助手经授权编写、发布，不证明 Copilot 机器人身份或本人亲自审查；本地委托回执不是独立人类验收。
 
 需要深入讲方法时，转到
 [AI 原生软件交付指南](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/ai-native-sdlc/README.md)；

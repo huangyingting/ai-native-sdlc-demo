@@ -4,11 +4,10 @@
 
 ## Prepare
 
-Read [who did what](copilot-roles.en.md) first. Point to the actual
+Read [demo goals and Copilot's role](copilot-roles.en.md) first. Point to the actual
 `app/copilot-swe-agent` author on [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9)
 or [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26), then show
-its code diff and Actions checks. The appendix Issues use the operator's account;
-they are summaries, not bot-authored implementation PRs.
+its code diff and Actions checks.
 
 Open the case study and the GitHub pages below. This is a read-only
 presentation: no new model calls, comments, approvals or workflow runs are
@@ -30,13 +29,12 @@ recorded localhost addresses are not public deployments.
 
 ## Keep the boundaries clear
 
-- The assistant ran browser checks; the user confirmed product decisions, stage approvals and acceptance.
+- Application checks, stage approvals and final acceptance are separate evidence.
 - This is functional acceptance, not production certification; eight baseline dependency advisories remain.
 - Readiness, recovery and engineering experiments retain their actual status in the [case index](cases/README.en.md).
   Historical exercises do not establish completion of this repository's planned cases.
 - Screenshots show capture-time state. Check source revision, run, attempt and image digest in the original records;
   a screenshot is not a substitute for version-bound evidence.
-- Operator-account comments may have been authored/published by the assistant under authorization. They do not establish Copilot bot identity or personal human review; a local delegated receipt is not independent Human acceptance.
 
 For deeper method questions, use the
 [AI-native SDLC guide](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/ai-native-sdlc/README.en.md).

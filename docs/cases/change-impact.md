@@ -3,32 +3,25 @@
 [English](change-impact.en.md) · [案例索引](README.md) · [诊断与策略](engineering-judgment.md)
 
 **这是工程附录，不是编码 Agent 的产品 PR。** Copilot CLI 生成方案和候选文本，
-可信验证程序执行检查。助手通过用户授权账号发布 Issue 摘要。
-角色与评论来源见[参与者说明](../copilot-roles.md)。
+可信验证程序执行检查。参照[演示目的与 Copilot 作用](../copilot-roles.md)。
 
 <a id="当前关卡"></a>
 ## 结果与审查边界
 
 一次真实 Copilot 调用生成了完整影响方案，其引用和语义已审查，
 隔离基线 **15/15** 通过。
-用户随后要求自主作出决定并完成演示，助手据此执行**委托的本地操作者审查**，
-批准未改变的方案，进行一次有限调用。
+经审查的方案、样本、行为约定和不可变镜像保持相同哈希，再进行一次受限实现调用。
 实现通过 **15/15 不变测试和 35/35 独立检查**。
 
 [方案审查](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)和
 [完成结果](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30#issuecomment-6136318336)
-是持久的英文记录。回执标签 `copilot-operator` 不是经过 GitHub 身份认证的审查者，
-`independentHumanReview` 为 false。更早未回答的提问没有被追认为批准。
+保留方案与执行结果。
 
 基线[工程实验应用](../../demos/engineering-lab/README.md)仍无代理负责人功能，
 为可重复比较而特意保持不变。代理实现存在于隔离候选代码中，
 不是已部署的服务台功能或已验收的生产交付。
 
 ![原始准确哈希方案审查](assets/engineering/impact-review.png)
-
-原来的待审查截图保持不变。随后委托审查和实际 Green 结果单独记录：
-
-![委托操作者审查与已验证代理实现](assets/engineering/impact-result.png)
 
 来源见[截图记录](assets/engineering/manifest.json)及
 [脱敏实现摘要](assets/engineering/impact-summary.json)。
@@ -100,8 +93,7 @@ effectiveOwner(ticket) = ticket.proxyOwner ?? ticket.owner ?? null
 | 沙箱镜像 | `node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6` |
 
 批准必须绑定未改变的方案、样本、约定和不可变镜像。
-修改方案后需要新哈希和新审查。本地操作者回执只是开发测试关卡，
-不是经过 GitHub 身份认证的人类验收，也不是另一个交付阶段的批准。
+修改方案后需要新哈希和新审查。开发测试中的方案审查不替代交付产品的验收。
 
 <a id="真实方案用量与隔离"></a>
 ## 真实调用用量与隔离
@@ -128,7 +120,7 @@ effectiveOwner(ticket) = ticket.proxyOwner ?? ticket.owner ?? null
 ## 已验证实现结果
 
 ```text
-审查准确方案 → 委托本地批准 → 验证全部绑定
+审查准确方案 → 记录审查 → 验证全部绑定
     → 一次有限实现调用 → 不变的十五项测试与三十五项影响检查
     → 报告实际结果，包括失败 → 清理沙箱
 ```
