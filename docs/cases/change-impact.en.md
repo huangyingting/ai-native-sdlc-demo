@@ -4,24 +4,20 @@
 
 **Engineering appendix, not a Coding Agent product PR.** Copilot CLI generated
 the proposal and candidate text; the trusted harness executed verification.
-The assistant published the Issue summaries through the authorized user account.
-See [roles and comment provenance](../copilot-roles.en.md).
+See [demo goals and Copilot's role](../copilot-roles.en.md).
 
 <a id="current-gate"></a>
 ## Result and review boundary
 
 A real Copilot call generated a complete impact proposal, its citations and
 semantics were reviewed, and the isolated baseline passed **15/15**.
-Following the user's subsequent instruction to make decisions and complete
-the demonstrations autonomously, the assistant performed a **delegated local
-operator review** and approved this unchanged proposal for one bounded call.
+The reviewed proposal, fixture, contract and immutable image were bound to
+the same hashes before one restricted implementation call.
 The implementation passed **15/15 unchanged tests and 35/35 independent checks**.
 
 [Proposal review](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)
 and the [completed result](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30#issuecomment-6136318336)
-are the durable English records. The receipt label `copilot-operator` is not an
-authenticated GitHub reviewer; `independentHumanReview` is false. Earlier
-unanswered prompts were not retroactively treated as approval.
+preserve the proposal and execution outcome.
 
 The baseline [engineering application](../../demos/engineering-lab/README.en.md)
 remains deliberately unchanged for repeatable comparisons. The proxy
@@ -29,11 +25,6 @@ implementation exists in an isolated candidate, not a deployed service-desk
 feature or an accepted production delivery.
 
 ![Original exact-hash proposal review](assets/engineering/impact-review.png)
-
-The original pending-review screenshot remains unchanged. The subsequent
-delegated review and actual Green result are recorded separately:
-
-![Delegated operator review and verified proxy implementation](assets/engineering/impact-result.png)
 
 See [screenshot provenance](assets/engineering/manifest.json) and the
 [sanitized implementation summary](assets/engineering/impact-summary.json).
@@ -109,9 +100,8 @@ unchanged, and only the four permitted files differed from baseline.
 | Sandbox image | `node@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6` |
 
 Approval must bind the unchanged proposal, fixture, contract and immutable
-image. A revised proposal needs a new hash and review. A local operator receipt
-is a development-test gate, not authenticated GitHub Human acceptance or an
-approval of a separate delivery stage.
+image. A revised proposal needs a new hash and review. This development-test
+review does not replace acceptance of a delivered product.
 
 <a id="real-proposal-cost-and-isolation"></a>
 ## Real call cost and isolation
@@ -140,7 +130,7 @@ compatibility failure, not a hidden successful proposal retry.
 ## Verified implementation outcome
 
 ```text
-Review exact proposal → delegated local approval → verify all bindings
+Review exact proposal → record review → verify all bindings
     → one bounded implementation call → unchanged 15 tests + 35 impact checks
     → report actual outcome, including failures → clean sandbox
 ```

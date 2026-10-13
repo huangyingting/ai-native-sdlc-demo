@@ -15,8 +15,7 @@
 
 **这是交付主线：**实现 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)
 作者为 `app/copilot-swe-agent`。Copilot 代码、Actions 验证和用户明确验收分别记录。
-这不同于受限 CLI 附录及其操作者账号摘要；
-角色与来源见[参与者说明](../copilot-roles.md)。
+这不同于受限 CLI 附录；参照[演示目的与 Copilot 作用](../copilot-roles.md)。
 
 ## 1. 先观察问题，不预先指定答案
 
@@ -42,8 +41,7 @@
 
 ## 2. 一次记录六项决定，不等于一次批准六个阶段
 
-用户授权选择推荐的探索结论，并使用已配置账号记录评论。
-当工作流要求每回答一个问题就生成一次修订时，用户明确要求支持原生批量回答。
+原生批量决定允许一条命令记录多项探索结论。
 [PR #23](https://github.com/huangyingting/ai-native-sdlc-demo/pull/23)
 加入原子性批量命令，同时保留单项命令和独立的批准关卡。
 
@@ -231,10 +229,7 @@ ghcr.io/huangyingting/ai-native-sdlc-demo-it-service-desk@sha256:84bff5d0817cafe
 
 ![显式验收及记录的关闭结果](assets/readiness/accepted-receipt.png)
 
-这是获得授权的单账号演示审查，不是独立多人保证。
-验证由助手执行；产品决定委托、规格、计划、测试、实现及最终验收均得到显式授权。
-
 **边界仍在：**就绪检查只证明当前数据库可读，
 不证明可写、完整应用流程、认证、响应时限或足以允许生产流量。
-基线依赖风险、锁竞争测量、其他故障矩阵和发布可靠性演练仍待处理。
+基线依赖风险、锁竞争测量、其他故障矩阵和预防性维护仍待跟进。
 没有声称改善了生产故障率、投入回报或恢复时间。

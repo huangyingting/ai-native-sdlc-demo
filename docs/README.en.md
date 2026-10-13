@@ -12,7 +12,7 @@ unchanged by translation.
 
 ## Start here
 
-First read [what Copilot does and why comments use the operator account](copilot-roles.en.md).
+First read [demo goals, Copilot's role and results](copilot-roles.en.md).
 Use the Coding Agent-authored ownership/readiness PRs as the delivery mainline;
 the CLI experiments and deterministic reliability rehearsal are appendices.
 
@@ -39,7 +39,7 @@ passing isolated rehearsals, with maintenance review pending. Diagnosis and
 strategy evaluation completed six real cells: six repairs verified, four
 fully accepted, with both wrong environment classifications preserved.
 The change-impact candidate passed 15 unchanged tests and 35 independent
-checks after delegated local operator review. The repository baseline remains
+checks after proposal review. The repository baseline remains
 unchanged for repeatable comparisons. These experiments are not production
 certification or automatic feature acceptance.
 

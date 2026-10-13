@@ -1,50 +1,32 @@
-# Copilot 在这些演示中到底做了什么
+# 演示目的、Copilot 的作用与结果
 
 [English](copilot-roles.en.md) · [文档首页](README.md) · [演示路线](presenter.md)
 
-## 先区分两类证据
+## 每个演示验证什么
 
-面向客户的交付主线与受控工程实验**不是同一套流程**。
-操作者账号下的结果评论，不是 Copilot 编写实现的 PR。
-
-| 演示 | 目的 | Copilot 的实际贡献 | 最适合展示的证据 |
+| 演示 | 目的 | Copilot 的贡献 | 结果 |
 |---|---|---|---|
-| [工单负责人](cases/ownership.zh-CN.md) | 增加责任归属和交接，不破坏已有工作 | 编码 Agent 编写实现并创建 PR | [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9)，作者为 `app/copilot-swe-agent`，查看差异、CI 和镜像验收 |
-| [数据库就绪检查](cases/readiness.md) | 把观察到的数据库缺口变成经审查、验收的修改 | 编码 Agent 实现获批的就绪约定 | [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26)，同一机器人作者，冻结测试与指定镜像验证 |
-| [发布可靠性](cases/reliability.md) | 验证准入、故障检测、回退和数据保留 | 使用此前交付的镜像；本次演练**没有新增 CLI 诊断或修复调用** | 确定性资格验证与两次运行观察，不是 AI 自主修复 |
-| [代理负责人影响](cases/change-impact.md) | 识别兼容性范围，再实现有限候选代码 | CLI 用两次调用生成影响方案与候选源码 | 已审查的输出摘录、选定代码差异和独立 15+35 检查 |
-| [诊断与策略](cases/engineering-judgment.md) | 比较故障分类、修复和多一步诊断的成本 | CLI 用九次调用生成诊断与修复候选 | 实际理由、分类摘录、选定补丁和六组完整结果 |
+| [工单负责人](cases/ownership.zh-CN.md) | 增加责任归属和交接，不破坏已有工作 | 编码 Agent 实现 [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) | 已验收，38 项测试 Green |
+| [数据库就绪检查](cases/readiness.md) | 区分进程存活与工单数据库可读 | 编码 Agent 实现 [PR #26](https://github.com/huangyingting/ai-native-sdlc-demo/pull/26) | 已验收，47 项测试 Green，数据库探测失败返回 503 |
+| [发布可靠性](cases/reliability.md) | 验证准入、故障检测、回退和数据保留 | 固定脚本演练此前交付的镜像，无新增 CLI 修复调用 | 两次隔离演练通过，每个事件一次回退，候选写入保留 |
+| [代理负责人影响](cases/change-impact.md) | 增加临时代理，保留责任负责人和兼容性 | CLI 用两次调用生成影响方案和隔离候选 | 十五项不变测试和三十五项独立检查通过，未部署进服务台 |
+| [故障诊断](cases/engineering-judgment.md) | 区分产品、测试框架和配置故障 | CLI 生成分类、理由与修复候选 | 六组行为修复通过，四组完整通过，两组配置标签错误 |
+| [Agent 策略比较](cases/engineering-judgment.md) | 衡量先诊断是否值得额外成本 | 比较直接与先诊断 CLI 策略 | 均完整通过 2/3，先诊断六次调用，直接三次，不作普遍排名 |
 
-客户演示先讲前两项。其余作为工程附录，不要当作更多机器人创建产品 PR 的案例。
+## 三类演示
 
-## 各方分别负责什么
+- **交付主线：**负责人和就绪检查覆盖需求决定、文档批准、编码 Agent 实现、
+  CI、镜像验证和验收。
+- **运行演练：**可靠性验证固定的准入与恢复策略。
+- **受控工程实验：**代理影响、诊断和策略比较，用独立检查评估生成的方案与候选。
 
-| 参与者 | 职责 | 不要混同为 |
-|---|---|---|
-| GitHub Copilot Coding Agent | 以 `app/copilot-swe-agent` 身份提交实现 PR | 用户账号创建的文档 PR |
-| Copilot CLI | 生成结构化方案、理由、分类和候选文本 | 本次受限实验中自主操作 GitHub 的贡献者 |
-| VS Code 中使用 Copilot SDK 的 AI 助手 | 编排实验、审查输出、记录委托的本地决定，并通过授权账号发布审查后的摘要 | 独立人类审查者或另外一个机器人身份 |
-| GitHub Actions／可信验证程序 | 执行检查、应用白名单候选、运行受限 Docker 并记录结果 | Copilot 给自己提出的修复打分 |
-| 用户／配置的审查者 | 授权决定，明确批准交付阶段并验收 | 所有显示用户账号的评论 |
+## Copilot 与验证程序的职责
 
-本地回执中的 `copilot-operator` 只是标签，**不是经过身份认证的 GitHub Copilot 账号**。
-记录中的 `independentHumanReview: false` 仍为 false，不能讲成独立人类验收。
-
-## 为什么 Issue 里都是 huangyingting 的评论
-
-普通实验记录
-[#28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28)、
-[#29](https://github.com/huangyingting/ai-native-sdlc-demo/issues/29)和
-[#30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)
-中的评论，由助手使用用户授权的 GitHub 凭据发布。
-显示的账号说明谁发布，不一定说明谁或哪个模型生成了内容。
-
-这些 CLI 调用特意验证可用工具数和工具请求数均为零。
-CLI 不能修改仓库、评论 GitHub、创建 PR 或批准自己。
-操作者的结果摘要不是编码 Agent 的评论。
-同样，[PR #31](https://github.com/huangyingting/ai-native-sdlc-demo/pull/31)和
-[PR #32](https://github.com/huangyingting/ai-native-sdlc-demo/pull/32)
-由 `huangyingting` 发布文档和证据，不是模型提交的实现 PR。
+- **编码 Agent：**实现经审查的功能，提交代码 PR。
+- **Copilot CLI：**生成结构化分析和候选文本。实验要求可用工具数和工具请求数均为零。
+- **Actions 与验证程序：**执行检查、应用白名单候选并运行受限 Docker，
+  不是模型给自己的修复打分。
+- **交付审查：**规格、计划、测试和实现分别批准，最终产物另行验收。
 
 ## 两条实际执行链路
 
@@ -56,17 +38,17 @@ CLI 不能修改仓库、评论 GitHub、创建 PR 或批准自己。
 受限实验：
   固定模拟输入 → Copilot CLI 方案／诊断／候选文本
     → 可信白名单适配器 → Docker 测试与独立检查
-    → 助手审查摘要，通过操作者账号发布
+    → 实测结果与代码差异证据
 ```
 
 工程实验基线特意保持不变。隔离代理候选通过，不代表服务台已经部署代理负责人功能。
 
-## 展示过程，不只展示用量数字
+## 应查看的证据
 
 CLI 实验应依次展示四项：
 
 1. **输入：**固定请求，以及实际提供的相关故障或基线代码。
-2. **模型输出：**实际理由或分类，不是操作者转述。
+2. **模型输出：**实际理由与分类。
 3. **候选差异：**模型提出的代码中经过审查的摘录。
 4. **独立结果：**修改范围、测试保留、行为检查和分类关卡。
 
@@ -76,16 +58,13 @@ CLI 实验应依次展示四项：
 [诊断案例](cases/engineering-judgment.md#copilot-实际说了什么)
 讲解这些摘录。两种语言页面都保留模型英文原句，周围说明分别翻译。
 
-这些选段由助手审查，不是经过身份认证的独立人类审查。
-它们**不是完整原始会话或完整候选文件**。
-私有或系统提示词、凭据、原始会话和完整候选载荷仍不公开。
-本次整理文档没有新增实验调用，没有修改或重跑失败组。
+只公开选定的最终回答文本和代码差异，不公开完整原始会话或完整候选文件。
+私有提示词、凭据和原始会话仍不公开。
 
-## 讲解时不能声称什么
+## 结论边界
 
 - 按固定策略运行的可靠性脚本，不是 Copilot 自主决定回退。
 - 模型说明配置原因正确，不会自动纠正错误的 `classification` 字段。
 - 行为绿灯不等于实验完整验收；两次分类失败仍然存在。
-- CLI 用量和哈希本身不能解释模型怎样推理。
-- 操作者账号评论不是 Copilot 作者身份或本人亲自审查的证明。
-- 不虚构机器人身份、独立批准、部署或生产认证。
+- 每个小型模拟样本一次试验，不能证明策略具有统计优势。
+- 功能验收和隔离实验结果不是生产认证。

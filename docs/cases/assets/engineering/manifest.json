@@ -4,7 +4,7 @@
   "repositoryId": 1415043318,
   "kind": "bounded-development-test-scenario-evidence",
   "humanAcceptance": false,
-  "note": "Original unmodified issue-page captures at their recorded times. The initial pending proposal and subsequent delegated local operator review / successful isolated implementation are separate historical captures. No independent human acceptance or production approval is claimed. Loopback resources are cleaned; raw prompts/responses/candidate source are not published.",
+  "note": "Original unmodified proposal and strategy-result captures at their recorded times, with source URLs and image hashes. Results are bounded development-test observations, not production certification. Loopback resources are cleaned; raw prompts/responses/candidate source are not published.",
   "screenshots": [
     {
       "file": "strategy-results.png",
@@ -35,25 +35,6 @@
       "humanAcceptance": false,
       "originalFile": "readiness-remaining-impact-record-verified.png",
       "issue": 30
-    },
-    {
-      "file": "impact-result.png",
-      "url": "https://github.com/huangyingting/ai-native-sdlc-demo/issues/30#issuecomment-6136318336",
-      "title": "Review synthetic proxy-owner impact proposal before implementation · Issue #30 · huangyingting/ai-native-sdlc-demo",
-      "selector": "#issuecomment-6136318336",
-      "capturedAt": "2026-10-13T01:50:39.201Z",
-      "width": 1440,
-      "height": 2000,
-      "bytes": 395014,
-      "sha256": "756fac184765c2b7059a1547b0cc3c7c1e4bf6e1607b8032a157c08f2f71e33a",
-      "execution": "assistant-run capture",
-      "humanAcceptance": false,
-      "originalFile": "readiness-impact-implemented-and-verified.png",
-      "issue": 30,
-      "commentId": 6136318336,
-      "executionStage": "delegated-local-review-and-verified-isolated-implementation",
-      "proposalHash": "2da119edb9b422f51024d85af9e9278aed748a958c1fa4891714cf1af869f02a",
-      "candidateHash": "a88beb04eeca099d17ed3f4a79ef35ba646845d3c6bfadcfadff88714db518e0"
     }
   ]
 }

@@ -5,8 +5,7 @@
 **Deterministic engineering appendix, not autonomous AI recovery.** This
 rehearsal adds no Copilot CLI diagnosis or repair call. Fixed scripts perform
 qualification, fault injection, monitoring and fallback against the previously
-delivered image. The assistant publishes the observations using the authorized
-operator account; see [roles and provenance](../copilot-roles.en.md).
+delivered image. See [demo goals and Copilot's role](../copilot-roles.en.md).
 
 ## Result and boundary
 

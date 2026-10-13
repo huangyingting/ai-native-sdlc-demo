@@ -2,7 +2,7 @@
 
 [English](README.en.md) · [仓库首页](../../README.md)
 
-先读[Copilot 的角色与作者身份](../copilot-roles.md)。
+先读[演示目的与 Copilot 作用](../copilot-roles.md)。
 下方两项已验收交付都有编码 Agent 创建的实现 PR。
 工程附录则展示 CLI 输出和独立检查，或确定性运行观察。
 
@@ -100,14 +100,13 @@
 
 可靠性演练没有新增 CLI 诊断或修复调用。
 影响与诊断实验在零工具条件下生成候选文本，不创建 GitHub 实现 PR。
-用户账号下的评论是助手发布的摘要。
 参照已审查的[影响输出](change-impact.md#copilot-实际生成了什么)和
 [诊断输出](engineering-judgment.md#copilot-实际说了什么)。
 
 | 专题 | 实际结果 | 尚存边界 |
 |---|---|---|
 | [发布可靠性](reliability.md) | 23 项精确资格断言、六个变异被杀死；两次全新数据卷准入、回退与恢复演练通过 | 仅为运行观察，[维护审查 #28](https://github.com/huangyingting/ai-native-sdlc-demo/issues/28)待完成 |
-| [变更影响](change-impact.md) | 准确哈希方案已审查，一次隔离实现通过十五项不变测试和三十五项独立检查 | [记录 #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)保留委托本地审查，不是独立人类验收；仓库基线不变 |
+| [变更影响](change-impact.md) | 准确哈希方案已审查，一次隔离实现通过十五项不变测试和三十五项独立检查 | [记录 #30](https://github.com/huangyingting/ai-native-sdlc-demo/issues/30)保留方案和验证结果；仓库基线不变 |
 | [故障诊断](engineering-judgment.md) | 六组行为修复通过，两组环境分类错误 | 保留分类失败，不以测试绿灯覆盖 |
 | [Agent 策略评估](engineering-judgment.md) | 六组九次真实调用，4/6 完整验收通过，比较用量与耗时 | 每组一次试验，不作普遍统计排名 |
 

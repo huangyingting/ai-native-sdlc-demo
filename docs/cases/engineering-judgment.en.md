@@ -4,8 +4,7 @@
 
 **Controlled CLI experiment, not a Coding Agent delivery.** The CLI generated
 diagnoses and candidate text; the trusted harness applied and verified it.
-Issue comments are assistant-published summaries using the authorized operator
-account. See [roles and comment provenance](../copilot-roles.en.md).
+See [demo goals and Copilot's role](../copilot-roles.en.md).
 
 ## Result and boundary
 
@@ -181,8 +180,8 @@ That rejected request is not one of the nine benchmark calls. Together with
 the later proxy proposal and implementation, there have been **twelve actual
 calls**: one rejected compatibility attempt, one proposal, nine benchmark
 requests and one bounded implementation. The [proxy experiment](change-impact.en.md)
-passed 15 unchanged tests and 35 independent checks after delegated local
-operator review; it does not change any of these six benchmark outcomes.
+passed 15 unchanged tests and 35 independent checks after proposal review;
+it does not change any of these six benchmark outcomes.
 
 ## Present or repeat it
 

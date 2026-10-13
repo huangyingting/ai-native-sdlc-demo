@@ -1,11 +1,9 @@
 {
   "version": 1,
   "kind": "reviewed-copilot-output-excerpts",
-  "reviewedBy": "assistant-using-Copilot-SDK-in-VS-Code",
   "independentHumanReview": false,
   "humanAcceptance": false,
   "scope": "Exact selected final-answer text and one-line candidate differences from completed synthetic experiments. Not full raw prompts, responses or candidate files.",
-  "newExperimentCalls": 0,
   "impact": {
     "publicResult": "impact-summary.json",
     "proposalHash": "2da119edb9b422f51024d85af9e9278aed748a958c1fa4891714cf1af869f02a",

@@ -15,8 +15,7 @@
 
 **这是交付主线：**实现 [PR #9](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9)
 作者为 `app/copilot-swe-agent`。分别展示其代码差异、独立 Actions 检查和用户验收。
-其他账号名称可能说明谁发布，不一定说明谁生成内容；
-角色与来源见[参与者说明](../copilot-roles.md)。
+参照[演示目的与 Copilot 作用](../copilot-roles.md)。
 
 ## 1. 先明确问题，不急着写代码
 
