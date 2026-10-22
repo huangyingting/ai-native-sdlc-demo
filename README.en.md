@@ -16,6 +16,7 @@ operation. Each case links to the work actually performed in this repository.
 - **[Release reliability](docs/cases/reliability.en.md)**: two isolated admission, fallback and recovery rehearsals.
 - **[Diagnosis and strategy](docs/cases/engineering-judgment.en.md)**: six real cells, preserved classification failures and measured cost.
 - **[Change impact](docs/cases/change-impact.en.md)**: reviewed proxy-owner proposal, isolated implementation, 15 unchanged tests and 35 independent checks.
+- **[Meeting-room workflow comparison](demos/meeting-room-booking/README.md)**: local OpenSpec, Spec Kit, and BMad implementations, histories, and usage comparison; independent Git repositories, not yet imported into the parent history.
 - **[Application](demos/it-service-desk/README.en.md)**: local installation and application commands.
 - **[Delivery commands](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.en.md)**:
   document review, pull-request checks and image acceptance.

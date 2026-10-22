@@ -30,6 +30,7 @@
 
 ## 目录结构与证据索引
 
+- [会议室预订方法对比](../demos/meeting-room-booking/README.md)：本地整合的 OpenSpec、Spec Kit 与 BMad 实验、运行历史和用量；三个应用仍保留独立 Git 历史，不代表已发布为父仓库的一部分。
 - [cases/](cases/README.md)：各交付案例的正文、实操记录与进度。
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json)：14 张原始截图清单，记录了完整来源、生成时间与文件哈希。
 - [cases/assets/readiness/](cases/assets/readiness/manifest.json)：21 张就绪检查过程截图，清晰区分基线镜像与新发布镜像的对比证据。
