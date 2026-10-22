@@ -14,6 +14,7 @@
 - **[发布可靠性演练](docs/cases/reliability.md)**：两次隔离环境下的准入拦截、自动回滚与数据恢复演练。
 - **[故障诊断与策略评估](docs/cases/engineering-judgment.md)**：基于真实样本的 6 组对照实验，记录分类失败详情并量化调用成本。
 - **[变更影响分析](docs/cases/change-impact.md)**：代理人方案审查、隔离候选实现、15 项既有回归测试与 35 项独立行为检查。
+- **[会议室预订方法对比](demos/meeting-room-booking/README.md)**：OpenSpec、Spec Kit 与 BMad 的本地实现、运行历史及用量比较；保留独立 Git 仓库，尚未导入父仓库历史。
 - **[运行 IT 服务台](demos/it-service-desk/README.md)**：本地运行环境依赖与常用操作命令。
 - **[交付流程命令参考](https://github.com/huangyingting/ai-native-sdlc/blob/main/docs/guides/brownfield-human-gated-delivery.md)**：
   文档审查、PR 检查门禁与镜像验收操作指南。

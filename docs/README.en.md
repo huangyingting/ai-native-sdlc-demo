@@ -45,6 +45,7 @@ certification or automatic feature acceptance.
 
 ## Files and evidence
 
+- [Meeting-room workflow comparison](../demos/meeting-room-booking/README.md): locally consolidated OpenSpec, Spec Kit, and BMad experiments, histories, and usage; the applications retain independent Git histories and are not yet published as part of the parent repository.
 - [cases/](cases/README.en.md): case narratives and progress.
 - [cases/assets/ownership/](cases/assets/ownership/manifest.json): 14 original screenshots with source, time and hashes.
 - [cases/assets/readiness/](cases/assets/readiness/manifest.json): 21 readiness screenshots with distinct baseline and delivered-image identities.
