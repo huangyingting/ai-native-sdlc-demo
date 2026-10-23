@@ -17,6 +17,7 @@ on:
       - ".github/workflows/copilot-cli-agent-demos.yml"
       - ".github/workflows/it-service-desk-ci.yml"
       - ".github/workflows/publish-trace-site.yml"
+      - ".github/workflows/publish-presentation-site.yml"
       - ".github/workflows/repository-ci.yml"
       - "tools/trace-viewer/**"
       - "tools/brownfield-demo/**"
@@ -25,6 +26,7 @@ on:
       - "demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/**"
       - ".node-version"
       - "package.json"
+      - "docs/presentation/**"
   push:
     branches: [main]
     paths:
@@ -42,6 +44,7 @@ on:
       - ".github/workflows/copilot-cli-agent-demos.yml"
       - ".github/workflows/it-service-desk-ci.yml"
       - ".github/workflows/publish-trace-site.yml"
+      - ".github/workflows/publish-presentation-site.yml"
       - ".github/workflows/repository-ci.yml"
       - "tools/trace-viewer/**"
       - "tools/brownfield-demo/**"
@@ -50,6 +53,7 @@ on:
       - "demos/it-service-desk/.github/brownfield-human-gated-delivery/scenarios/**"
       - ".node-version"
       - "package.json"
+      - "docs/presentation/**"
 
 permissions:
   contents: read

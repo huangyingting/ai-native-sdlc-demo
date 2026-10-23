@@ -11,7 +11,7 @@
     "demo:engineering": "node tools/engineering-demo/cli.mjs",
     "setup:brownfield": "node .github/brownfield-human-gated-delivery/scripts/setup.mjs",
     "test": "npm run test:automation && npm run test:trace-viewer && npm run test:demo-toolkit && npm run test:engineering-demo",
-    "test:automation": "node --test .github/brownfield-human-gated-delivery/tests/core.test.mjs .github/brownfield-human-gated-delivery/tests/github.test.mjs .github/brownfield-human-gated-delivery/tests/documents.test.mjs .github/brownfield-human-gated-delivery/tests/setup.test.mjs .github/scripts/build-demo-result-comment.test.mjs .github/scripts/it-service-desk-ci.test.mjs .github/scripts/prepare-demo-request.test.mjs .github/scripts/publish-trace-site.test.mjs",
+    "test:automation": "node --test .github/brownfield-human-gated-delivery/tests/core.test.mjs .github/brownfield-human-gated-delivery/tests/github.test.mjs .github/brownfield-human-gated-delivery/tests/documents.test.mjs .github/brownfield-human-gated-delivery/tests/setup.test.mjs .github/scripts/build-demo-result-comment.test.mjs .github/scripts/it-service-desk-ci.test.mjs .github/scripts/prepare-demo-request.test.mjs .github/scripts/publish-presentation-site.test.mjs .github/scripts/publish-trace-site.test.mjs",
     "test:trace-viewer": "npm --prefix tools/trace-viewer test",
     "test:demo-toolkit": "node --test tools/brownfield-demo/tests/*.test.mjs",
     "test:engineering-demo": "node --test tools/engineering-demo/tests/*.test.mjs"
