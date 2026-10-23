@@ -1,0 +1,56 @@
+name: Publish AI-Native SDLC Presentation
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/scripts/publish-presentation-site.mjs"
+      - ".github/workflows/publish-presentation-site.yml"
+      - "docs/presentation/**"
+      - "docs/cases/**"
+      - "docs/copilot-roles.md"
+      - "docs/copilot-roles.en.md"
+      - "tools/trace-viewer/**"
+      - "demos/meeting-room-booking/README.md"
+      - "demos/meeting-room-booking/docs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: copilot-trace-pages
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+        with:
+          path: source
+      - name: Check out Pages
+        uses: actions/checkout@v7
+        with:
+          ref: gh-pages
+          path: pages
+      - name: Build presentation site
+        run: node source/.github/scripts/publish-presentation-site.mjs source pages
+      - name: Push Pages update
+        working-directory: pages
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          if git diff --cached --quiet; then
+            echo "Presentation site is already current."
+            exit 0
+          fi
+          git commit -m "Publish AI-Native SDLC presentation"
+          git push origin HEAD:gh-pages
+          gh api --method POST "repos/${{ github.repository }}/pages/builds" >/dev/null

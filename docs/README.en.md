@@ -16,14 +16,19 @@ First read [demo goals, Copilot's role and results](copilot-roles.en.md).
 Use the Coding Agent-authored ownership/readiness PRs as the delivery mainline;
 the CLI experiments and deterministic reliability rehearsal are appendices.
 
-1. **Understand the result:** [ticket ownership case study](cases/ownership.en.md).
+1. **Explore the complete bilingual presentation:** open the
+   [interactive AI-native SDLC editorial edition](presentation/index.html).
+   It provides a client-ready narrative: why delivery must change, how to
+   build the operating model, choose methods, verify delivery with evidence,
+   and adopt the approach across an organization.
+2. **Understand the result:** [ticket ownership case study](cases/ownership.en.md).
    Then follow the [database-readiness maintenance delivery](cases/readiness.en.md).
-2. **Present it:** [presentation route](presenter.en.md).
-3. **Check scope and progress:** [case index](cases/README.en.md).
+3. **Present it:** [presentation route](presenter.en.md).
+4. **Check scope and progress:** [case index](cases/README.en.md).
    For the new topics, use [release reliability](cases/reliability.en.md),
    [diagnosis and strategy](cases/engineering-judgment.en.md), and the
    [verified change-impact experiment](cases/change-impact.en.md).
-4. **Inspect original records:**
+5. **Inspect original records:**
    [Intent](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) ·
    [Tests PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) ·
    [Implementation PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) ·

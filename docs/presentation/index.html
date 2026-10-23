@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A bilingual AI-native SDLC client presentation with an operating model, cases and evidence.">
+    <meta name="theme-color" content="#0b1f2a">
+    <title>AI-native SDLC · Research edition</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#slide">Skip to content</a>
+    <div class="page-shell">
+      <header class="topbar">
+        <button class="brand" type="button" data-action="home" aria-label="Go to opening">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span>
+            <strong>AI·SDLC</strong>
+            <small data-copy="edition">EDITORIAL EDITION</small>
+          </span>
+        </button>
+        <nav class="top-actions" aria-label="Presentation tools">
+          <button class="text-button" type="button" data-action="overview" data-copy="overview">Overview</button>
+          <button class="text-button" type="button" data-action="library" data-copy="library">Evidence library</button>
+          <div class="language-switch" role="group" aria-label="Language">
+            <button type="button" data-language="en" aria-pressed="true">EN</button>
+            <button type="button" data-language="zh" aria-pressed="false">中文</button>
+          </div>
+        </nav>
+      </header>
+
+      <aside class="chapter-rail" aria-label="Chapters">
+        <div class="rail-line" aria-hidden="true"></div>
+        <div id="chapter-nav"></div>
+      </aside>
+
+      <main id="slide" class="slide-stage" tabindex="-1" aria-live="polite"></main>
+
+      <footer class="controlbar">
+        <div class="progress-wrap" aria-hidden="true">
+          <span id="progress-bar"></span>
+        </div>
+        <div class="slide-meta">
+          <span id="slide-count">01 / 24</span>
+          <span id="chapter-label"></span>
+        </div>
+        <div class="control-actions">
+          <button class="icon-button" type="button" data-action="sources" aria-label="Open source notes" title="Source notes">
+            <span aria-hidden="true">⌁</span>
+          </button>
+          <button class="icon-button" type="button" data-action="previous" aria-label="Previous slide" title="Previous slide">
+            <span aria-hidden="true">←</span>
+          </button>
+          <button class="next-button" type="button" data-action="next">
+            <span data-copy="next">Next</span><span aria-hidden="true">→</span>
+          </button>
+        </div>
+      </footer>
+    </div>
+
+    <dialog id="overview-dialog" class="modal overview-modal">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow" data-copy="route">PRESENTATION ROUTE</span>
+          <h2 data-copy="overview">Overview</h2>
+        </div>
+        <button class="icon-button close-button" type="button" data-close aria-label="Close">×</button>
+      </div>
+      <div id="overview-grid" class="overview-grid"></div>
+    </dialog>
+
+    <dialog id="library-dialog" class="modal library-modal">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow" data-copy="evidenceBase">EVIDENCE BASE</span>
+          <h2 data-copy="library">Evidence library</h2>
+        </div>
+        <button class="icon-button close-button" type="button" data-close aria-label="Close">×</button>
+      </div>
+      <div class="library-tools">
+        <label>
+          <span class="sr-only" data-copy="search">Search sources</span>
+          <input id="library-search" type="search" placeholder="Search findings, limits, and sources…">
+        </label>
+        <div id="library-filters" class="filter-row" role="group" aria-label="Source groups"></div>
+      </div>
+      <div id="library-results" class="library-results"></div>
+    </dialog>
+
+    <aside id="source-drawer" class="source-drawer" aria-hidden="true" aria-label="Source notes">
+      <div class="drawer-head">
+        <div>
+          <span class="eyebrow" data-copy="sourceNotes">SPEAKER NOTES</span>
+          <h2 id="drawer-title"></h2>
+        </div>
+        <button class="icon-button" type="button" data-action="close-sources" aria-label="Close">×</button>
+      </div>
+      <div id="drawer-content"></div>
+    </aside>
+    <div id="drawer-scrim" class="drawer-scrim" data-action="close-sources"></div>
+
+    <script src="research-content.js"></script>
+    <script src="content.js"></script>
+    <script src="diagrams.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

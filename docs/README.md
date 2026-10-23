@@ -10,10 +10,11 @@
 建议首先阅读[演示目的、Copilot 的作用与验证结果](copilot-roles.md)。
 交付主线重点展示由 Coding Agent 创建的“工单负责人”与“就绪检查”PR；CLI 实验与确定性可靠性演练则作为工程附录呈现。
 
-1. **了解业务交付结果**：阅读[工单负责人图文案例实录](cases/ownership.zh-CN.md)；后续的运维维护交付可参阅[数据库就绪检查图文案例](cases/readiness.md)。
-2. **准备现场讲解**：查阅[30 分钟标准演示路线](presenter.md)。
-3. **核对交付范围与进度**：查阅[案例与进度总览](cases/README.md)；进阶工程专题包括[发布可靠性演练](cases/reliability.md)、[故障诊断与策略评估](cases/engineering-judgment.md)以及[已验证的变更影响实验](cases/change-impact.md)。
-4. **追溯原始证据链**：
+1. **浏览完整双语演示**：打开[AI-Native SDLC 交互式 HTML 编辑版](presentation/index.html)。演示围绕“为什么改变、如何建立运行模型、怎样选择方法、如何用证据验证交付，以及怎样在组织中落地”形成完整客户沟通主线。
+2. **了解业务交付结果**：阅读[工单负责人图文案例实录](cases/ownership.zh-CN.md)；后续的运维维护交付可参阅[数据库就绪检查图文案例](cases/readiness.md)。
+3. **准备现场讲解**：查阅[30 分钟标准演示路线](presenter.md)。
+4. **核对交付范围与进度**：查阅[案例与进度总览](cases/README.md)；进阶工程专题包括[发布可靠性演练](cases/reliability.md)、[故障诊断与策略评估](cases/engineering-judgment.md)以及[已验证的变更影响实验](cases/change-impact.md)。
+5. **追溯原始证据链**：
    [原始需求 Issue](https://github.com/huangyingting/ai-native-sdlc-demo/issues/1) ·
    [测试套件 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/8) ·
    [功能实现 PR](https://github.com/huangyingting/ai-native-sdlc-demo/pull/9) ·
