@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "repository": "huangyingting/ai-native-sdlc-demo",
+  "repositoryId": 1415043318,
+  "kind": "bounded-development-test-scenario-evidence",
+  "humanAcceptance": false,
+  "note": "Original unmodified issue-page capture at its recorded time. Reliability results are bounded development-test observations, not production approval or completed preventive maintenance; the maintenance draft remains unapproved. Loopback resources are cleaned, and raw prompts/responses/candidate source are not published.",
+  "screenshots": [
+    {
+      "file": "results-record.png",
+      "url": "https://github.com/huangyingting/ai-native-sdlc-demo/issues/28",
+      "title": "Release reliability rehearsal: admission, fallback and maintenance review · Issue #28 · huangyingting/ai-native-sdlc-demo · GitHub",
+      "selector": "body",
+      "capturedAt": "2026-10-13T01:18:52.643Z",
+      "width": 1440,
+      "height": 1800,
+      "bytes": 311396,
+      "sha256": "cae3c97cac11e71b599ef8cb02f1b46a11b069192680e887a7080a8221e69d8e",
+      "execution": "assistant-run capture",
+      "humanAcceptance": false,
+      "originalFile": "readiness-remaining-reliability-evidence.png",
+      "issue": 28
+    }
+  ]
+}

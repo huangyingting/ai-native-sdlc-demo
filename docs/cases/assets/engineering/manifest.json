@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "repository": "huangyingting/ai-native-sdlc-demo",
+  "repositoryId": 1415043318,
+  "kind": "bounded-development-test-scenario-evidence",
+  "humanAcceptance": false,
+  "note": "Original unmodified proposal and strategy-result captures at their recorded times, with source URLs and image hashes. Results are bounded development-test observations, not production certification. Loopback resources are cleaned; raw prompts/responses/candidate source are not published.",
+  "screenshots": [
+    {
+      "file": "strategy-results.png",
+      "url": "https://github.com/huangyingting/ai-native-sdlc-demo/issues/29",
+      "title": "Diagnosis and strategy comparison: measured six-cell development-test results · Issue #29 · huangyingting/ai-native-sdlc-demo",
+      "selector": "body",
+      "capturedAt": "2026-10-13T01:22:13.372Z",
+      "width": 1440,
+      "height": 2000,
+      "bytes": 307606,
+      "sha256": "15f3394b37ca0ea124dd2dd4be3a9cc8145d852c87f9e49d39cad0850190738b",
+      "execution": "assistant-run capture",
+      "humanAcceptance": false,
+      "originalFile": "readiness-remaining-strategy-record-verified.png",
+      "issue": 29
+    },
+    {
+      "file": "impact-review.png",
+      "url": "https://github.com/huangyingting/ai-native-sdlc-demo/issues/30",
+      "title": "Review synthetic proxy-owner impact proposal before implementation · Issue #30 · huangyingting/ai-native-sdlc-demo",
+      "selector": "body",
+      "capturedAt": "2026-10-13T01:22:13.513Z",
+      "width": 1440,
+      "height": 1900,
+      "bytes": 331826,
+      "sha256": "82a60d9854614a07e4190486711af7bd71b28f6e29f5b70ab031981938ec9761",
+      "execution": "assistant-run capture",
+      "humanAcceptance": false,
+      "originalFile": "readiness-remaining-impact-record-verified.png",
+      "issue": 30
+    }
+  ]
+}

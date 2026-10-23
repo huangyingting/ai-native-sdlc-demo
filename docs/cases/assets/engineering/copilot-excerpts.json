@@ -1,0 +1,91 @@
+{
+  "version": 1,
+  "kind": "reviewed-copilot-output-excerpts",
+  "independentHumanReview": false,
+  "humanAcceptance": false,
+  "scope": "Exact selected final-answer text and one-line candidate differences from completed synthetic experiments. Not full raw prompts, responses or candidate files.",
+  "impact": {
+    "publicResult": "impact-summary.json",
+    "proposalHash": "2da119edb9b422f51024d85af9e9278aed748a958c1fa4891714cf1af869f02a",
+    "proposalResponseSha256": "06350afd0e33261dfe5bf79a8100c3754314c268f109772856cea910420465f4",
+    "implementationResponseSha256": "4bf4f3db6816677afb1007062174cc090ed50732cea9e17e69222523dfbbb5a3",
+    "instructionExcerpt": "Add temporary proxy assignment to the ticket application, preserving all existing behavior and approved tests.",
+    "migrationDecisionExcerpt": "Create new tables with nullable proxy_owner TEXT and, after opening, inspect the existing tickets schema and issue ALTER TABLE tickets ADD COLUMN proxy_owner TEXT only when the column is absent.",
+    "rationaleExcerpt": "Implements temporary proxy ownership while preserving accountable ownership and legacy behavior. The store adds an idempotent additive proxy_owner migration, exposes proxyOwner on persisted tickets, validates and persists proxy assignment/clearing, and the API serializes both proxyOwner and effectiveOwner. Documentation covers ownership semantics, filtering, errors, persistence, and migration compatibility.",
+    "codeDifference": {
+      "path": "src/domain.mjs",
+      "before": "  return ticket.owner ?? null;",
+      "after": "  return ticket.proxyOwner ?? ticket.owner ?? null;"
+    },
+    "visibleTestsPassed": 15,
+    "independentChecksPassed": 35
+  },
+  "cases": [
+    {
+      "caseId": "case-1",
+      "strategy": "direct",
+      "callNumber": 1,
+      "publicResult": "summary.json",
+      "responseSha256": "1cad706610ff92e449e99211214d9849a1f55a1b22066f9225b76f0bf03b4187",
+      "instructionExcerpt": "Diagnose and correct observed CI failure without changing unrelated behavior",
+      "classification": "product",
+      "expectedClassification": "product",
+      "rationaleExcerpt": "The product implementation combines independent owner and status predicates with OR, so a ticket is incorrectly accepted whenever either predicate passes—including when one filter is omitted. Replacing OR with AND implements the documented intersection semantics while preserving individual-filter and no-filter behavior.",
+      "evidenceExcerpt": {
+        "path": "src/domain.mjs",
+        "quote": "  return ownerMatches || statusMatches;\n"
+      },
+      "codeDifference": {
+        "path": "src/domain.mjs",
+        "before": "  return ownerMatches || statusMatches;",
+        "after": "  return ownerMatches && statusMatches;"
+      },
+      "behavioralRepairPassed": true,
+      "fullyAccepted": true
+    },
+    {
+      "caseId": "case-2",
+      "strategy": "direct",
+      "callNumber": 1,
+      "publicResult": "summary.json",
+      "responseSha256": "4cf0b8a801012bcfa207aed4edbd451f4146be9c04dd39c9e41d713d2d1969e5",
+      "instructionExcerpt": "Diagnose and correct observed CI failure without changing unrelated behavior",
+      "classification": "test-harness",
+      "expectedClassification": "test-harness",
+      "rationaleExcerpt": "The implementation returns the ticket's existing owner exactly as required by the documented contract. The failing test incorrectly expects 'jordan' for a ticket owned by 'avery', so the assertion must be restored to the contractually correct value without changing product behavior.",
+      "evidenceExcerpt": {
+        "path": "tests/domain.test.mjs",
+        "quote": "  assert.equal(effectiveOwner(ticket), 'jordan');"
+      },
+      "codeDifference": {
+        "path": "tests/domain.test.mjs",
+        "before": "  assert.equal(effectiveOwner(ticket), 'jordan');",
+        "after": "  assert.equal(effectiveOwner(ticket), 'avery');"
+      },
+      "behavioralRepairPassed": true,
+      "fullyAccepted": true
+    },
+    {
+      "caseId": "case-3",
+      "strategy": "direct",
+      "callNumber": 1,
+      "publicResult": "summary.json",
+      "responseSha256": "604699d8efd77d5477faefb75c2a40815db0c57dca77d415c8e36bc795e6c5d1",
+      "instructionExcerpt": "Diagnose and correct observed CI failure without changing unrelated behavior",
+      "classification": "product",
+      "expectedClassification": "environment",
+      "rationaleExcerpt": "The checked-in runtime configuration violates the documented contract by pointing SQLite beneath /dev/null, which cannot contain a database file. Both CLI tests therefore fail while domain, API, and store behavior pass. Restoring the required in-memory database path fixes the root cause without changing code, tests, fallback behavior, or unrelated semantics.",
+      "evidenceExcerpt": {
+        "path": "runtime.json",
+        "quote": "{\n  \"databasePath\": \"/dev/null/engineering-lab.db\"\n}"
+      },
+      "codeDifference": {
+        "path": "runtime.json",
+        "before": "  \"databasePath\": \"/dev/null/engineering-lab.db\"",
+        "after": "  \"databasePath\": \":memory:\""
+      },
+      "behavioralRepairPassed": true,
+      "fullyAccepted": false
+    }
+  ]
+}
